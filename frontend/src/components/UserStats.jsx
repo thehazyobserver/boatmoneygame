@@ -21,22 +21,6 @@ export default function UserStats() {
     query: { enabled: isConnected }
   })
 
-  // Read user's ETH balance (we'll use this to show available funds)
-  // Note: This would typically use useBalance from wagmi, but we'll simulate for now
-  const { data: ethBalance } = useContractRead({
-    address: address,
-    abi: [{
-      name: 'balanceOf',
-      type: 'function',
-      stateMutability: 'view',
-      inputs: [{ name: 'account', type: 'address' }],
-      outputs: [{ name: '', type: 'uint256' }]
-    }],
-    functionName: 'balanceOf',
-    args: [address],
-    enabled: false // Disabled for now, would need proper ETH balance query
-  })
-
   if (!isConnected) {
     return (
       <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 border border-white border-opacity-20">
