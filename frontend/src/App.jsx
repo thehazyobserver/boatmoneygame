@@ -2,7 +2,6 @@ import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Navbar from './components/Navbar'
 import GameDashboard from './components/GameDashboard'
-import Footer from './components/Footer'
 import { config } from './config/wagmi'
 
 const queryClient = new QueryClient()
@@ -14,7 +13,6 @@ function App() {
         <div className="min-h-screen ocean-gradient">
           <Navbar />
           <GameDashboard />
-          <Footer />
         </div>
       </QueryClientProvider>
     </WagmiProvider>
