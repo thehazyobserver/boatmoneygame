@@ -29,9 +29,9 @@ export const config = createConfig({
     // walletConnect({ projectId: 'your-project-id' }), // Add if you want WalletConnect
   ],
   transports: {
-    [sonic.id]: http(),
+    [sonic.id]: http('https://sonic-mainnet.g.alchemy.com/v2/QiDLI_B9X1EAVYatlN9Jm'),
     [sonicTestnet.id]: http(),
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_API_KEY}`),
+    [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_API_KEY}`),
   },
 })
