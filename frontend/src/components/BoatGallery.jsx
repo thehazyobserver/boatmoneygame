@@ -13,13 +13,31 @@ export default function BoatGallery() {
     query: { enabled: isConnected }
   })
 
-  // Read user's boat token IDs
-  const { data: tokenIds } = useReadContract({
+  // For ERC721Enumerable, we need to get each token ID individually
+  // We'll just get the first few if they have boats
+  const { data: firstTokenId } = useReadContract({
     ...contracts.boatNFT,
-    functionName: 'walletOfOwner',
-    args: [address],
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 0],
     query: { enabled: isConnected && boatCount > 0 }
   })
+
+  const { data: secondTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex', 
+    args: [address, 1],
+    query: { enabled: isConnected && boatCount > 1 }
+  })
+
+  const { data: thirdTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 2], 
+    query: { enabled: isConnected && boatCount > 2 }
+  })
+
+  // Create array of token IDs
+  const tokenIds = [firstTokenId, secondTokenId, thirdTokenId].filter(id => id !== undefined)
 
   if (!isConnected) {
     return null

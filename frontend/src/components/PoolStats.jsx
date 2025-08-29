@@ -18,12 +18,8 @@ export default function PoolStats() {
   })
 
   // Read contract ETH balance (this will show the prize pool)
-  const { data: contractBalance } = useReadContract({
-    address: BOAT_GAME_ADDRESS,
-    abi: ['function balance() view returns (uint256)'],
-    functionName: 'balance',
-    query: { enabled: false } // This function might not exist, disable for now
-  })
+  // Note: Disabling this as the function doesn't exist - could use native balance instead
+  const contractBalance = null
 
   // Read total boats minted
   const { data: totalBoats } = useReadContract({

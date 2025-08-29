@@ -10,16 +10,13 @@ export const BOAT_GAME_ABI = [
   'function upgrade(uint256 tokenId)',
   'function run(uint256 tokenId) payable',
   
-  // View functions
+  // View functions (public variables get automatic getters)
   'function buyRaftCost() view returns (uint256)',
-  'function upgradeCost(uint8 fromLevel) view returns (uint256)',
-  'function level(uint8 level) view returns (tuple(uint16 successBps, uint8 fail))',
-  'function stakeCfg(uint8 level) view returns (tuple(uint256 minStake, uint256 maxStake, uint16 rewardMultBps, uint256 maxPayoutAbs))',
+  'function upgradeCost(uint8) view returns (uint256)', // This is a mapping getter
+  'function level(uint8) view returns (tuple(uint16 successBps, uint8 fail))',
+  'function stakeCfg(uint8) view returns (tuple(uint256 minStake, uint256 maxStake, uint16 rewardMultBps, uint256 maxPayoutAbs))',
   'function BOAT() view returns (address)',
   'function NFT() view returns (address)',
-  
-  // BOAT token functions (since BOAT is stored in the game contract)
-  'function BOAT() view returns (address)',
   
   // Events
   'event RaftBought(address indexed user, uint256 indexed tokenId, uint256 cost)',
@@ -28,7 +25,7 @@ export const BOAT_GAME_ABI = [
 ]
 
 export const BOAT_NFT_ABI = [
-  // ERC721 standard functions
+  // ERC721Enumerable functions
   'function balanceOf(address owner) view returns (uint256)',
   'function ownerOf(uint256 tokenId) view returns (address)',
   'function totalSupply() view returns (uint256)',
@@ -37,12 +34,10 @@ export const BOAT_NFT_ABI = [
   
   // Custom functions
   'function levelOf(uint256 tokenId) view returns (uint8)',
-  'function nextTokenId() view returns (uint256)',
-  'function walletOfOwner(address owner) view returns (uint256[])',
   
   // Events
   'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
-  'event LevelChanged(uint256 indexed tokenId, uint8 oldLevel, uint8 newLevel)'
+  'event LevelSet(uint256 indexed tokenId, uint8 level)'
 ]
 
 export const BOAT_TOKEN_ABI = [
