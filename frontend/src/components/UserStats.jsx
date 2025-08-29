@@ -5,12 +5,19 @@ import { contracts } from '../config/contracts'
 export default function UserStats() {
   const { address, isConnected } = useAccount()
 
-  // Read user's BOAT token balance
-  const { data: boatBalance } = useReadContract({
+  // First, read the BOAT token address from the game contract
+  const { data: boatTokenAddress } = useReadContract({
     ...contracts.boatGame,
+    functionName: 'BOAT'
+  })
+
+  // Read user's BOAT token balance from the actual BOAT token contract
+  const { data: boatBalance } = useReadContract({
+    address: boatTokenAddress,
+    abi: ['function balanceOf(address) view returns (uint256)'],
     functionName: 'balanceOf',
     args: [address],
-    query: { enabled: isConnected }
+    query: { enabled: isConnected && !!boatTokenAddress }
   })
 
   // Read user's boat count

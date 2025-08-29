@@ -10,18 +10,25 @@ export default function BuyRaftCard() {
   // Contract write hook
   const { writeContract, isPending } = useWriteContract()
 
+  // Read the BOAT token address from the game contract
+  const { data: boatTokenAddress } = useReadContract({
+    ...contracts.boatGame,
+    functionName: 'BOAT'
+  })
+
   // Read the raft price
   const { data: raftPrice } = useReadContract({
     ...contracts.boatGame,
-    functionName: 'RAFT_PRICE'
+    functionName: 'buyRaftCost'
   })
 
-  // Read user's BOAT balance  
+  // Read user's BOAT balance from the actual BOAT token contract
   const { data: boatBalance } = useReadContract({
-    ...contracts.boatGame,
+    address: boatTokenAddress,
+    abi: ['function balanceOf(address) view returns (uint256)'],
     functionName: 'balanceOf',
     args: [address],
-    query: { enabled: isConnected }
+    query: { enabled: isConnected && !!boatTokenAddress }
   })
 
   const handleBuyRaft = async () => {

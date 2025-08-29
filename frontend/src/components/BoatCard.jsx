@@ -25,6 +25,12 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   // Contract write hook
   const { writeContract, isPending, error } = useWriteContract()
 
+  // Read the BOAT token address from the game contract
+  const { data: boatTokenAddress } = useReadContract({
+    ...contracts.boatGame,
+    functionName: 'BOAT'
+  })
+
   // Read boat data
   const { data: boatLevel } = useReadContract({
     ...contracts.boatNFT,
@@ -32,19 +38,21 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     args: [tokenId]
   })
 
-  // Read upgrade cost
+  // Read upgrade cost (costs are stored by fromLevel, so level 1 -> level 2 uses upgradeCost[1])
   const { data: upgradeCost } = useReadContract({
     ...contracts.boatGame,
-    functionName: 'getUpgradeCost',
-    args: [tokenId],
-    query: { enabled: boatLevel < 3 }
+    functionName: 'upgradeCost',
+    args: [boatLevel || level || 0],
+    query: { enabled: (boatLevel || level || 0) < 4 }
   })
 
-  // Read user's BOAT balance
+  // Read user's BOAT balance from the actual BOAT token contract
   const { data: boatBalance } = useReadContract({
-    ...contracts.boatGame,
+    address: boatTokenAddress,
+    abi: ['function balanceOf(address) view returns (uint256)'],
     functionName: 'balanceOf',
-    args: [address]
+    args: [address],
+    query: { enabled: !!boatTokenAddress }
   })
 
   const currentLevel = boatLevel || level || 0

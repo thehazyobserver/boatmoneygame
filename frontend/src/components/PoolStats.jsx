@@ -1,18 +1,28 @@
 import { useReadContract } from 'wagmi'
 import { formatEther } from 'viem'
-import { contracts } from '../config/contracts'
+import { contracts, BOAT_GAME_ADDRESS } from '../config/contracts'
 
 export default function PoolStats() {
-  // Read total supply of BOAT tokens
-  const { data: totalSupply } = useReadContract({
+  // Read the BOAT token address from the game contract
+  const { data: boatTokenAddress } = useReadContract({
     ...contracts.boatGame,
-    functionName: 'totalSupply'
+    functionName: 'BOAT'
   })
 
-  // Read contract ETH balance
+  // Read total supply of BOAT tokens from the actual BOAT token contract
+  const { data: totalSupply } = useReadContract({
+    address: boatTokenAddress,
+    abi: ['function totalSupply() view returns (uint256)'],
+    functionName: 'totalSupply',
+    query: { enabled: !!boatTokenAddress }
+  })
+
+  // Read contract ETH balance (this will show the prize pool)
   const { data: contractBalance } = useReadContract({
-    ...contracts.boatGame,
-    functionName: 'getContractBalance'
+    address: BOAT_GAME_ADDRESS,
+    abi: ['function balance() view returns (uint256)'],
+    functionName: 'balance',
+    query: { enabled: false } // This function might not exist, disable for now
   })
 
   // Read total boats minted
@@ -21,10 +31,10 @@ export default function PoolStats() {
     functionName: 'totalSupply'
   })
 
-  // Read next token ID (for boats minted counter)
-  const { data: nextTokenId } = useReadContract({
-    ...contracts.boatNFT,
-    functionName: 'nextTokenId'
+  // Read buy raft cost
+  const { data: buyRaftCost } = useReadContract({
+    ...contracts.boatGame,
+    functionName: 'buyRaftCost'
   })
 
   const stats = [
@@ -47,10 +57,10 @@ export default function PoolStats() {
       icon: '🚤'
     },
     {
-      label: 'Next Boat ID',
-      value: nextTokenId ? nextTokenId.toString() : '1',
-      suffix: '',
-      icon: '#️⃣'
+      label: 'Raft Cost',
+      value: buyRaftCost ? parseInt(formatEther(buyRaftCost)).toLocaleString() : '100,000',
+      suffix: 'BOAT',
+      icon: '🪜'
     }
   ]
 

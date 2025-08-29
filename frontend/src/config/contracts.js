@@ -1,29 +1,30 @@
 // Contract addresses - UPDATE THESE AFTER DEPLOYMENT
 export const BOAT_GAME_ADDRESS = '0xab004722930Dd89C3698C73658FE803e8632fdF3' // Your deployed BoatGame address
 export const BOAT_NFT_ADDRESS = '0x9CB74A9fF49c06a8119854ac86eF3920e9aCe983'  // Your deployed BoatNFT address
-export const BOAT_TOKEN_ADDRESS = '0xab004722930Dd89C3698C73658FE803e8632fdF3' // Your BOAT token address (same as game contract)
+// Note: BOAT token address will be read from the game contract
 
 // Contract ABIs
 export const BOAT_GAME_ABI = [
-  // Read functions
-  'function balanceOf(address account) view returns (uint256)',
-  'function totalSupply() view returns (uint256)',
-  'function getContractBalance() view returns (uint256)',
-  'function RAFT_PRICE() view returns (uint256)',
-  'function getUpgradeCost(uint256 tokenId) view returns (uint256)',
-  'function getSuccessRate(uint8 level) view returns (uint256)',
-  
-  // Write functions
+  // Game functions  
   'function buyRaft() returns (uint256)',
   'function upgrade(uint256 tokenId)',
   'function run(uint256 tokenId) payable',
   
+  // View functions
+  'function buyRaftCost() view returns (uint256)',
+  'function upgradeCost(uint8 fromLevel) view returns (uint256)',
+  'function level(uint8 level) view returns (tuple(uint16 successBps, uint8 fail))',
+  'function stakeCfg(uint8 level) view returns (tuple(uint256 minStake, uint256 maxStake, uint16 rewardMultBps, uint256 maxPayoutAbs))',
+  'function BOAT() view returns (address)',
+  'function NFT() view returns (address)',
+  
+  // BOAT token functions (since BOAT is stored in the game contract)
+  'function BOAT() view returns (address)',
+  
   // Events
-  'event Transfer(address indexed from, address indexed to, uint256 value)',
-  'event RaftBought(address indexed buyer, uint256 indexed tokenId, uint256 cost)',
-  'event BoatUpgraded(address indexed owner, uint256 indexed tokenId, uint8 newLevel)',
-  'event RunStarted(address indexed player, uint256 indexed tokenId, uint256 stake)',
-  'event RunCompleted(address indexed player, uint256 indexed tokenId, bool success, uint256 reward)'
+  'event RaftBought(address indexed user, uint256 indexed tokenId, uint256 cost)',
+  'event Upgraded(address indexed user, uint256 indexed tokenId, uint8 fromLevel, uint8 toLevel, uint256 cost)',
+  'event RunResult(address indexed user, uint256 indexed tokenId, uint8 level, uint256 stake, bool success, uint256 rewardPaid)'
 ]
 
 export const BOAT_NFT_ABI = [
@@ -63,8 +64,5 @@ export const contracts = {
     address: BOAT_NFT_ADDRESS,
     abi: BOAT_NFT_ABI
   },
-  boatToken: {
-    address: BOAT_TOKEN_ADDRESS,
-    abi: BOAT_TOKEN_ABI
-  }
+  // BOAT token contract will be accessed via the game contract's BOAT() function
 }
