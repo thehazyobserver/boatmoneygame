@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts } from '../config/contracts'
 
@@ -22,77 +22,66 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const [isRunning, setIsRunning] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('0.01')
 
+  // Contract write hook
+  const { writeContract, isPending, error } = useWriteContract()
+
   // Read boat data
-  const { data: boatLevel } = useContractRead({
+  const { data: boatLevel } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'levelOf',
-    args: [tokenId],
-    watch: true
+    args: [tokenId]
   })
 
   // Read upgrade cost
-  const { data: upgradeCost } = useContractRead({
+  const { data: upgradeCost } = useReadContract({
     ...contracts.boatGame,
     functionName: 'getUpgradeCost',
     args: [tokenId],
-    enabled: boatLevel < 3
+    query: { enabled: boatLevel < 3 }
   })
 
   // Read user's BOAT balance
-  const { data: boatBalance } = useContractRead({
+  const { data: boatBalance } = useReadContract({
     ...contracts.boatGame,
     functionName: 'balanceOf',
-    args: [address],
-    watch: true
-  })
-
-  // Prepare upgrade transaction
-  const { config: upgradeConfig } = usePrepareContractWrite({
-    ...contracts.boatGame,
-    functionName: 'upgrade',
-    args: [tokenId],
-    enabled: boatLevel < 3 && upgradeCost && boatBalance >= upgradeCost
-  })
-
-  const { write: upgrade, isLoading: isUpgrading } = useContractWrite({
-    ...upgradeConfig,
-    onSuccess: () => {
-      onRefresh?.()
-    }
-  })
-
-  // Prepare run transaction
-  const { config: runConfig } = usePrepareContractWrite({
-    ...contracts.boatGame,
-    functionName: 'run',
-    args: [tokenId],
-    value: parseEther(stakeAmount),
-    enabled: parseFloat(stakeAmount) > 0
-  })
-
-  const { write: runSmugglingRun, isLoading: isRunningTransaction } = useContractWrite({
-    ...runConfig,
-    onSuccess: () => {
-      setIsRunning(false)
-      onRefresh?.()
-    },
-    onError: () => {
-      setIsRunning(false)
-    }
+    args: [address]
   })
 
   const currentLevel = boatLevel || level || 0
   const isMaxLevel = currentLevel >= 3
 
-  const handleRun = () => {
+  const handleRun = async () => {
     if (parseFloat(stakeAmount) <= 0) return
     setIsRunning(true)
-    runSmugglingRun?.()
+    
+    try {
+      await writeContract({
+        ...contracts.boatGame,
+        functionName: 'run',
+        args: [tokenId],
+        value: parseEther(stakeAmount)
+      })
+      onRefresh?.()
+    } catch (err) {
+      console.error('Run failed:', err)
+    } finally {
+      setIsRunning(false)
+    }
   }
 
-  const handleUpgrade = () => {
-    if (isMaxLevel || !upgrade) return
-    upgrade()
+  const handleUpgrade = async () => {
+    if (isMaxLevel || !upgradeCost || !boatBalance || boatBalance < upgradeCost) return
+    
+    try {
+      await writeContract({
+        ...contracts.boatGame,
+        functionName: 'upgrade',
+        args: [tokenId]
+      })
+      onRefresh?.()
+    } catch (err) {
+      console.error('Upgrade failed:', err)
+    }
   }
 
   return (
@@ -115,10 +104,10 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             </div>
             <button
               onClick={handleUpgrade}
-              disabled={!upgrade || isUpgrading || (boatBalance && upgradeCost && boatBalance < upgradeCost)}
+              disabled={isPending || isMaxLevel || (boatBalance && upgradeCost && boatBalance < upgradeCost)}
               className="w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
             >
-              {isUpgrading ? 'Upgrading...' : `Upgrade to ${BOAT_NAMES[currentLevel + 1]}`}
+              {isPending ? 'Upgrading...' : `Upgrade to ${BOAT_NAMES[currentLevel + 1]}`}
             </button>
           </div>
         )}
@@ -142,10 +131,10 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           
           <button
             onClick={handleRun}
-            disabled={!runSmugglingRun || isRunning || isRunningTransaction || parseFloat(stakeAmount) <= 0}
+            disabled={isPending || isRunning || parseFloat(stakeAmount) <= 0}
             className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
           >
-            {isRunning || isRunningTransaction ? 'Running...' : 'Start Smuggling Run'}
+            {isRunning || isPending ? 'Running...' : 'Start Smuggling Run'}
           </button>
         </div>
 

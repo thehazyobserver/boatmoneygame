@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts } from '../config/contracts'
 
@@ -7,42 +7,37 @@ export default function BuyRaftCard() {
   const { address, isConnected } = useAccount()
   const [isBuying, setIsBuying] = useState(false)
 
+  // Contract write hook
+  const { writeContract, isPending } = useWriteContract()
+
   // Read the raft price
-  const { data: raftPrice } = useContractRead({
+  const { data: raftPrice } = useReadContract({
     ...contracts.boatGame,
-    functionName: 'RAFT_PRICE',
+    functionName: 'RAFT_PRICE'
   })
 
   // Read user's BOAT balance  
-  const { data: boatBalance } = useContractRead({
+  const { data: boatBalance } = useReadContract({
     ...contracts.boatGame,
     functionName: 'balanceOf',
     args: [address],
-    enabled: isConnected,
-    watch: true
+    query: { enabled: isConnected }
   })
 
-  // Prepare buy raft transaction
-  const { config: buyRaftConfig } = usePrepareContractWrite({
-    ...contracts.boatGame,
-    functionName: 'buyRaft',
-    enabled: isConnected && raftPrice && boatBalance >= raftPrice
-  })
-
-  const { write: buyRaft, isLoading: isBuyingRaft } = useContractWrite({
-    ...buyRaftConfig,
-    onSuccess: () => {
-      setIsBuying(false)
-    },
-    onError: () => {
+  const handleBuyRaft = async () => {
+    if (!isConnected) return
+    setIsBuying(true)
+    
+    try {
+      await writeContract({
+        ...contracts.boatGame,
+        functionName: 'buyRaft'
+      })
+    } catch (err) {
+      console.error('Buy raft failed:', err)
+    } finally {
       setIsBuying(false)
     }
-  })
-
-  const handleBuyRaft = () => {
-    if (!buyRaft) return
-    setIsBuying(true)
-    buyRaft()
   }
 
   const hasEnoughBoat = boatBalance && raftPrice && boatBalance >= raftPrice
@@ -97,10 +92,10 @@ export default function BuyRaftCard() {
           </div>
           <button
             onClick={handleBuyRaft}
-            disabled={!buyRaft || isBuying || isBuyingRaft || !hasEnoughBoat}
+            disabled={!isConnected || isPending || isBuying || !hasEnoughBoat}
             className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-bold text-lg transition-colors shadow-lg"
           >
-            {isBuying || isBuyingRaft ? 'Buying...' : hasEnoughBoat ? 'Buy Raft' : 'Need More BOAT'}
+            {isBuying || isPending ? 'Buying...' : hasEnoughBoat ? 'Buy Raft' : 'Need More BOAT'}
           </button>
           
           {!hasEnoughBoat && (

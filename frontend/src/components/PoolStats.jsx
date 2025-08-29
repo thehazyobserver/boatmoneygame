@@ -1,34 +1,30 @@
-import { useContractRead } from 'wagmi'
+import { useReadContract } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts } from '../config/contracts'
 
 export default function PoolStats() {
   // Read total supply of BOAT tokens
-  const { data: totalSupply } = useContractRead({
+  const { data: totalSupply } = useReadContract({
     ...contracts.boatGame,
-    functionName: 'totalSupply',
-    watch: true
+    functionName: 'totalSupply'
   })
 
   // Read contract ETH balance
-  const { data: contractBalance } = useContractRead({
+  const { data: contractBalance } = useReadContract({
     ...contracts.boatGame,
-    functionName: 'getContractBalance',
-    watch: true
+    functionName: 'getContractBalance'
   })
 
   // Read total boats minted
-  const { data: totalBoats } = useContractRead({
+  const { data: totalBoats } = useReadContract({
     ...contracts.boatNFT,
-    functionName: 'totalSupply',
-    watch: true
+    functionName: 'totalSupply'
   })
 
   // Read next token ID (for boats minted counter)
-  const { data: nextTokenId } = useContractRead({
+  const { data: nextTokenId } = useReadContract({
     ...contracts.boatNFT,
-    functionName: 'nextTokenId',
-    watch: true
+    functionName: 'nextTokenId'
   })
 
   const stats = [

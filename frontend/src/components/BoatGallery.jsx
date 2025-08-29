@@ -1,4 +1,4 @@
-import { useAccount, useContractRead } from 'wagmi'
+import { useAccount, useReadContract } from 'wagmi'
 import { contracts } from '../config/contracts'
 import BoatCard from './BoatCard'
 
@@ -6,30 +6,19 @@ export default function BoatGallery() {
   const { address, isConnected } = useAccount()
 
   // Read user's boat count
-  const { data: boatCount } = useContractRead({
+  const { data: boatCount } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'balanceOf',
     args: [address],
-    enabled: isConnected,
-    watch: true
+    query: { enabled: isConnected }
   })
 
   // Read user's boat token IDs
-  const { data: tokenIds } = useContractRead({
+  const { data: tokenIds } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'walletOfOwner',
     args: [address],
-    enabled: isConnected && boatCount > 0,
-    watch: true
-  })
-
-  // Read individual boat levels
-  const boatLevels = useContractRead({
-    ...contracts.boatNFT,
-    functionName: 'levelOf',
-    args: tokenIds?.[0],
-    enabled: tokenIds && tokenIds.length > 0,
-    watch: true
+    query: { enabled: isConnected && boatCount > 0 }
   })
 
   if (!isConnected) {

@@ -1,4 +1,4 @@
-import { useAccount, useContractRead } from 'wagmi'
+import { useAccount, useReadContract } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts } from '../config/contracts'
 
@@ -6,21 +6,19 @@ export default function UserStats() {
   const { address, isConnected } = useAccount()
 
   // Read user's BOAT token balance
-  const { data: boatBalance } = useContractRead({
+  const { data: boatBalance } = useReadContract({
     ...contracts.boatGame,
     functionName: 'balanceOf',
     args: [address],
-    enabled: isConnected,
-    watch: true
+    query: { enabled: isConnected }
   })
 
   // Read user's boat count
-  const { data: boatCount } = useContractRead({
+  const { data: boatCount } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'balanceOf',
     args: [address],
-    enabled: isConnected,
-    watch: true
+    query: { enabled: isConnected }
   })
 
   // Read user's ETH balance (we'll use this to show available funds)
