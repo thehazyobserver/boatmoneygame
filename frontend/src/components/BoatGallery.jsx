@@ -89,7 +89,7 @@ export default function BoatGallery() {
   const tokenIds = [
     firstTokenId, secondTokenId, thirdTokenId, fourthTokenId, fifthTokenId,
     sixthTokenId, seventhTokenId, eighthTokenId, ninthTokenId, tenthTokenId
-  ].filter(id => id !== undefined)
+  ].filter(id => id !== undefined).map(id => id.toString())
 
   if (!isConnected) {
     return null
@@ -143,7 +143,7 @@ export default function BoatGallery() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {tokenIds?.map((tokenId, index) => (
           <BoatCard
-            key={tokenId.toString()}
+            key={tokenId}
             tokenId={tokenId}
             level={1} // Will be read from contract in BoatCard component
             onRefresh={() => {

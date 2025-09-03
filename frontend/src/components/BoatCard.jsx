@@ -29,7 +29,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const { hasAllowance, approveMax, isApproving } = useTokenApproval()
 
   // Cooldown timer hook
-  const { timeLeft, isOnCooldown, formattedTime, cooldownDuration } = useCooldownTimer(tokenId)
+  const { timeLeft, isOnCooldown, formattedTime, cooldownDuration } = useCooldownTimer(BigInt(tokenId))
 
   // Contract write hook
   const { writeContract, isPending, error } = useWriteContract()
@@ -49,7 +49,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const { data: boatLevel } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'levelOf',
-    args: [tokenId]
+    args: [BigInt(tokenId)]
   })
 
   // Read upgrade cost (costs are stored by fromLevel, so level 1 -> level 2 uses upgradeCost[1])
@@ -116,7 +116,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       const hash = await writeContract({
         ...contracts.boatGame,
         functionName: 'run',
-        args: [tokenId, stakeAmountWei]
+        args: [BigInt(tokenId), stakeAmountWei]
       })
       setLastTxHash(hash)
       onRefresh?.()
@@ -144,7 +144,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       const hash = await writeContract({
         ...contracts.boatGame,
         functionName: 'upgrade',
-        args: [tokenId]
+        args: [BigInt(tokenId)]
       })
       setLastTxHash(hash)
       onRefresh?.()
