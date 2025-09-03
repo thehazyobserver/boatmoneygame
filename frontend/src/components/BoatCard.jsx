@@ -3,6 +3,7 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'
+import { useCooldownTimer } from '../hooks/useCooldownTimer'
 
 const BOAT_EMOJIS = {
   1: '🪜', // Raft (level 1)
@@ -26,6 +27,9 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
   // Token approval hook
   const { hasAllowance, approveMax, isApproving } = useTokenApproval()
+
+  // Cooldown timer hook
+  const { timeLeft, isOnCooldown, formattedTime, cooldownDuration } = useCooldownTimer(tokenId)
 
   // Contract write hook
   const { writeContract, isPending, error } = useWriteContract()
@@ -75,6 +79,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   
   // Button text functions
   const getRunButtonText = () => {
+    if (isOnCooldown) return `Cooldown: ${formattedTime}`
     if (isConfirming) return 'Processing...'
     if (isRunning || isPending) return 'Running...'
     if (isApproving) return 'Approving...'
@@ -166,6 +171,24 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           <p className="text-white opacity-80">Level {currentLevel}</p>
         </div>
 
+        {/* Cooldown Progress Bar */}
+        {isOnCooldown && (
+          <div className="w-full">
+            <div className="flex justify-between text-xs text-white opacity-80 mb-1">
+              <span>Cooldown</span>
+              <span>{formattedTime}</span>
+            </div>
+            <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
+              <div 
+                className="bg-orange-400 h-2 rounded-full transition-all duration-1000"
+                style={{ 
+                  width: `${Math.max(0, 100 - (timeLeft / cooldownDuration) * 100)}%` 
+                }}
+              ></div>
+            </div>
+          </div>
+        )}
+
         {/* Upgrade Section */}
         {!isMaxLevel && (
           <div className="w-full text-center space-y-2">
@@ -202,13 +225,21 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           
           <button
             onClick={handleRun}
-            disabled={isPending || isRunning || isApproving || isConfirming || parseFloat(stakeAmount) <= 0}
-            className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
+            disabled={isPending || isRunning || isApproving || isConfirming || parseFloat(stakeAmount) <= 0 || isOnCooldown}
+            className={`w-full px-4 py-2 ${
+              isOnCooldown 
+                ? 'bg-orange-500 hover:bg-orange-600' 
+                : 'bg-blue-500 hover:bg-blue-600'
+            } disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors`}
           >
             {getRunButtonText()}
           </button>
           <div className="text-center text-white opacity-60 text-xs mt-1">
-            ⏱️ 10-minute cooldown | 📊 Stake: 10,000-80,000 BOAT
+            {isOnCooldown ? (
+              <span className="text-orange-300">⏱️ Cooldown: {formattedTime} remaining</span>
+            ) : (
+              <>⏱️ 10-minute cooldown | 📊 Stake: 10,000-80,000 BOAT</>
+            )}
           </div>
         </div>
 
