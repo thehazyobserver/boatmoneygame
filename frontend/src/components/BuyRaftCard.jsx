@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
-import { contracts } from '../config/contracts'
+import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
+import { useTokenApproval } from '../hooks/useTokenApproval'
 
 export default function BuyRaftCard() {
   const { address, isConnected } = useAccount()
   const [isBuying, setIsBuying] = useState(false)
+
+  // Token approval hook
+  const { hasAllowance, approveMax, isApproving } = useTokenApproval()
 
   // Contract write hook
   const { writeContract, isPending } = useWriteContract()
@@ -25,7 +29,7 @@ export default function BuyRaftCard() {
   // Read user's BOAT balance from the actual BOAT token contract
   const { data: boatBalance } = useReadContract({
     address: boatTokenAddress,
-    abi: ['function balanceOf(address) view returns (uint256)'],
+    abi: BOAT_TOKEN_ABI,
     functionName: 'balanceOf',
     args: [address],
     query: { enabled: isConnected && !!boatTokenAddress }
@@ -33,8 +37,20 @@ export default function BuyRaftCard() {
 
   const handleBuyRaft = async () => {
     if (!isConnected) return
-    setIsBuying(true)
     
+    // Check if we need approval first
+    if (!hasAllowance(raftPrice)) {
+      try {
+        await approveMax()
+        return // Let user click again after approval
+      } catch (err) {
+        console.error('Approval failed:', err)
+        return
+      }
+    }
+    
+    // Proceed with buying raft
+    setIsBuying(true)
     try {
       await writeContract({
         ...contracts.boatGame,
@@ -49,6 +65,18 @@ export default function BuyRaftCard() {
 
   const hasEnoughBoat = boatBalance && raftPrice && boatBalance >= raftPrice
   const raftPriceFormatted = raftPrice ? formatEther(raftPrice) : '1000'
+  const needsApproval = raftPrice && !hasAllowance(raftPrice)
+
+  // Button state logic
+  const getButtonText = () => {
+    if (isBuying || isPending) return 'Buying...'
+    if (isApproving) return 'Approving...'
+    if (needsApproval) return 'Approve BOAT'
+    if (!hasEnoughBoat) return 'Need More BOAT'
+    return 'Buy Raft'
+  }
+
+  const isButtonDisabled = !isConnected || isPending || isBuying || isApproving || (!hasEnoughBoat && !needsApproval)
 
   if (!isConnected) {
     return null
@@ -99,13 +127,19 @@ export default function BuyRaftCard() {
           </div>
           <button
             onClick={handleBuyRaft}
-            disabled={!isConnected || isPending || isBuying || !hasEnoughBoat}
+            disabled={isButtonDisabled}
             className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-bold text-lg transition-colors shadow-lg"
           >
-            {isBuying || isPending ? 'Buying...' : hasEnoughBoat ? 'Buy Raft' : 'Need More BOAT'}
+            {getButtonText()}
           </button>
           
-          {!hasEnoughBoat && (
+          {needsApproval && hasEnoughBoat && (
+            <div className="text-white text-xs opacity-80">
+              First approve BOAT spending, then buy raft
+            </div>
+          )}
+          
+          {!hasEnoughBoat && !needsApproval && (
             <div className="text-white text-xs opacity-80">
               You need {raftPriceFormatted} BOAT tokens to buy a raft
             </div>

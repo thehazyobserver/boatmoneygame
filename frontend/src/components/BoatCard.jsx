@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
-import { contracts } from '../config/contracts'
+import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
+import { useTokenApproval } from '../hooks/useTokenApproval'
 
 const BOAT_EMOJIS = {
   0: '🪜', // Raft
@@ -21,6 +22,9 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const { address } = useAccount()
   const [isRunning, setIsRunning] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('10000')
+
+  // Token approval hook
+  const { hasAllowance, approveMax, isApproving } = useTokenApproval()
 
   // Contract write hook
   const { writeContract, isPending, error } = useWriteContract()
@@ -49,7 +53,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   // Read user's BOAT balance from the actual BOAT token contract
   const { data: boatBalance } = useReadContract({
     address: boatTokenAddress,
-    abi: ['function balanceOf(address) view returns (uint256)'],
+    abi: BOAT_TOKEN_ABI,
     functionName: 'balanceOf',
     args: [address],
     query: { enabled: !!boatTokenAddress }
@@ -57,16 +61,49 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
   const currentLevel = boatLevel || level || 0
   const isMaxLevel = currentLevel >= 3
+  
+  // Calculate button states
+  const stakeAmountWei = parseEther(stakeAmount || '0')
+  const needsRunApproval = stakeAmountWei > 0 && !hasAllowance(stakeAmountWei)
+  const needsUpgradeApproval = upgradeCost && !hasAllowance(upgradeCost)
+  
+  // Button text functions
+  const getRunButtonText = () => {
+    if (isRunning || isPending) return 'Running...'
+    if (isApproving) return 'Approving...'
+    if (needsRunApproval) return 'Approve BOAT'
+    return 'Start Smuggling Run'
+  }
+  
+  const getUpgradeButtonText = () => {
+    if (isPending) return 'Upgrading...'
+    if (isApproving) return 'Approving...'
+    if (needsUpgradeApproval) return 'Approve BOAT'
+    return `Upgrade to ${BOAT_NAMES[currentLevel + 1]}`
+  }
 
   const handleRun = async () => {
     if (parseFloat(stakeAmount) <= 0) return
-    setIsRunning(true)
     
+    const stakeAmountWei = parseEther(stakeAmount)
+    
+    // Check if we need approval first
+    if (!hasAllowance(stakeAmountWei)) {
+      try {
+        await approveMax()
+        return // Let user click again after approval
+      } catch (err) {
+        console.error('Approval failed:', err)
+        return
+      }
+    }
+    
+    setIsRunning(true)
     try {
       await writeContract({
         ...contracts.boatGame,
         functionName: 'run',
-        args: [tokenId, parseEther(stakeAmount)]
+        args: [tokenId, stakeAmountWei]
       })
       onRefresh?.()
     } catch (err) {
@@ -78,6 +115,17 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
   const handleUpgrade = async () => {
     if (isMaxLevel || !upgradeCost || !boatBalance || boatBalance < upgradeCost) return
+    
+    // Check if we need approval first
+    if (!hasAllowance(upgradeCost)) {
+      try {
+        await approveMax()
+        return // Let user click again after approval
+      } catch (err) {
+        console.error('Approval failed:', err)
+        return
+      }
+    }
     
     try {
       await writeContract({
@@ -111,10 +159,10 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             </div>
             <button
               onClick={handleUpgrade}
-              disabled={isPending || isMaxLevel || (boatBalance && upgradeCost && boatBalance < upgradeCost)}
+              disabled={isPending || isApproving || isMaxLevel || (boatBalance && upgradeCost && boatBalance < upgradeCost && !needsUpgradeApproval)}
               className="w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
             >
-              {isPending ? 'Upgrading...' : `Upgrade to ${BOAT_NAMES[currentLevel + 1]}`}
+              {getUpgradeButtonText()}
             </button>
           </div>
         )}
@@ -139,10 +187,10 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           
           <button
             onClick={handleRun}
-            disabled={isPending || isRunning || parseFloat(stakeAmount) <= 0}
+            disabled={isPending || isRunning || isApproving || parseFloat(stakeAmount) <= 0}
             className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
           >
-            {isRunning || isPending ? 'Running...' : 'Start Smuggling Run'}
+            {getRunButtonText()}
           </button>
           <div className="text-center text-white opacity-60 text-xs mt-1">
             ⏱️ 10-minute cooldown | 📊 Stake: 10,000-80,000 BOAT
