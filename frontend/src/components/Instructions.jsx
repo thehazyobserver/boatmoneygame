@@ -75,6 +75,7 @@ export default function Instructions() {
                         <div>
                           <div className="font-semibold">Raft (Level 1)</div>
                           <div className="text-sm opacity-80">55% success rate, 1.5x tokens, gets BURNED on failure</div>
+                          <div className="text-xs opacity-60 mt-1">💰 Buy: 100,000 BOAT | Upgrade to Dinghy: 150,000 BOAT</div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
@@ -82,6 +83,7 @@ export default function Instructions() {
                         <div>
                           <div className="font-semibold">Dinghy (Level 2)</div>
                           <div className="text-sm opacity-80">65% success rate, 2.0x tokens, downgrades on failure</div>
+                          <div className="text-xs opacity-60 mt-1">💰 Upgrade to Speedboat: 300,000 BOAT</div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
@@ -89,6 +91,7 @@ export default function Instructions() {
                         <div>
                           <div className="font-semibold">Speedboat (Level 3)</div>
                           <div className="text-sm opacity-80">75% success rate, 2.4x tokens, downgrades on failure</div>
+                          <div className="text-xs opacity-60 mt-1">💰 Upgrade to Yacht: 600,000 BOAT</div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
@@ -96,6 +99,7 @@ export default function Instructions() {
                         <div>
                           <div className="font-semibold">Yacht (Level 4)</div>
                           <div className="text-sm opacity-80">85% success rate, 3.0x tokens, 15% bonus raft spawn chance</div>
+                          <div className="text-xs opacity-60 mt-1">💰 Maximum level - no further upgrades available</div>
                         </div>
                       </div>
                     </div>
@@ -234,6 +238,15 @@ export default function Instructions() {
                           <li>• 3.0x multiplier on wins</li>
                           <li>• 15% chance for bonus rafts</li>
                           <li>• Good for large stakes</li>
+                        </ul>
+                      </div>
+                      <div className="p-3 bg-yellow-500 bg-opacity-20 rounded-lg">
+                        <div className="font-semibold mb-2">💰 Upgrade Costs</div>
+                        <ul className="text-sm space-y-1 opacity-90">
+                          <li>• Raft → Dinghy: 150,000 BOAT</li>
+                          <li>• Dinghy → Speedboat: 300,000 BOAT</li>
+                          <li>• Speedboat → Yacht: 600,000 BOAT</li>
+                          <li>• Total to max level: 1,050,000 BOAT</li>
                         </ul>
                       </div>
                       <div className="p-3 bg-orange-500 bg-opacity-20 rounded-lg">
