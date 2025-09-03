@@ -162,8 +162,8 @@ export default function BuyRaftCard() {
 
       {/* Bottom Info */}
       <div className="mt-4 pt-4 border-t border-white border-opacity-20 text-center text-white text-sm opacity-90">
-        💡 <strong>New to the game?</strong> You'll earn BOAT rewards from successful runs. 
-        Success = earn 1.5x your stake. Failure = lose your stake and raft gets BURNED!
+        💡 <strong>New to the game?</strong> You'll get BOAT tokens from successful runs. 
+        Success = win 1.5x your stake. Failure = lose your stake and raft gets BURNED!
       </div>
     </div>
   )

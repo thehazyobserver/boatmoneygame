@@ -9,8 +9,7 @@ export default function Instructions() {
   const tabs = [
     { id: 'basics', label: '🎮 Basics', icon: '🎯' },
     { id: 'gameplay', label: '⚓ Gameplay', icon: '🚤' },
-    { id: 'strategy', label: '🧠 Strategy', icon: '💡' },
-    { id: 'economics', label: '💰 Economics', icon: '📊' }
+    { id: 'strategy', label: '🧠 Strategy', icon: '💡' }
   ]
 
   return (
@@ -63,7 +62,7 @@ export default function Instructions() {
                     🎯 Welcome to BOAT MONEY
                   </h3>
                   <p className="text-lg mb-4 opacity-90">
-                    A high-risk, high-reward Web3 game where you run smuggling operations with boats to earn BOAT tokens!
+                    A fun Web3 game where you run smuggling operations with boats to earn BOAT tokens!
                   </p>
                 </div>
 
@@ -75,28 +74,28 @@ export default function Instructions() {
                         <div className="text-2xl">🪜</div>
                         <div>
                           <div className="font-semibold">Raft (Level 1)</div>
-                          <div className="text-sm opacity-80">55% success rate, 1.5x rewards, gets BURNED on failure</div>
+                          <div className="text-sm opacity-80">55% success rate, 1.5x tokens, gets BURNED on failure</div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
                         <div className="text-2xl">🛶</div>
                         <div>
                           <div className="font-semibold">Dinghy (Level 2)</div>
-                          <div className="text-sm opacity-80">65% success rate, 2.0x rewards, downgrades on failure</div>
+                          <div className="text-sm opacity-80">65% success rate, 2.0x tokens, downgrades on failure</div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
                         <div className="text-2xl">🚤</div>
                         <div>
                           <div className="font-semibold">Speedboat (Level 3)</div>
-                          <div className="text-sm opacity-80">75% success rate, 2.4x rewards, downgrades on failure</div>
+                          <div className="text-sm opacity-80">75% success rate, 2.4x tokens, downgrades on failure</div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
                         <div className="text-2xl">🛥️</div>
                         <div>
                           <div className="font-semibold">Yacht (Level 4)</div>
-                          <div className="text-sm opacity-80">85% success rate, 3.0x rewards, 15% bonus raft spawn chance</div>
+                          <div className="text-sm opacity-80">85% success rate, 3.0x tokens, 15% bonus raft spawn chance</div>
                         </div>
                       </div>
                     </div>
@@ -130,7 +129,7 @@ export default function Instructions() {
                         <div className="text-xl mt-1">4️⃣</div>
                         <div>
                           <div className="font-semibold">Upgrade & Expand</div>
-                          <div className="text-sm opacity-80">Use earnings to upgrade boats and buy more</div>
+                          <div className="text-sm opacity-80">Use tokens to upgrade boats and buy more</div>
                         </div>
                       </div>
                     </div>
@@ -150,7 +149,7 @@ export default function Instructions() {
                       <div className="p-4 bg-green-500 bg-opacity-20 rounded-lg border border-green-500 border-opacity-50">
                         <div className="font-bold text-green-200 mb-2">✅ SUCCESS</div>
                         <ul className="text-sm space-y-1 text-green-100">
-                          <li>• Earn 1.5x-3.0x your stake back</li>
+                          <li>• Win 1.5x-3.0x your stake back</li>
                           <li>• Boat keeps its level</li>
                           <li>• Yachts have 15% chance to spawn bonus raft</li>
                         </ul>
@@ -199,7 +198,7 @@ export default function Instructions() {
 
             {activeTab === 'strategy' && (
               <div className="space-y-6">
-                <h3 className="text-xl font-bold mb-4">🧠 Winning Strategies</h3>
+                <h3 className="text-xl font-bold mb-4">🧠 Game Strategies</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
@@ -211,15 +210,15 @@ export default function Instructions() {
                           <li>• Buy 2-3 rafts initially</li>
                           <li>• Stake smaller amounts (10k-20k BOAT)</li>
                           <li>• Accept that some rafts will burn</li>
-                          <li>• Reinvest profits into more rafts</li>
+                          <li>• Use winnings to get more rafts</li>
                         </ul>
                       </div>
                       <div className="p-3 bg-green-500 bg-opacity-20 rounded-lg">
                         <div className="font-semibold mb-2">Scale Gradually</div>
                         <ul className="text-sm space-y-1 opacity-90">
                           <li>• Upgrade successful rafts to dinghies</li>
-                          <li>• Higher success rates = safer investments</li>
-                          <li>• Keep some rafts for high-risk plays</li>
+                          <li>• Higher success rates = better odds</li>
+                          <li>• Keep some rafts for risky plays</li>
                         </ul>
                       </div>
                     </div>
@@ -231,18 +230,18 @@ export default function Instructions() {
                       <div className="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
                         <div className="font-semibold mb-2">Yacht Focus</div>
                         <ul className="text-sm space-y-1 opacity-90">
-                          <li>• 85% success rate is very safe</li>
+                          <li>• 85% success rate is very high</li>
                           <li>• 3.0x multiplier on wins</li>
                           <li>• 15% chance for bonus rafts</li>
-                          <li>• Best for large stakes</li>
+                          <li>• Good for large stakes</li>
                         </ul>
                       </div>
                       <div className="p-3 bg-orange-500 bg-opacity-20 rounded-lg">
-                        <div className="font-semibold mb-2">Risk Management</div>
+                        <div className="font-semibold mb-2">Smart Play</div>
                         <ul className="text-sm space-y-1 opacity-90">
-                          <li>• Never stake more than you can afford to lose</li>
-                          <li>• Diversify across multiple boats</li>
-                          <li>• Consider downgrade costs vs upgrade costs</li>
+                          <li>• Only play with tokens you can afford to lose</li>
+                          <li>• Spread stakes across multiple boats</li>
+                          <li>• Consider upgrade costs when planning</li>
                         </ul>
                       </div>
                     </div>
@@ -250,105 +249,29 @@ export default function Instructions() {
                 </div>
 
                 <div className="bg-blue-500 bg-opacity-20 rounded-lg p-4 border border-blue-500 border-opacity-50">
-                  <div className="font-bold text-blue-200 mb-3">💡 Pro Tips</div>
+                  <div className="font-bold text-blue-200 mb-3">💡 Game Tips</div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-100">
                     <div>
-                      <div className="font-semibold mb-1">🎰 Probability Math</div>
-                      <div>With 55% success and 1.5x rewards, rafts have positive expected value over time</div>
+                      <div className="font-semibold mb-1">🎰 Know the Odds</div>
+                      <div>Higher level boats have better success rates but cost more to upgrade</div>
                     </div>
                     <div>
                       <div className="font-semibold mb-1">⚡ Yacht Bonus</div>
-                      <div>Free rafts from yachts add significant value - each has 1000 BOAT worth</div>
+                      <div>Yachts can spawn free rafts - each raft costs 1000 BOAT normally</div>
                     </div>
                     <div>
-                      <div className="font-semibold mb-1">📊 Bankroll Management</div>
-                      <div>Keep enough BOAT to replace burned rafts and handle variance</div>
+                      <div className="font-semibold mb-1">📊 Token Management</div>
+                      <div>Keep enough BOAT to replace burned rafts and try again</div>
                     </div>
                     <div>
-                      <div className="font-semibold mb-1">🕒 Timing Strategy</div>
-                      <div>Run all boats simultaneously to maximize hourly earnings</div>
+                      <div className="font-semibold mb-1">🕒 Timing</div>
+                      <div>Run all boats at once since there's a 10-minute cooldown</div>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {activeTab === 'economics' && (
-              <div className="space-y-6">
-                <h3 className="text-xl font-bold mb-4">💰 Game Economics</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h4 className="font-bold text-lg">💸 Costs</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-2 bg-white bg-opacity-10 rounded">
-                        <span>🪜 Buy Raft</span>
-                        <span className="font-semibold">1,000 BOAT</span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 bg-white bg-opacity-10 rounded">
-                        <span>🪜→🛶 Upgrade to Dinghy</span>
-                        <span className="font-semibold">5,000 BOAT</span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 bg-white bg-opacity-10 rounded">
-                        <span>🛶→🚤 Upgrade to Speedboat</span>
-                        <span className="font-semibold">25,000 BOAT</span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 bg-white bg-opacity-10 rounded">
-                        <span>🚤→🛥️ Upgrade to Yacht</span>
-                        <span className="font-semibold">125,000 BOAT</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="font-bold text-lg">📈 Expected Returns</h4>
-                    <div className="space-y-2">
-                      <div className="p-3 bg-white bg-opacity-10 rounded">
-                        <div className="font-semibold">🪜 Raft Strategy</div>
-                        <div className="text-sm opacity-80">High risk, high volatility, positive EV</div>
-                        <div className="text-xs mt-1">55% × 1.5x = 82.5% return rate</div>
-                      </div>
-                      <div className="p-3 bg-white bg-opacity-10 rounded">
-                        <div className="font-semibold">🛥️ Yacht Strategy</div>
-                        <div className="text-sm opacity-80">Lower risk, steady returns, bonus rafts</div>
-                        <div className="text-xs mt-1">85% × 3.0x = 255% return rate</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h4 className="font-bold text-lg">🏆 Prize Pool System</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="p-4 bg-green-500 bg-opacity-20 rounded-lg text-center">
-                      <div className="text-2xl mb-2">💰</div>
-                      <div className="font-semibold">Player Stakes</div>
-                      <div className="text-sm opacity-80">Lost stakes fund the prize pool</div>
-                    </div>
-                    <div className="p-4 bg-blue-500 bg-opacity-20 rounded-lg text-center">
-                      <div className="text-2xl mb-2">🎁</div>
-                      <div className="font-semibold">Rewards Paid</div>
-                      <div className="text-sm opacity-80">Successful runs get multiplied stakes</div>
-                    </div>
-                    <div className="p-4 bg-purple-500 bg-opacity-20 rounded-lg text-center">
-                      <div className="text-2xl mb-2">⚖️</div>
-                      <div className="font-semibold">House Edge</div>
-                      <div className="text-sm opacity-80">Small edge funds development</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-green-500 bg-opacity-20 rounded-lg p-4 border border-green-500 border-opacity-50">
-                  <div className="font-bold text-green-200 mb-2">🎯 Value Proposition</div>
-                  <p className="text-sm text-green-100">
-                    BOAT MONEY combines DeFi yields with gaming excitement. Unlike pure gambling, 
-                    the game has positive expected value for skilled players who manage risk properly. 
-                    The upgrade system creates long-term progression and yacht ownership provides 
-                    sustainable income through bonus raft generation.
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}
