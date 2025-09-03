@@ -1,5 +1,5 @@
 import { useAccount, useReadContract } from 'wagmi'
-import { contracts } from '../config/contracts'
+import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 
 export default function DebugPanel() {
   const { address, isConnected } = useAccount()
@@ -21,15 +21,7 @@ export default function DebugPanel() {
   // Test reading BOAT balance
   const { data: boatBalance, error: boatBalanceError, isLoading: boatBalanceLoading } = useReadContract({
     address: boatTokenAddress,
-    abi: [
-      {
-        "type": "function",
-        "name": "balanceOf",
-        "inputs": [{"name": "owner", "type": "address", "internalType": "address"}],
-        "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
-        "stateMutability": "view"
-      }
-    ],
+    abi: BOAT_TOKEN_ABI,
     functionName: 'balanceOf',
     args: [address],
     query: { enabled: isConnected && !!boatTokenAddress }
