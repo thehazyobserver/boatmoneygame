@@ -108,12 +108,12 @@ export default function RunResults() {
   })
 
   const getBoatEmoji = (level) => {
-    const emojis = { 0: '🪜', 1: '🛶', 2: '🚤', 3: '🛥️' }
+    const emojis = { 1: '🪜', 2: '🛶', 3: '🚤', 4: '🛥️' }
     return emojis[level] || '🚤'
   }
 
   const getBoatName = (level) => {
-    const names = { 0: 'Raft', 1: 'Dinghy', 2: 'Speedboat', 3: 'Yacht' }
+    const names = { 1: 'Raft', 2: 'Dinghy', 3: 'Speedboat', 4: 'Yacht' }
     return names[level] || 'Boat'
   }
 
@@ -123,22 +123,22 @@ export default function RunResults() {
         return {
           title: result.success ? '🎉 Successful Run!' : '💥 Run Failed!',
           message: result.success 
-            ? `Your ${getBoatName(result.level)} #{result.tokenId} completed a successful smuggling run! You earned ${parseFloat(result.rewardPaid).toFixed(0)} BOAT tokens.`
-            : `Your ${getBoatName(result.level)} #{result.tokenId} failed the smuggling run. You lost ${parseFloat(result.stake).toFixed(0)} BOAT tokens.`,
+            ? `Your ${getBoatName(result.level)} #${result.tokenId} completed a successful smuggling run! You won ${parseFloat(result.rewardPaid).toFixed(0)} BOAT tokens.`
+            : `Your ${getBoatName(result.level)} #${result.tokenId} failed the smuggling run. You lost ${parseFloat(result.stake).toFixed(0)} BOAT tokens. ${result.level === 1 ? 'Your raft will be BURNED!' : 'Your boat will be DOWNGRADED!'}`,
           color: result.success ? 'green' : 'red',
           emoji: result.success ? '💰' : '💸'
         }
       case 'burned':
         return {
           title: '🔥 Boat Burned!',
-          message: `Your ${getBoatName(result.level)} #{result.tokenId} was burned after a failed run!`,
+          message: `Your ${getBoatName(result.level)} #${result.tokenId} was burned after the failed run!`,
           color: 'red',
           emoji: '🔥'
         }
       case 'downgraded':
         return {
           title: '⬇️ Boat Downgraded',
-          message: `Your ${getBoatName(result.fromLevel)} #{result.tokenId} was downgraded to a ${getBoatName(result.toLevel)} after a failed run.`,
+          message: `Your ${getBoatName(result.fromLevel)} #${result.tokenId} was downgraded to a ${getBoatName(result.toLevel)} after the failed run.`,
           color: 'yellow',
           emoji: '📉'
         }
