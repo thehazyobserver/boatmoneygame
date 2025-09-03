@@ -3,6 +3,7 @@ import PoolStats from './PoolStats'
 import UserStats from './UserStats'
 import BoatGallery from './BoatGallery'
 import BuyRaftCard from './BuyRaftCard'
+import Instructions from './Instructions'
 
 export default function GameDashboard() {
   const { isConnected } = useAccount()
@@ -10,6 +11,9 @@ export default function GameDashboard() {
   if (!isConnected) {
     return (
       <div className="container mx-auto p-6">
+        {/* Instructions for non-connected users */}
+        <Instructions />
+        
         <div className="flex flex-col items-center justify-center min-h-64 text-center">
           <div className="text-8xl mb-4 float">🚤</div>
           <h2 className="text-3xl font-bold text-white mb-4">
@@ -48,6 +52,9 @@ export default function GameDashboard() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* Instructions */}
+      <Instructions />
+      
       {/* Top Stats Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PoolStats />
