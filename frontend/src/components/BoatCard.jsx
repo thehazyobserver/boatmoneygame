@@ -20,7 +20,7 @@ const BOAT_NAMES = {
 export default function BoatCard({ tokenId, level, onRefresh }) {
   const { address } = useAccount()
   const [isRunning, setIsRunning] = useState(false)
-  const [stakeAmount, setStakeAmount] = useState('0.01')
+  const [stakeAmount, setStakeAmount] = useState('10000')
 
   // Contract write hook
   const { writeContract, isPending, error } = useWriteContract()
@@ -129,10 +129,11 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
               type="number"
               value={stakeAmount}
               onChange={(e) => setStakeAmount(e.target.value)}
-              step="0.01"
-              min="0.01"
+              step="1000"
+              min="10000"
+              max="80000"
               className="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="0.01"
+              placeholder="10000"
             />
           </div>
           
@@ -143,11 +144,14 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           >
             {isRunning || isPending ? 'Running...' : 'Start Smuggling Run'}
           </button>
+          <div className="text-center text-white opacity-60 text-xs mt-1">
+            ⏱️ 10-minute cooldown | 📊 Stake: 10,000-80,000 BOAT
+          </div>
         </div>
 
         {/* Success Rate Display */}
         <div className="text-center text-white opacity-80 text-sm">
-          Success Rate: {currentLevel === 0 ? '50%' : currentLevel === 1 ? '65%' : currentLevel === 2 ? '80%' : '90%'}
+          Success Rate: {currentLevel === 0 ? '55%' : currentLevel === 1 ? '65%' : currentLevel === 2 ? '75%' : '85%'}
         </div>
       </div>
     </div>

@@ -109,8 +109,8 @@ export default function BoatGallery() {
             <div className="text-2xl">🎯</div>
             <div className="font-bold">Run Smuggling Operations</div>
             <div className="opacity-80">
-              Stake BOAT and run missions. Success = get your stake back + bonus BOAT tokens. 
-              Failure = lose your stake.
+              Stake BOAT and run missions. Success = earn BOAT reward (1.5x-3.0x your stake). 
+              Failure = lose your stake. Level 1 boats get BURNED, higher levels get DOWNGRADED.
             </div>
           </div>
           <div className="space-y-2">
@@ -118,6 +118,7 @@ export default function BoatGallery() {
             <div className="font-bold">Upgrade Your Fleet</div>
             <div className="opacity-80">
               Use BOAT tokens to upgrade boats for better success rates and higher rewards.
+              Yachts have a 15% bonus chance to spawn a free raft after each run!
             </div>
           </div>
           <div className="space-y-2">

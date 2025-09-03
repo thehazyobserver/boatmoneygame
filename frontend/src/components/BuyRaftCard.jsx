@@ -76,7 +76,7 @@ export default function BuyRaftCard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
               <div className="text-lg">🎯</div>
-              <div className="font-semibold">50% Success</div>
+              <div className="font-semibold">55% Success</div>
               <div className="opacity-80">Starting odds</div>
             </div>
             <div>
@@ -115,8 +115,8 @@ export default function BuyRaftCard() {
 
       {/* Bottom Info */}
       <div className="mt-4 pt-4 border-t border-white border-opacity-20 text-center text-white text-sm opacity-90">
-        💡 <strong>New to the game?</strong> You'll earn BOAT tokens from successful smuggling runs. 
-        Each run has a chance to succeed (earn 1.5x your stake) or fail (lose your stake).
+        💡 <strong>New to the game?</strong> You'll earn BOAT rewards from successful runs. 
+        Success = earn 1.5x your stake. Failure = lose your stake and raft gets BURNED!
       </div>
     </div>
   )
