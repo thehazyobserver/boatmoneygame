@@ -5,17 +5,17 @@ import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'
 
 const BOAT_EMOJIS = {
-  0: '🪜', // Raft
-  1: '🛶', // Dinghy  
-  2: '🚤', // Speedboat
-  3: '🛥️'  // Yacht
+  1: '🪜', // Raft (level 1)
+  2: '🛶', // Dinghy (level 2)
+  3: '🚤', // Speedboat (level 3)
+  4: '🛥️'  // Yacht (level 4)
 }
 
 const BOAT_NAMES = {
-  0: 'Raft',
-  1: 'Dinghy',
-  2: 'Speedboat', 
-  3: 'Yacht'
+  1: 'Raft',
+  2: 'Dinghy',
+  3: 'Speedboat', 
+  4: 'Yacht'
 }
 
 export default function BoatCard({ tokenId, level, onRefresh }) {
@@ -52,8 +52,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const { data: upgradeCost } = useReadContract({
     ...contracts.boatGame,
     functionName: 'upgradeCost',
-    args: [boatLevel || level || 0],
-    query: { enabled: (boatLevel || level || 0) < 4 }
+    args: [boatLevel || level || 1],
+    query: { enabled: (boatLevel || level || 1) < 4 }
   })
 
   // Read user's BOAT balance from the actual BOAT token contract
@@ -65,8 +65,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     query: { enabled: !!boatTokenAddress }
   })
 
-  const currentLevel = boatLevel || level || 0
-  const isMaxLevel = currentLevel >= 3
+  const currentLevel = boatLevel || level || 1  // Default to level 1 (Raft)
+  const isMaxLevel = currentLevel >= 4
   
   // Calculate button states
   const stakeAmountWei = parseEther(stakeAmount || '0')
@@ -163,7 +163,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           <h3 className="text-xl font-bold text-white">
             {BOAT_NAMES[currentLevel]} #{tokenId}
           </h3>
-          <p className="text-white opacity-80">Level {currentLevel + 1}</p>
+          <p className="text-white opacity-80">Level {currentLevel}</p>
         </div>
 
         {/* Upgrade Section */}

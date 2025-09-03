@@ -14,7 +14,7 @@ export default function BoatGallery() {
   })
 
   // For ERC721Enumerable, we need to get each token ID individually
-  // We'll just get the first few if they have boats
+  // We'll get up to 10 boats to handle larger fleets
   const { data: firstTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
@@ -36,8 +36,60 @@ export default function BoatGallery() {
     query: { enabled: isConnected && boatCount > 2 }
   })
 
+  const { data: fourthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 3], 
+    query: { enabled: isConnected && boatCount > 3 }
+  })
+
+  const { data: fifthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 4], 
+    query: { enabled: isConnected && boatCount > 4 }
+  })
+
+  const { data: sixthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 5], 
+    query: { enabled: isConnected && boatCount > 5 }
+  })
+
+  const { data: seventhTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 6], 
+    query: { enabled: isConnected && boatCount > 6 }
+  })
+
+  const { data: eighthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 7], 
+    query: { enabled: isConnected && boatCount > 7 }
+  })
+
+  const { data: ninthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 8], 
+    query: { enabled: isConnected && boatCount > 8 }
+  })
+
+  const { data: tenthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 9], 
+    query: { enabled: isConnected && boatCount > 9 }
+  })
+
   // Create array of token IDs
-  const tokenIds = [firstTokenId, secondTokenId, thirdTokenId].filter(id => id !== undefined)
+  const tokenIds = [
+    firstTokenId, secondTokenId, thirdTokenId, fourthTokenId, fifthTokenId,
+    sixthTokenId, seventhTokenId, eighthTokenId, ninthTokenId, tenthTokenId
+  ].filter(id => id !== undefined)
 
   if (!isConnected) {
     return null
@@ -93,7 +145,7 @@ export default function BoatGallery() {
           <BoatCard
             key={tokenId.toString()}
             tokenId={tokenId}
-            level={0} // Will be read from contract in BoatCard component
+            level={1} // Will be read from contract in BoatCard component
             onRefresh={() => {
               // Trigger refresh of boat data
               // This would typically refetch the queries

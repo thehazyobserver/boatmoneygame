@@ -62,7 +62,7 @@ export default function Instructions() {
                     🎯 Welcome to BOAT MONEY
                   </h3>
                   <p className="text-lg mb-4 opacity-90">
-                    A fun Web3 game where you run smuggling operations with boats to earn BOAT tokens!
+                    Money can’t buy happiness, but it can buy me some hoes and a $BOAT
                   </p>
                 </div>
 
