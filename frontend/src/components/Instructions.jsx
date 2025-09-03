@@ -115,7 +115,7 @@ export default function Instructions() {
                         <div className="text-xl mt-1">2️⃣</div>
                         <div>
                           <div className="font-semibold">Buy Your First Raft</div>
-                          <div className="text-sm opacity-80">Costs 1,000 BOAT tokens to start your fleet</div>
+                          <div className="text-sm opacity-80">Costs 100,000 BOAT tokens to start your fleet</div>
                         </div>
                       </div>
                       <div className="flex items-start space-x-3">
@@ -257,7 +257,7 @@ export default function Instructions() {
                     </div>
                     <div>
                       <div className="font-semibold mb-1">⚡ Yacht Bonus</div>
-                      <div>Yachts can spawn free rafts - each raft costs 1000 BOAT normally</div>
+                      <div>Yachts can spawn free rafts - each raft costs 100,000 BOAT normally</div>
                     </div>
                     <div>
                       <div className="font-semibold mb-1">📊 Token Management</div>

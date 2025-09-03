@@ -5,7 +5,7 @@ A decentralized boat smuggling game built on the Sonic blockchain. Buy boats, up
 ## 🎮 How to Play
 
 1. **Connect Your Wallet** - Connect your Web3 wallet to start playing
-2. **Buy Your First Raft** - Purchase a raft with 1000 BOAT tokens  
+2. **Buy Your First Raft** - Purchase a raft with 100,000 BOAT tokens  
 3. **Run Smuggling Missions** - Stake ETH and attempt smuggling runs
 4. **Upgrade Your Fleet** - Use earned BOAT tokens to upgrade boats for better success rates
 5. **Expand Your Empire** - Buy more boats and compound your earnings
