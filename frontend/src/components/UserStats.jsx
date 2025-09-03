@@ -14,7 +14,15 @@ export default function UserStats() {
   // Read user's BOAT token balance from the actual BOAT token contract
   const { data: boatBalance } = useReadContract({
     address: boatTokenAddress,
-    abi: ['function balanceOf(address) view returns (uint256)'],
+    abi: [
+      {
+        "type": "function",
+        "name": "balanceOf",
+        "inputs": [{"name": "owner", "type": "address", "internalType": "address"}],
+        "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "view"
+      }
+    ],
     functionName: 'balanceOf',
     args: [address],
     query: { enabled: isConnected && !!boatTokenAddress }

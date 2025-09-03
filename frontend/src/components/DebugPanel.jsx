@@ -21,7 +21,15 @@ export default function DebugPanel() {
   // Test reading BOAT balance
   const { data: boatBalance, error: boatBalanceError, isLoading: boatBalanceLoading } = useReadContract({
     address: boatTokenAddress,
-    abi: ['function balanceOf(address) view returns (uint256)'],
+    abi: [
+      {
+        "type": "function",
+        "name": "balanceOf",
+        "inputs": [{"name": "owner", "type": "address", "internalType": "address"}],
+        "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "view"
+      }
+    ],
     functionName: 'balanceOf',
     args: [address],
     query: { enabled: isConnected && !!boatTokenAddress }

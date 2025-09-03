@@ -5,48 +5,154 @@ export const BOAT_NFT_ADDRESS = '0x9CB74A9fF49c06a8119854ac86eF3920e9aCe983'  //
 
 // Contract ABIs
 export const BOAT_GAME_ABI = [
-  // Game functions  
-  'function buyRaft() returns (uint256)',
-  'function upgrade(uint256 tokenId)',
-  'function run(uint256 tokenId) payable',
-  
-  // View functions (public variables get automatic getters)
-  'function buyRaftCost() view returns (uint256)',
-  'function upgradeCost(uint8) view returns (uint256)', // This is a mapping getter
-  'function level(uint8) view returns (tuple(uint16 successBps, uint8 fail))',
-  'function stakeCfg(uint8) view returns (tuple(uint256 minStake, uint256 maxStake, uint16 rewardMultBps, uint256 maxPayoutAbs))',
-  'function BOAT() view returns (address)',
-  'function NFT() view returns (address)',
-  
-  // Events
-  'event RaftBought(address indexed user, uint256 indexed tokenId, uint256 cost)',
-  'event Upgraded(address indexed user, uint256 indexed tokenId, uint8 fromLevel, uint8 toLevel, uint256 cost)',
-  'event RunResult(address indexed user, uint256 indexed tokenId, uint8 level, uint256 stake, bool success, uint256 rewardPaid)'
+  {
+    "type": "function",
+    "name": "buyRaft",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "upgrade",
+    "inputs": [{"name": "tokenId", "type": "uint256", "internalType": "uint256"}],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "run",
+    "inputs": [{"name": "tokenId", "type": "uint256", "internalType": "uint256"}],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "buyRaftCost",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "upgradeCost",
+    "inputs": [{"name": "", "type": "uint8", "internalType": "uint8"}],
+    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "BOAT",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "address", "internalType": "contract IERC20"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "NFT",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "address", "internalType": "contract IBoatNFT"}],
+    "stateMutability": "view"
+  }
 ]
 
 export const BOAT_NFT_ABI = [
-  // ERC721Enumerable functions
-  'function balanceOf(address owner) view returns (uint256)',
-  'function ownerOf(uint256 tokenId) view returns (address)',
-  'function totalSupply() view returns (uint256)',
-  'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
-  'function tokenURI(uint256 tokenId) view returns (string)',
-  
-  // Custom functions
-  'function levelOf(uint256 tokenId) view returns (uint8)',
-  
-  // Events
-  'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
-  'event LevelSet(uint256 indexed tokenId, uint8 level)'
+  {
+    "type": "function",
+    "name": "balanceOf",
+    "inputs": [{"name": "owner", "type": "address", "internalType": "address"}],
+    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "ownerOf",
+    "inputs": [{"name": "tokenId", "type": "uint256", "internalType": "uint256"}],
+    "outputs": [{"name": "", "type": "address", "internalType": "address"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "totalSupply",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokenOfOwnerByIndex",
+    "inputs": [
+      {"name": "owner", "type": "address", "internalType": "address"},
+      {"name": "index", "type": "uint256", "internalType": "uint256"}
+    ],
+    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokenURI",
+    "inputs": [{"name": "tokenId", "type": "uint256", "internalType": "uint256"}],
+    "outputs": [{"name": "", "type": "string", "internalType": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "levelOf",
+    "inputs": [{"name": "tokenId", "type": "uint256", "internalType": "uint256"}],
+    "outputs": [{"name": "", "type": "uint8", "internalType": "uint8"}],
+    "stateMutability": "view"
+  }
 ]
 
 export const BOAT_TOKEN_ABI = [
-  'function balanceOf(address owner) view returns (uint256)',
-  'function allowance(address owner, address spender) view returns (uint256)',
-  'function approve(address spender, uint256 amount) returns (bool)',
-  'function decimals() view returns (uint8)',
-  'function symbol() view returns (string)',
-  'function name() view returns (string)'
+  {
+    "type": "function",
+    "name": "balanceOf",
+    "inputs": [{"name": "owner", "type": "address", "internalType": "address"}],
+    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "allowance",
+    "inputs": [
+      {"name": "owner", "type": "address", "internalType": "address"},
+      {"name": "spender", "type": "address", "internalType": "address"}
+    ],
+    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "approve",
+    "inputs": [
+      {"name": "spender", "type": "address", "internalType": "address"},
+      {"name": "amount", "type": "uint256", "internalType": "uint256"}
+    ],
+    "outputs": [{"name": "", "type": "bool", "internalType": "bool"}],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "decimals",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint8", "internalType": "uint8"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "symbol",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "string", "internalType": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "name",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "string", "internalType": "string"}],
+    "stateMutability": "view"
+  }
 ]
 
 // Contract configuration for wagmi
