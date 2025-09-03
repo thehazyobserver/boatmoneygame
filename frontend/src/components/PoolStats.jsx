@@ -43,7 +43,7 @@ export default function PoolStats() {
     {
       label: 'Prize Pool',
       value: contractBalance ? formatEther(contractBalance) : '0',
-      suffix: 'ETH', 
+      suffix: 'BOAT', 
       icon: '💰'
     },
     {

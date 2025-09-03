@@ -109,7 +109,7 @@ export default function BoatGallery() {
             <div className="text-2xl">🎯</div>
             <div className="font-bold">Run Smuggling Operations</div>
             <div className="opacity-80">
-              Stake ETH and run missions. Success = 2x your stake + BOAT tokens. 
+              Stake BOAT and run missions. Success = get your stake back + bonus BOAT tokens. 
               Failure = lose your stake.
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function BoatGallery() {
             <div className="text-2xl">💰</div>
             <div className="font-bold">Earn & Compound</div>
             <div className="opacity-80">
-              Successful runs earn ETH and BOAT. Use BOAT to buy more boats and upgrade existing ones.
+              Successful runs earn BOAT rewards. Use BOAT to buy more boats and upgrade existing ones.
             </div>
           </div>
         </div>

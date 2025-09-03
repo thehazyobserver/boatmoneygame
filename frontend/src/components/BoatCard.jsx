@@ -66,8 +66,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       await writeContract({
         ...contracts.boatGame,
         functionName: 'run',
-        args: [tokenId],
-        value: parseEther(stakeAmount)
+        args: [tokenId, parseEther(stakeAmount)]
       })
       onRefresh?.()
     } catch (err) {
@@ -124,7 +123,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
         <div className="w-full space-y-3">
           <div className="text-center">
             <label className="text-white text-sm opacity-80 block mb-2">
-              Stake Amount (ETH)
+              Stake Amount (BOAT)
             </label>
             <input
               type="number"
