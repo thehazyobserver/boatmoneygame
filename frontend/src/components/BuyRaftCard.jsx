@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccount, useReadContract, useWriteContract } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'
@@ -7,12 +7,18 @@ import { useTokenApproval } from '../hooks/useTokenApproval'
 export default function BuyRaftCard() {
   const { address, isConnected } = useAccount()
   const [isBuying, setIsBuying] = useState(false)
+  const [lastTxHash, setLastTxHash] = useState(null)
 
   // Token approval hook
   const { hasAllowance, approveMax, isApproving } = useTokenApproval()
 
   // Contract write hook
   const { writeContract, isPending } = useWriteContract()
+  
+  // Wait for transaction receipt
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: lastTxHash,
+  })
 
   // Read the BOAT token address from the game contract
   const { data: boatTokenAddress } = useReadContract({
@@ -52,15 +58,21 @@ export default function BuyRaftCard() {
     // Proceed with buying raft
     setIsBuying(true)
     try {
-      await writeContract({
+      const hash = await writeContract({
         ...contracts.boatGame,
         functionName: 'buyRaft'
       })
+      setLastTxHash(hash)
     } catch (err) {
       console.error('Buy raft failed:', err)
-    } finally {
       setIsBuying(false)
     }
+  }
+
+  // Reset buying state when transaction is confirmed
+  if (isConfirmed && isBuying) {
+    setIsBuying(false)
+    setLastTxHash(null)
   }
 
   const hasEnoughBoat = boatBalance && raftPrice && boatBalance >= raftPrice
@@ -69,6 +81,7 @@ export default function BuyRaftCard() {
 
   // Button state logic
   const getButtonText = () => {
+    if (isConfirming) return 'Processing...'
     if (isBuying || isPending) return 'Buying...'
     if (isApproving) return 'Approving...'
     if (needsApproval) return 'Approve BOAT'
@@ -76,7 +89,7 @@ export default function BuyRaftCard() {
     return 'Buy Raft'
   }
 
-  const isButtonDisabled = !isConnected || isPending || isBuying || isApproving || (!hasEnoughBoat && !needsApproval)
+  const isButtonDisabled = !isConnected || isPending || isBuying || isApproving || isConfirming || (!hasEnoughBoat && !needsApproval)
 
   if (!isConnected) {
     return null

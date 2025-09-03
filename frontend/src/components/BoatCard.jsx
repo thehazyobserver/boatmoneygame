@@ -22,12 +22,18 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const { address } = useAccount()
   const [isRunning, setIsRunning] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('10000')
+  const [lastTxHash, setLastTxHash] = useState(null)
 
   // Token approval hook
   const { hasAllowance, approveMax, isApproving } = useTokenApproval()
 
   // Contract write hook
   const { writeContract, isPending, error } = useWriteContract()
+  
+  // Wait for transaction receipt
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: lastTxHash,
+  })
 
   // Read the BOAT token address from the game contract
   const { data: boatTokenAddress } = useReadContract({
@@ -69,6 +75,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   
   // Button text functions
   const getRunButtonText = () => {
+    if (isConfirming) return 'Processing...'
     if (isRunning || isPending) return 'Running...'
     if (isApproving) return 'Approving...'
     if (needsRunApproval) return 'Approve BOAT'
@@ -76,6 +83,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   }
   
   const getUpgradeButtonText = () => {
+    if (isConfirming) return 'Processing...'
     if (isPending) return 'Upgrading...'
     if (isApproving) return 'Approving...'
     if (needsUpgradeApproval) return 'Approve BOAT'
@@ -100,15 +108,15 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     
     setIsRunning(true)
     try {
-      await writeContract({
+      const hash = await writeContract({
         ...contracts.boatGame,
         functionName: 'run',
         args: [tokenId, stakeAmountWei]
       })
+      setLastTxHash(hash)
       onRefresh?.()
     } catch (err) {
       console.error('Run failed:', err)
-    } finally {
       setIsRunning(false)
     }
   }
@@ -128,15 +136,22 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     }
     
     try {
-      await writeContract({
+      const hash = await writeContract({
         ...contracts.boatGame,
         functionName: 'upgrade',
         args: [tokenId]
       })
+      setLastTxHash(hash)
       onRefresh?.()
     } catch (err) {
       console.error('Upgrade failed:', err)
     }
+  }
+
+  // Reset running state when transaction is confirmed
+  if (isConfirmed && isRunning) {
+    setIsRunning(false)
+    setLastTxHash(null)
   }
 
   return (
@@ -159,7 +174,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             </div>
             <button
               onClick={handleUpgrade}
-              disabled={isPending || isApproving || isMaxLevel || (boatBalance && upgradeCost && boatBalance < upgradeCost && !needsUpgradeApproval)}
+              disabled={isPending || isApproving || isConfirming || isMaxLevel || (boatBalance && upgradeCost && boatBalance < upgradeCost && !needsUpgradeApproval)}
               className="w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
             >
               {getUpgradeButtonText()}
@@ -187,7 +202,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           
           <button
             onClick={handleRun}
-            disabled={isPending || isRunning || isApproving || parseFloat(stakeAmount) <= 0}
+            disabled={isPending || isRunning || isApproving || isConfirming || parseFloat(stakeAmount) <= 0}
             className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
           >
             {getRunButtonText()}
