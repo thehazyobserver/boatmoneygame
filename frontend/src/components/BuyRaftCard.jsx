@@ -116,7 +116,7 @@ export default function BuyRaftCard() {
       {/* Bottom Info */}
       <div className="mt-4 pt-4 border-t border-white border-opacity-20 text-center text-white text-sm opacity-90">
         💡 <strong>New to the game?</strong> You'll earn BOAT tokens from successful smuggling runs. 
-        Each run has a chance to succeed (earn 2x your stake + BOAT) or fail (lose your stake).
+        Each run has a chance to succeed (earn 1.5x your stake) or fail (lose your stake).
       </div>
     </div>
   )
