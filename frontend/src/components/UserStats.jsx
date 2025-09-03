@@ -28,6 +28,14 @@ export default function UserStats() {
     query: { enabled: isConnected }
   })
 
+  // Read user's game statistics
+  const { data: userStats } = useReadContract({
+    ...contracts.boatGame,
+    functionName: 'getStats',
+    args: [address],
+    query: { enabled: isConnected && !!address }
+  })
+
   if (!isConnected) {
     return (
       <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 border border-white border-opacity-20">
@@ -56,13 +64,15 @@ export default function UserStats() {
     },
     {
       label: 'Total Runs',
-      value: '0', // This would need to be tracked in the contract
+      value: userStats ? userStats.runsStarted.toString() : '0',
       suffix: 'runs',
       icon: '🏃'
     },
     {
       label: 'Success Rate',
-      value: '0', // This would need to be calculated from run history
+      value: userStats && userStats.runsStarted > 0 
+        ? Math.round((Number(userStats.runsWon) / Number(userStats.runsStarted)) * 100).toString() 
+        : '0',
       suffix: '%',
       icon: '📈'
     }
@@ -88,9 +98,33 @@ export default function UserStats() {
         ))}
       </div>
 
+      {/* Additional detailed stats if user has played */}
+      {userStats && userStats.runsStarted > 0 && (
+        <div className="mt-6 pt-4 border-t border-white border-opacity-20">
+          <div className="grid grid-cols-2 gap-4 text-white text-sm">
+            <div className="text-center">
+              <div className="font-bold text-green-400">{userStats.runsWon.toString()}</div>
+              <div className="opacity-80">Runs Won</div>
+            </div>
+            <div className="text-center">
+              <div className="font-bold text-red-400">{userStats.boatsLost.toString()}</div>
+              <div className="opacity-80">Boats Lost</div>
+            </div>
+          </div>
+          <div className="text-center mt-3">
+            <div className="text-sm text-white opacity-80">
+              🏆 Max Fleet Size: {userStats.boatsOwnedMax.toString()} boats
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mt-6 pt-4 border-t border-white border-opacity-20">
         <div className="text-center text-white opacity-80 text-sm">
-          🎯 Buy your first boat to start earning BOAT tokens!
+          {userStats && userStats.runsStarted > 0 
+            ? '🎯 Keep playing to improve your success rate!' 
+            : '🎮 Buy your first boat to start earning BOAT tokens!'
+          }
         </div>
       </div>
     </div>
