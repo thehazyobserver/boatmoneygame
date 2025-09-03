@@ -1,6 +1,6 @@
 import { useReadContract } from 'wagmi'
 import { formatEther } from 'viem'
-import { contracts, BOAT_GAME_ADDRESS } from '../config/contracts'
+import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 
 export default function PoolStats() {
   // Read the BOAT token address from the game contract
@@ -12,14 +12,16 @@ export default function PoolStats() {
   // Read total supply of BOAT tokens from the actual BOAT token contract
   const { data: totalSupply } = useReadContract({
     address: boatTokenAddress,
-    abi: ['function totalSupply() view returns (uint256)'],
+    abi: BOAT_TOKEN_ABI,
     functionName: 'totalSupply',
     query: { enabled: !!boatTokenAddress }
   })
 
-  // Read contract ETH balance (this will show the prize pool)
-  // Note: Disabling this as the function doesn't exist - could use native balance instead
-  const contractBalance = null
+  // Read prize pool balance from game contract
+  const { data: prizePool } = useReadContract({
+    ...contracts.boatGame,
+    functionName: 'poolBalance'
+  })
 
   // Read total boats minted
   const { data: totalBoats } = useReadContract({
@@ -36,13 +38,13 @@ export default function PoolStats() {
   const stats = [
     {
       label: 'Total BOAT Supply',
-      value: totalSupply ? formatEther(totalSupply) : '0',
+      value: totalSupply ? parseInt(formatEther(totalSupply)).toLocaleString() : '0',
       suffix: 'BOAT',
       icon: '🪙'
     },
     {
       label: 'Prize Pool',
-      value: contractBalance ? formatEther(contractBalance) : '0',
+      value: prizePool ? parseInt(formatEther(prizePool)).toLocaleString() : '0',
       suffix: 'BOAT', 
       icon: '💰'
     },
