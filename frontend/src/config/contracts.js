@@ -28,7 +28,7 @@ export const GAME_CONFIGS = {
     contractAddress: JOINT_BOAT_GAME_ADDRESS,
     tokenAddress: JOINT_TOKEN_ADDRESS,
     minStake: '20000',
-    maxStake: '420000',
+    maxStake: '120000',
     decimals: 18,
     isDeployed: isJointContractDeployed && isJointTokenDeployed
   }

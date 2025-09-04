@@ -22,10 +22,10 @@ const BOAT_NAMES = {
 export default function BoatCard({ tokenId, level, onRefresh }) {
   const { address } = useAccount()
   const [isRunning, setIsRunning] = useState(false)
-  const [cardSelectedToken, setCardSelectedToken] = useState(selectedToken) // Local token selection for this card
+  const [cardSelectedToken, setCardSelectedToken] = useState('BOAT') // Default to BOAT token
   
   const gameConfig = GAME_CONFIGS[cardSelectedToken]
-  const [stakeAmount, setStakeAmount] = useState(gameConfig.minStake)
+  const [playAmount, setPlayAmount] = useState(gameConfig.minStake)
   const [lastTxHash, setLastTxHash] = useState(null)
 
   const getGameContract = () => {
@@ -75,8 +75,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const currentLevel = boatLevel || level || 1
   const isMaxLevel = currentLevel >= 4
   
-  const stakeAmountWei = parseEther(stakeAmount || '0')
-  const needsRunApproval = stakeAmountWei > 0 && !hasAllowance(stakeAmountWei)
+  const playAmountWei = parseEther(playAmount || '0')
+  const needsRunApproval = playAmountWei > 0 && !hasAllowance(playAmountWei)
   const needsUpgradeApproval = upgradeCost && !hasUpgradeAllowance(upgradeCost)
   
   const getRunButtonText = () => {
@@ -97,11 +97,11 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   }
 
   const handleRun = async () => {
-    if (parseFloat(stakeAmount) <= 0) return
+    if (parseFloat(playAmount) <= 0) return
     
-    const stakeAmountWei = parseEther(stakeAmount)
+    const playAmountWei = parseEther(playAmount)
     
-    if (!hasAllowance(stakeAmountWei)) {
+    if (!hasAllowance(playAmountWei)) {
       try {
         await approveMax()
         return
@@ -116,7 +116,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       const hash = await writeContract({
         ...getGameContract(),
         functionName: 'run',
-        args: [BigInt(tokenId), stakeAmountWei]
+        args: [BigInt(tokenId), playAmountWei]
       })
       setLastTxHash(hash)
       if (onRefresh) onRefresh()
@@ -229,12 +229,12 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
         <div className="w-full space-y-4">
           <div className="text-center">
             <label className="text-cyan-400 text-sm font-bold block mb-3" style={{ fontFamily: 'Orbitron, monospace' }}>
-              RUN STAKES ({gameConfig.symbol})
+              PLAY AMOUNT ({gameConfig.symbol})
             </label>
             <input
               type="number"
-              value={stakeAmount}
-              onChange={(e) => setStakeAmount(e.target.value)}
+              value={playAmount}
+              onChange={(e) => setPlayAmount(e.target.value)}
               step="1000"
               min={gameConfig.minStake}
               max={gameConfig.maxStake}
@@ -246,7 +246,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           
           <button
             onClick={handleRun}
-            disabled={isPending || isRunning || isApproving || isConfirming || parseFloat(stakeAmount) <= 0 || isOnCooldown}
+            disabled={isPending || isRunning || isApproving || isConfirming || parseFloat(playAmount) <= 0 || isOnCooldown}
             className="w-full px-6 py-4 vice-button disabled:bg-gray-700 disabled:opacity-50 disabled:border-gray-600 text-white font-bold rounded-lg transition-all duration-300"
             style={{ fontFamily: 'Orbitron, monospace' }}
           >

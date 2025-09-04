@@ -48,7 +48,7 @@ export default function GameDashboard() {
             <div className="terminal-bg p-4 md:p-6 rounded-lg border border-cyan-400 neon-glow hover:border-yellow-400 transition-all duration-300">
               <div className="text-3xl md:text-4xl mb-3">🚤</div>
               <div className="font-bold text-cyan-400 text-sm md:text-base" style={{ fontFamily: 'Orbitron, monospace' }}>SPEEDBOAT</div>
-              <div className="text-xs md:text-sm text-pink-400" style={{ fontFamily: 'Rajdhani, monospace' }}>HIGH STAKES</div>
+              <div className="text-xs md:text-sm text-pink-400" style={{ fontFamily: 'Rajdhani, monospace' }}>HIGH RISK</div>
               <div className="text-xs text-yellow-400 mt-1">Big Risk</div>
             </div>
             <div className="terminal-bg p-4 md:p-6 rounded-lg border border-cyan-400 neon-glow hover:border-yellow-400 transition-all duration-300">

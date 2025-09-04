@@ -211,7 +211,7 @@ export default function RunResults() {
           title: result.success ? '🎉 Successful Run!' : '💥 Run Failed!',
           message: result.success 
             ? `Your ${getBoatName(result.level)} #${result.tokenId} completed a successful smuggling run! You won ${parseFloat(result.rewardPaid).toFixed(0)} ${tokenSymbol} tokens.`
-            : `Your ${getBoatName(result.level)} #${result.tokenId} failed the smuggling run. You lost ${parseFloat(result.stake).toFixed(0)} ${tokenSymbol} tokens. ${result.level === 1 ? 'Your raft will be BURNED!' : 'Your boat will be DOWNGRADED!'}`,
+            : `Your ${getBoatName(result.level)} #${result.tokenId} failed the smuggling run. You lost ${parseFloat(result.stake).toFixed(0)} ${tokenSymbol} from your play amount. ${result.level === 1 ? 'Your raft will be BURNED!' : 'Your boat will be DOWNGRADED!'}`,
           color: result.success ? 'green' : 'red',
           emoji: result.success ? '💰' : '💸'
         }

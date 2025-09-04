@@ -67,7 +67,7 @@ export default function Instructions() {
                   </h3>
                   <div className="space-y-3 text-white" style={{ fontFamily: 'Rajdhani, monospace' }}>
                     <p className="text-pink-400">
-                      <strong>BOAT RUNNER</strong> is a high-stakes blockchain game where you operate smuggling boats in the neon-soaked waters of Miami '85.
+                      <strong>BOAT RUNNER</strong> is a high-risk blockchain game where you operate smuggling boats in the neon-soaked waters of Miami '85.
                     </p>
                     <p>
                       • <strong className="text-yellow-400">BUY RAFTS:</strong> Start with basic rafts using $BOAT tokens
@@ -93,7 +93,7 @@ export default function Instructions() {
                       <li>• Buy new rafts</li>
                       <li>• Upgrade boat levels</li>
                       <li>• Run smuggling operations</li>
-                      <li>• Lower stakes, steady gains</li>
+                      <li>• Lower risk amounts, steady gains</li>
                     </ul>
                   </div>
                   
@@ -104,7 +104,7 @@ export default function Instructions() {
                     <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
                       <li>• High-risk smuggling runs</li>
                       <li>• Massive potential payouts</li>
-                      <li>• Higher stakes required</li>
+                      <li>• Higher play amounts required</li>
                       <li>• More dangerous waters</li>
                     </ul>
                   </div>
@@ -142,7 +142,7 @@ export default function Instructions() {
                     <div className="flex items-start space-x-3">
                       <span className="text-2xl">3️⃣</span>
                       <div>
-                        <h4 className="font-bold text-yellow-400">SET YOUR STAKE</h4>
+                        <h4 className="font-bold text-yellow-400">SET YOUR PLAY AMOUNT</h4>
                         <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
                           Enter how much you want to risk. Higher stakes = bigger potential rewards.
                         </p>
