@@ -1,12 +1,19 @@
+import { useState } from 'react'
 import { useAccount, useReadContract } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
 
 export default function UserStats({ selectedToken }) {
   const { address, isConnected } = useAccount()
+  const [activeTab, setActiveTab] = useState(selectedToken || 'BOAT')
 
-  // Get game config
-  const gameConfig = GAME_CONFIGS[selectedToken]
+  // Get game config for active tab
+  const gameConfig = GAME_CONFIGS[activeTab]
+  
+  // Get contract configuration based on active tab
+  const getGameContract = () => {
+    return activeTab === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+  }
 
   // Read user's token balance from the token contract
   const { data: tokenBalance } = useReadContract({
@@ -27,7 +34,7 @@ export default function UserStats({ selectedToken }) {
 
   // Read user's game statistics
   const { data: userStats } = useReadContract({
-    ...contracts.boatGame,
+    ...getGameContract(),
     functionName: 'getStats',
     args: [address],
     query: { enabled: isConnected && !!address }
@@ -36,7 +43,7 @@ export default function UserStats({ selectedToken }) {
   if (!isConnected) {
     return (
       <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 border border-white border-opacity-20">
-        <h2 className="text-2xl font-bold text-white mb-6 text-center">
+        <h2 className="text-2xl font-bold text-white mb-4 text-center">
           👤 Your Stats
         </h2>
         <div className="text-center text-white opacity-80">
@@ -77,9 +84,33 @@ export default function UserStats({ selectedToken }) {
 
   return (
     <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 border border-white border-opacity-20">
-      <h2 className="text-2xl font-bold text-white mb-6 text-center">
+      <h2 className="text-2xl font-bold text-white mb-4 text-center">
         👤 Your Stats
       </h2>
+      
+      {/* Tab Selector */}
+      <div className="flex space-x-1 mb-6 bg-white bg-opacity-10 rounded-lg p-1">
+        <button
+          onClick={() => setActiveTab('BOAT')}
+          className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeTab === 'BOAT'
+              ? 'bg-blue-500 text-white'
+              : 'text-white hover:bg-white hover:bg-opacity-10'
+          }`}
+        >
+          🚤 $BOAT
+        </button>
+        <button
+          onClick={() => setActiveTab('JOINT')}
+          className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeTab === 'JOINT'
+              ? 'bg-green-500 text-white'
+              : 'text-white hover:bg-white hover:bg-opacity-10'
+          }`}
+        >
+          🌿 $JOINT
+        </button>
+      </div>
       
       <div className="grid grid-cols-2 gap-4">
         {stats.map((stat, index) => (

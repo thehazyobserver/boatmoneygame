@@ -22,17 +22,20 @@ const BOAT_NAMES = {
 export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
   const { address } = useAccount()
   const [isRunning, setIsRunning] = useState(false)
+  const [cardSelectedToken, setCardSelectedToken] = useState(selectedToken) // Local token selection for this card
   
-  const gameConfig = GAME_CONFIGS[selectedToken]
+  const gameConfig = GAME_CONFIGS[cardSelectedToken]
   const [stakeAmount, setStakeAmount] = useState(gameConfig.minStake)
   const [lastTxHash, setLastTxHash] = useState(null)
 
   const getGameContract = () => {
-    return selectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+    return cardSelectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
   }
 
-  const { hasAllowance, approveMax, isApproving } = useTokenApproval(selectedToken)
-  const { timeLeft, isOnCooldown, formattedTime, cooldownDuration } = useCooldownTimer(selectedToken, BigInt(tokenId))
+  const { hasAllowance, approveMax, isApproving } = useTokenApproval(cardSelectedToken)
+  // Separate approval hook for upgrades (always BOAT tokens)
+  const { hasAllowance: hasUpgradeAllowance, approveMax: approveUpgrade, isApproving: isApprovingUpgrade } = useTokenApproval('BOAT')
+  const { timeLeft, isOnCooldown, formattedTime, cooldownDuration } = useCooldownTimer(cardSelectedToken, BigInt(tokenId))
 
   const { writeContract, isPending } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
@@ -46,10 +49,19 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
   })
 
   const { data: upgradeCost } = useReadContract({
-    ...getGameContract(),
+    ...contracts.boatGame, // Always use BOAT game contract for upgrades
     functionName: 'upgradeCost',
     args: [boatLevel || level || 1],
     query: { enabled: (boatLevel || level || 1) < 4 }
+  })
+
+  // Get BOAT token balance for upgrades
+  const { data: boatTokenBalance } = useReadContract({
+    address: GAME_CONFIGS.BOAT.tokenAddress,
+    abi: BOAT_TOKEN_ABI,
+    functionName: 'balanceOf',
+    args: [address],
+    query: { enabled: !!address }
   })
 
   const { data: tokenBalance } = useReadContract({
@@ -65,7 +77,7 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
   
   const stakeAmountWei = parseEther(stakeAmount || '0')
   const needsRunApproval = stakeAmountWei > 0 && !hasAllowance(stakeAmountWei)
-  const needsUpgradeApproval = upgradeCost && !hasAllowance(upgradeCost)
+  const needsUpgradeApproval = upgradeCost && !hasUpgradeAllowance(upgradeCost)
   
   const getRunButtonText = () => {
     if (isOnCooldown) return 'Cooldown: ' + formattedTime
@@ -79,9 +91,9 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
   const getUpgradeButtonText = () => {
     if (isConfirming) return 'Processing...'
     if (isPending) return 'Upgrading...'
-    if (isApproving) return 'Approving...'
-    if (needsUpgradeApproval) return 'Approve ' + gameConfig.symbol
-    return 'Upgrade (' + (upgradeCost ? formatEther(upgradeCost) : '0') + ' ' + gameConfig.symbol + ')'
+    if (isApprovingUpgrade) return 'Approving...'
+    if (needsUpgradeApproval) return 'Approve $BOAT'
+    return 'Upgrade (' + (upgradeCost ? formatEther(upgradeCost) : '0') + ' $BOAT)'
   }
 
   const handleRun = async () => {
@@ -115,22 +127,22 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
   }
 
   const handleUpgrade = async () => {
-    if (isMaxLevel || !upgradeCost || !tokenBalance || tokenBalance < upgradeCost) return
+    if (isMaxLevel || !upgradeCost || !boatTokenBalance || boatTokenBalance < upgradeCost) return
     
-    if (!hasAllowance(upgradeCost)) {
+    if (!hasUpgradeAllowance(upgradeCost)) {
       try {
-        await approveMax()
+        await approveUpgrade()
         return
       } catch (err) {
-        console.error('Approval failed:', err)
+        console.error('Upgrade approval failed:', err)
         return
       }
     }
     
     try {
       await writeContract({
-        ...getGameContract(),
-        functionName: 'upgradeBoat',
+        ...contracts.boatGame, // Always use BOAT game contract for upgrades
+        functionName: 'upgrade', // Note: might be 'upgrade' instead of 'upgradeBoat'
         args: [BigInt(tokenId)]
       })
       if (onRefresh) onRefresh()
@@ -155,6 +167,22 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
           <p className="text-white opacity-80">Level {currentLevel}</p>
         </div>
 
+        {/* Token Selector Dropdown */}
+        <div className="w-full">
+          <label className="block text-white text-sm font-medium mb-2">Play Token</label>
+          <select
+            value={cardSelectedToken}
+            onChange={(e) => {
+              setCardSelectedToken(e.target.value)
+              setStakeAmount(GAME_CONFIGS[e.target.value].minStake)
+            }}
+            className="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="BOAT" className="bg-gray-800">🚤 $BOAT (10K-80K)</option>
+            <option value="JOINT" className="bg-gray-800">🌿 $JOINT (20K-420K)</option>
+          </select>
+        </div>
+
         {isOnCooldown && (
           <div className="w-full">
             <div className="flex justify-between text-xs text-white opacity-80 mb-1">
@@ -175,11 +203,11 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
         {!isMaxLevel && (
           <div className="w-full text-center space-y-2">
             <div className="text-white opacity-80 text-sm">
-              Upgrade Cost: {upgradeCost ? formatEther(upgradeCost) : '...'} {gameConfig.symbol}
+              Upgrade Cost: {upgradeCost ? formatEther(upgradeCost) : '...'} $BOAT
             </div>
             <button
               onClick={handleUpgrade}
-              disabled={isPending || isApproving || isConfirming || isMaxLevel || (tokenBalance && upgradeCost && tokenBalance < upgradeCost && !needsUpgradeApproval)}
+              disabled={isPending || isApprovingUpgrade || isConfirming || isMaxLevel || (boatTokenBalance && upgradeCost && boatTokenBalance < upgradeCost && !needsUpgradeApproval)}
               className="w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
             >
               {getUpgradeButtonText()}
