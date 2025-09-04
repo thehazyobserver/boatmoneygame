@@ -6,7 +6,26 @@ import { useTokenApproval } from '../hooks/useTokenApproval'
 import { useCooldownTimer } from '../hooks/useCooldownTimer'
 
 const BOAT_EMOJIS = {
-  1: '🪜',
+  1: '🚣',
+  2: '🛶', 
+  3: '🚤',
+  4: '🛥️'
+}
+
+const BOAT_NAMES = {OJIS = {
+  1: '🚣',
+  2: '🛶', 
+  3: '🚤',
+  4: '🛥️'
+}tate } from 'react'
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { parseEther, formatEther } from 'viem'
+import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
+import { useTokenApproval } from '../hooks/useTokenApproval'
+import { useCooldownTimer } from '../hooks/useCooldownTimer'
+
+const BOAT_EMOJIS = {
+  1: '�',
   2: '🛶', 
   3: '🚤',
   4: '🛥️'

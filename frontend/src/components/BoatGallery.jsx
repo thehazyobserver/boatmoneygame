@@ -105,7 +105,7 @@ export default function BoatGallery() {
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-white">
           <div className="p-4 bg-white bg-opacity-10 rounded-lg">
-            <div className="text-2xl mb-2">🪜</div>
+            <div className="text-2xl mb-2">�</div>
             <div className="font-bold">Raft</div>
             <div className="text-sm opacity-80">1000 BOAT</div>
           </div>

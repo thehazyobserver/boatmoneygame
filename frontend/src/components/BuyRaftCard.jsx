@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract, useWaitForTr          <div className="text-6xl float neon-glow" style={{ filter: 'drop-shadow(0 0 20px currentColor)' }}>🚣</div>nsactionReceipt } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'
@@ -100,7 +100,7 @@ export default function BuyRaftCard() {
       <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
         {/* Left Side - Boat Display */}
         <div className="flex items-center space-x-4">
-          <div className="text-6xl float neon-glow" style={{ filter: 'drop-shadow(0 0 20px currentColor)' }}>🪜</div>
+          <div className="text-6xl float neon-glow" style={{ filter: 'drop-shadow(0 0 20px currentColor)' }}>�</div>
           <div>
             <h3 className="text-2xl font-bold text-cyan-400 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
               BUY YOUR FIRST RAFT
