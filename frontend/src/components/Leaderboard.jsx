@@ -140,14 +140,16 @@ export default function Leaderboard() {
       const cached = getCachedData(selectedGame)
       if (cached && Date.now() - cached.timestamp < 120000) { // 2 minute cache for user RPC
         setLeaderboardData(cached.data)
-        setError('CACHED DATA - Using your wallet RPC')
+        setError('CACHED DATA - Using your wallet RPC (Sonic network)')
         setLastFetch(cached.timestamp)
         setLoading(false)
         setHasLoaded(true)
         return
       }
 
-      // Use user's wallet RPC - much more efficient and no API limits
+      console.log(`Fetching ${selectedGame} events via wallet RPC on Sonic network...`)
+
+      // Use user's wallet RPC - much more efficient and no external API dependencies
       const currentBlock = await publicClient.getBlockNumber()
       const contract = selectedGame === 'BOAT' ? contracts.boatGame : contracts.jointBoatGame
       const eventName = selectedGame === 'BOAT' ? 'RunResult' : 'JointRun'
@@ -156,10 +158,8 @@ export default function Leaderboard() {
       let fromBlock = currentBlock - 50n
       let allLogs = []
       
-      console.log(`Fetching ${selectedGame} events via your wallet RPC...`)
-      
       try {
-        // Single request for recent activity using user's RPC
+        // Single request for recent activity using wallet's Sonic RPC
         const logs = await publicClient.getLogs({
           address: contract.address,
           event: {
@@ -289,7 +289,7 @@ export default function Leaderboard() {
       } else {
         setLeaderboardData(sortedPlayers)
         setCachedData(selectedGame, sortedPlayers)
-        setError(`LIVE DATA - ${allLogs.length} events found via your wallet RPC`)
+        setError(`LIVE DATA - ${allLogs.length} events found via Sonic network RPC`)
         console.log(`Successfully loaded ${sortedPlayers.length} players from ${allLogs.length} events`)
       }
       
@@ -298,12 +298,22 @@ export default function Leaderboard() {
     } catch (error) {
       console.error('Error fetching leaderboard via wallet RPC:', error)
       
+      // Provide specific error messages for common issues
+      let errorMessage = 'DEMO DATA - Wallet RPC error'
+      if (error.message?.includes('CORS')) {
+        errorMessage = 'DEMO DATA - Network configuration issue (CORS)'
+      } else if (error.message?.includes('fetch')) {
+        errorMessage = 'DEMO DATA - Network connection issue'
+      } else if (error.message?.includes('chain')) {
+        errorMessage = 'DEMO DATA - Please switch to Sonic network in wallet'
+      }
+      
       // Use mock data when RPC fails or other errors
       console.log('Wallet RPC error, showing demo data')
       const mockData = getMockData()
       setLeaderboardData(mockData)
       setCachedData(selectedGame, mockData)
-      setError('DEMO DATA - Wallet RPC error (check connection)')
+      setError(errorMessage)
       setLastFetch(now)
       setHasLoaded(true)
     } finally {
