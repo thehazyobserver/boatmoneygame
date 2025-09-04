@@ -123,6 +123,19 @@ export default function Leaderboard() {
       setError('Connect wallet to load leaderboard data via your RPC')
       return
     }
+
+    // Verify we can get the current block (ensures proper network connection)
+    try {
+      await publicClient.getBlockNumber()
+    } catch (networkError) {
+      console.error('Network connection test failed:', networkError)
+      setError('DEMO DATA - Wallet not connected to Sonic network')
+      const mockData = getMockData()
+      setLeaderboardData(mockData)
+      setCachedData(selectedGame, mockData)
+      setHasLoaded(true)
+      return
+    }
     
     // Check if we've fetched recently to avoid overwhelming user's RPC
     const now = Date.now()
@@ -300,16 +313,18 @@ export default function Leaderboard() {
       
       // Provide specific error messages for common issues
       let errorMessage = 'DEMO DATA - Wallet RPC error'
-      if (error.message?.includes('CORS')) {
-        errorMessage = 'DEMO DATA - Network configuration issue (CORS)'
-      } else if (error.message?.includes('fetch')) {
+      if (error.message?.includes('CORS') || error.message?.includes('Access-Control')) {
+        errorMessage = 'DEMO DATA - Network CORS issue (check wallet network)'
+      } else if (error.message?.includes('fetch') || error.message?.includes('network')) {
         errorMessage = 'DEMO DATA - Network connection issue'
-      } else if (error.message?.includes('chain')) {
-        errorMessage = 'DEMO DATA - Please switch to Sonic network in wallet'
+      } else if (error.message?.includes('chain') || error.message?.includes('network')) {
+        errorMessage = 'DEMO DATA - Please switch wallet to Sonic network'
+      } else if (error.message?.includes('port closed') || error.message?.includes('connection')) {
+        errorMessage = 'DEMO DATA - Wallet connection issue (try refreshing)'
       }
       
       // Use mock data when RPC fails or other errors
-      console.log('Wallet RPC error, showing demo data')
+      console.log('Wallet RPC error, showing demo data:', error.message)
       const mockData = getMockData()
       setLeaderboardData(mockData)
       setCachedData(selectedGame, mockData)

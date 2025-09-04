@@ -1,5 +1,5 @@
 import { useAccount } from 'wagmi'
-i              <div className="text-3xl md:text-4xl mb-3">🚣</div>port PoolStats from './PoolStats'
+import PoolStats from './PoolStats'
 import UserStats from './UserStats'
 import BoatGallery from './BoatGallery'
 import BuyRaftCard from './BuyRaftCard'

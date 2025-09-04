@@ -1,4 +1,14 @@
-import { useState } from 'react'
+import { useStconst BOAT_NAMES = {
+  1: 'Raft',
+  2: 'Canoe',
+  3: 'Speedboat',
+  4: 'Yacht'
+}
+
+const BOAT_EMOJIS = {
+  1: '🚣',
+  2: '🛶', 
+  3: '🚤',t'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
@@ -7,6 +17,25 @@ import { useCooldownTimer } from '../hooks/useCooldownTimer'
 
 const BOAT_EMOJIS = {
   1: '🚣',
+  2: '🛶', 
+  3: '🚤',
+  4: '🛥️'
+}
+
+const BOAT_NAMES = {
+  1: 'Raft',
+  2: 'Canoe',
+  3: 'Speedboat',
+  4: 'Yacht'
+}
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { parseEther, formatEther } from 'viem'
+import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
+import { useTokenApproval } from '../hooks/useTokenApproval'
+import { useCooldownTimer } from '../hooks/useCooldownTimer'
+
+const BOAT_EMOJIS = {
+  1: '�',
   2: '🛶', 
   3: '🚤',
   4: '🛥️'
@@ -35,7 +64,6 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const { hasAllowance, approveMax, isApproving } = useTokenApproval(cardSelectedToken)
   // Separate approval hook for upgrades (always BOAT tokens)
   const { hasAllowance: hasUpgradeAllowance, approveMax: approveUpgrade, isApproving: isApprovingUpgrade } = useTokenApproval('BOAT')
-
   const { timeLeft, isOnCooldown, formattedTime, cooldownDuration } = useCooldownTimer(cardSelectedToken, BigInt(tokenId))
 
   const { writeContract, isPending } = useWriteContract()
@@ -82,55 +110,66 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   
   const getRunButtonText = () => {
     if (isOnCooldown) return 'COOLING DOWN: ' + formattedTime
-    if (isPending || isConfirming) return 'RUNNING...'
-    if (needsRunApproval) return `APPROVE ${gameConfig.symbol} FIRST`
+    if (isConfirming) return 'PROCESSING...'
+    if (isRunning || isPending) return 'RUN IN PROGRESS...'
     if (isApproving) return 'APPROVING...'
-    return 'START RUN'
+    if (needsRunApproval) return 'APPROVE ' + gameConfig.symbol
+    return 'INITIATE RUN'
   }
-
+  
   const getUpgradeButtonText = () => {
-    if (isPending || isConfirming) return 'UPGRADING...'
-    if (needsUpgradeApproval) return 'APPROVE BOAT FIRST'
+    if (isConfirming) return 'PROCESSING...'
+    if (isPending) return 'UPGRADING...'
     if (isApprovingUpgrade) return 'APPROVING...'
-    return `UPGRADE TO ${BOAT_NAMES[currentLevel + 1]?.toUpperCase()}`
+    if (needsUpgradeApproval) return 'APPROVE $BOAT'
+    return 'UPGRADE (' + (upgradeCost ? formatEther(upgradeCost) : '0') + ' $BOAT)'
   }
 
   const handleRun = async () => {
-    if (isOnCooldown || isPending || isConfirming || isApproving) return
+    if (parseFloat(playAmount) <= 0) return
     
-    // Handle approval first if needed
-    if (needsRunApproval) {
-      await approveMax()
-      return
+    const playAmountWei = parseEther(playAmount)
+    
+    if (!hasAllowance(playAmountWei)) {
+      try {
+        await approveMax()
+        return
+      } catch (err) {
+        console.error('Approval failed:', err)
+        return
+      }
     }
-
+    
+    setIsRunning(true)
     try {
-      setIsRunning(true)
-      const contract = getGameContract()
-      const tx = await writeContract({
-        ...contract,
-        functionName: 'play',
+      const hash = await writeContract({
+        ...getGameContract(),
+        functionName: 'run',
         args: [BigInt(tokenId), playAmountWei]
       })
-      setLastTxHash(tx)
+      setLastTxHash(hash)
       if (onRefresh) onRefresh()
     } catch (err) {
       console.error('Run failed:', err)
+      setIsRunning(false)
     }
   }
 
   const handleUpgrade = async () => {
-    if (isPending || isApprovingUpgrade || isConfirming || isMaxLevel) return
-
-    // Handle approval first if needed
-    if (needsUpgradeApproval) {
-      await approveUpgrade()
-      return
+    if (isMaxLevel || !upgradeCost || !boatTokenBalance || boatTokenBalance < upgradeCost) return
+    
+    if (!hasUpgradeAllowance(upgradeCost)) {
+      try {
+        await approveUpgrade()
+        return
+      } catch (err) {
+        console.error('Upgrade approval failed:', err)
+        return
+      }
     }
-
+    
     try {
-      setIsRunning(true)
-      const tx = await writeContract({
+      await writeContract({
         ...contracts.boatGame, // Always use BOAT game contract for upgrades
         functionName: 'upgrade', // Note: might be 'upgrade' instead of 'upgradeBoat'
         args: [BigInt(tokenId)]
@@ -173,7 +212,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             value={cardSelectedToken}
             onChange={(e) => {
               setCardSelectedToken(e.target.value)
-              setPlayAmount(GAME_CONFIGS[e.target.value].minStake)
+              setStakeAmount(GAME_CONFIGS[e.target.value].minStake)
             }}
             className="w-full px-4 py-3 terminal-bg border-2 border-pink-500 rounded-lg text-cyan-400 font-bold focus:outline-none focus:border-cyan-400 neon-glow"
             style={{ fontFamily: 'Orbitron, monospace' }}
@@ -225,24 +264,19 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
               type="number"
               value={playAmount}
               onChange={(e) => setPlayAmount(e.target.value)}
+              step="1000"
               min={gameConfig.minStake}
               max={gameConfig.maxStake}
-              step="1000"
-              className="w-full px-4 py-3 terminal-bg border-2 border-pink-500 rounded-lg text-center text-cyan-400 font-bold text-xl focus:outline-none focus:border-cyan-400 neon-glow"
+              className="w-full px-4 py-3 terminal-bg border-2 border-pink-500 rounded-lg text-cyan-400 font-bold placeholder-pink-400 placeholder-opacity-60 focus:outline-none focus:border-cyan-400 neon-glow"
               style={{ fontFamily: 'Orbitron, monospace' }}
+              placeholder={gameConfig.minStake}
             />
-            <div className="text-xs text-pink-400 mt-1 font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
-              Range: {parseInt(gameConfig.minStake).toLocaleString()} - {parseInt(gameConfig.maxStake).toLocaleString()} {gameConfig.symbol}
-            </div>
-            <div className="text-cyan-400 text-sm font-bold mt-2" style={{ fontFamily: 'Orbitron, monospace' }}>
-              YOUR {gameConfig.symbol}: {tokenBalance ? parseFloat(formatEther(tokenBalance)).toFixed(2) : '0.00'}
-            </div>
           </div>
-
+          
           <button
             onClick={handleRun}
-            disabled={isOnCooldown || isPending || isConfirming || isApproving}
-            className="w-full px-6 py-4 vice-button disabled:bg-gray-700 disabled:opacity-50 text-white font-bold text-lg transition-all duration-300"
+            disabled={isPending || isRunning || isApproving || isConfirming || parseFloat(playAmount) <= 0 || isOnCooldown}
+            className="w-full px-6 py-4 vice-button disabled:bg-gray-700 disabled:opacity-50 disabled:border-gray-600 text-white font-bold rounded-lg transition-all duration-300"
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
             {getRunButtonText()}

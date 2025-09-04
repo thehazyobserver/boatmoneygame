@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccount, useReadContract, useWriteContract, useWaitForTr          <div className="text-6xl float neon-glow" style={{ filter: 'drop-shadow(0 0 20px currentColor)' }}>🚣</div>nsactionReceipt } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'

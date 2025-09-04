@@ -1,4 +1,4 @@
-import { http, createConfig, fallback } from 'wagmi'
+import { http, createConfig } from 'wagmi'
 import { sonic } from 'wagmi/chains'
 import { injected, metaMask } from 'wagmi/connectors'
 
@@ -9,11 +9,7 @@ export const config = createConfig({
     metaMask(),
   ],
   transports: {
-    // Use multiple Sonic public RPC endpoints with fallback for reliability
-    [sonic.id]: fallback([
-      http('https://rpc.sonic.fantom.network/'),
-      http('https://sonic.drpc.org/'),
-      http('https://rpc.sonic.fantom.network/')
-    ]),
+    // Use Sonic's official RPC endpoint that supports CORS
+    [sonic.id]: http('https://rpc.sonic.fantom.network/'),
   },
 })
