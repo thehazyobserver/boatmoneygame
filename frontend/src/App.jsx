@@ -15,9 +15,18 @@ function App() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen ocean-gradient">
+        <div className="min-h-screen night-ocean scanlines relative">
+          {/* 80s grid overlay */}
+          <div className="fixed inset-0 opacity-10 pointer-events-none" style={{
+            backgroundImage: `
+              linear-gradient(rgba(0, 245, 255, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0, 245, 255, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }}></div>
+          
           <Navbar />
-          <div className="container mx-auto px-4 pt-6">
+          <div className="container mx-auto px-4 pt-6 relative z-10">
             <TokenSelector 
               selectedToken={selectedToken}
               onTokenChange={setSelectedToken}

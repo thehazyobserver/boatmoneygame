@@ -80,20 +80,20 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
   const needsUpgradeApproval = upgradeCost && !hasUpgradeAllowance(upgradeCost)
   
   const getRunButtonText = () => {
-    if (isOnCooldown) return 'Cooldown: ' + formattedTime
-    if (isConfirming) return 'Processing...'
-    if (isRunning || isPending) return 'Running...'
-    if (isApproving) return 'Approving...'
-    if (needsRunApproval) return 'Approve ' + gameConfig.symbol
-    return 'Start Smuggling Run'
+    if (isOnCooldown) return 'COOLING DOWN: ' + formattedTime
+    if (isConfirming) return 'PROCESSING...'
+    if (isRunning || isPending) return 'RUN IN PROGRESS...'
+    if (isApproving) return 'APPROVING...'
+    if (needsRunApproval) return 'APPROVE ' + gameConfig.symbol
+    return 'INITIATE RUN'
   }
   
   const getUpgradeButtonText = () => {
-    if (isConfirming) return 'Processing...'
-    if (isPending) return 'Upgrading...'
-    if (isApprovingUpgrade) return 'Approving...'
-    if (needsUpgradeApproval) return 'Approve $BOAT'
-    return 'Upgrade (' + (upgradeCost ? formatEther(upgradeCost) : '0') + ' $BOAT)'
+    if (isConfirming) return 'PROCESSING...'
+    if (isPending) return 'UPGRADING...'
+    if (isApprovingUpgrade) return 'APPROVING...'
+    if (needsUpgradeApproval) return 'APPROVE $BOAT'
+    return 'UPGRADE (' + (upgradeCost ? formatEther(upgradeCost) : '0') + ' $BOAT)'
   }
 
   const handleRun = async () => {
@@ -157,41 +157,51 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
   }
 
   return (
-    <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 border border-white border-opacity-20">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="text-6xl">{BOAT_EMOJIS[currentLevel]}</div>
+    <div className="terminal-bg rounded-xl p-6 border-2 border-cyan-400 relative overflow-hidden">
+      {/* 80s scan line effect */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/5 to-transparent pointer-events-none"></div>
+      
+      <div className="flex flex-col items-center space-y-4 relative z-10">
+        <div className="text-7xl neon-glow" style={{ filter: 'drop-shadow(0 0 10px currentColor)' }}>
+          {BOAT_EMOJIS[currentLevel]}
+        </div>
         <div className="text-center">
-          <h3 className="text-xl font-bold text-white">
-            {BOAT_NAMES[currentLevel]} #{tokenId}
+          <h3 className="text-2xl font-bold text-cyan-400 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+            {BOAT_NAMES[currentLevel].toUpperCase()} #{tokenId}
           </h3>
-          <p className="text-white opacity-80">Level {currentLevel}</p>
+          <p className="text-pink-400 font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
+            LVL {currentLevel} • {currentLevel === 4 ? 'MAX SPEED' : 'UPGRADE READY'}
+          </p>
         </div>
 
         {/* Token Selector Dropdown */}
         <div className="w-full">
-          <label className="block text-white text-sm font-medium mb-2">Play Token</label>
+          <label className="block text-cyan-400 text-sm font-bold mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
+            PAYLOAD TYPE
+          </label>
           <select
             value={cardSelectedToken}
             onChange={(e) => {
               setCardSelectedToken(e.target.value)
               setStakeAmount(GAME_CONFIGS[e.target.value].minStake)
             }}
-            className="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 terminal-bg border-2 border-pink-500 rounded-lg text-cyan-400 font-bold focus:outline-none focus:border-cyan-400 neon-glow"
+            style={{ fontFamily: 'Orbitron, monospace' }}
           >
-            <option value="BOAT" className="bg-gray-800">🚤 $BOAT (10K-80K)</option>
-            <option value="JOINT" className="bg-gray-800">🌿 $JOINT (20K-420K)</option>
+            <option value="BOAT" className="bg-gray-900">🚤 $BOAT (10K-80K)</option>
+            <option value="JOINT" className="bg-gray-900">🌿 $JOINT (20K-420K)</option>
           </select>
         </div>
 
         {isOnCooldown && (
-          <div className="w-full">
-            <div className="flex justify-between text-xs text-white opacity-80 mb-1">
-              <span>Cooldown</span>
+          <div className="w-full border border-yellow-400 rounded-lg p-3 bg-yellow-900/20">
+            <div className="flex justify-between text-xs text-yellow-400 font-bold mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
+              <span>HEAT COOLDOWN</span>
               <span>{formattedTime}</span>
             </div>
-            <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
+            <div className="w-full bg-black border border-yellow-400 rounded-full h-3">
               <div 
-                className="bg-orange-400 h-2 rounded-full transition-all duration-1000"
+                className="warning-gradient h-3 rounded-full transition-all duration-1000 neon-glow"
                 style={{ 
                   width: Math.max(0, 100 - (timeLeft / cooldownDuration) * 100) + '%'
                 }}
@@ -201,24 +211,25 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
         )}
 
         {!isMaxLevel && (
-          <div className="w-full text-center space-y-2">
-            <div className="text-white opacity-80 text-sm">
-              Upgrade Cost: {upgradeCost ? formatEther(upgradeCost) : '...'} $BOAT
+          <div className="w-full text-center space-y-3 border border-yellow-400 rounded-lg p-4 bg-yellow-900/20">
+            <div className="text-yellow-400 text-sm font-bold" style={{ fontFamily: 'Orbitron, monospace' }}>
+              UPGRADE COST: {upgradeCost ? formatEther(upgradeCost) : '...'} $BOAT
             </div>
             <button
               onClick={handleUpgrade}
               disabled={isPending || isApprovingUpgrade || isConfirming || isMaxLevel || (boatTokenBalance && upgradeCost && boatTokenBalance < upgradeCost && !needsUpgradeApproval)}
-              className="w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
+              className="w-full px-6 py-3 warning-gradient disabled:bg-gray-700 disabled:opacity-50 text-black font-bold rounded-lg transition-all duration-300 hover:neon-glow"
+              style={{ fontFamily: 'Orbitron, monospace' }}
             >
               {getUpgradeButtonText()}
             </button>
           </div>
         )}
 
-        <div className="w-full space-y-3">
+        <div className="w-full space-y-4">
           <div className="text-center">
-            <label className="text-white text-sm opacity-80 block mb-2">
-              Play Amount ({gameConfig.symbol})
+            <label className="text-cyan-400 text-sm font-bold block mb-3" style={{ fontFamily: 'Orbitron, monospace' }}>
+              RUN STAKES ({gameConfig.symbol})
             </label>
             <input
               type="number"
@@ -227,7 +238,8 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
               step="1000"
               min={gameConfig.minStake}
               max={gameConfig.maxStake}
-              className="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 terminal-bg border-2 border-pink-500 rounded-lg text-cyan-400 font-bold placeholder-pink-400 placeholder-opacity-60 focus:outline-none focus:border-cyan-400 neon-glow"
+              style={{ fontFamily: 'Orbitron, monospace' }}
               placeholder={gameConfig.minStake}
             />
           </div>
@@ -235,7 +247,8 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
           <button
             onClick={handleRun}
             disabled={isPending || isRunning || isApproving || isConfirming || parseFloat(stakeAmount) <= 0 || isOnCooldown}
-            className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 disabled:opacity-50 text-white rounded-lg font-semibold transition-colors"
+            className="w-full px-6 py-4 vice-button disabled:bg-gray-700 disabled:opacity-50 disabled:border-gray-600 text-white font-bold rounded-lg transition-all duration-300"
+            style={{ fontFamily: 'Orbitron, monospace' }}
           >
             {getRunButtonText()}
           </button>

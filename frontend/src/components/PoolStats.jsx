@@ -67,52 +67,59 @@ export default function PoolStats({ selectedToken }) {
   ] : baseStats
 
   return (
-    <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 border border-white border-opacity-20">
-      <h2 className="text-2xl font-bold text-white mb-4 text-center">
-        🌊 Pool Statistics
+    <div className="terminal-bg rounded-xl p-6 border-2 border-cyan-400 relative overflow-hidden">
+      {/* Retro scan lines */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/5 to-transparent pointer-events-none"></div>
+      
+      <h2 className="text-3xl font-bold text-cyan-400 mb-6 text-center neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+        🌊 OPERATION INTEL
       </h2>
       
       {/* Tab Selector */}
-      <div className="flex space-x-1 mb-6 bg-white bg-opacity-10 rounded-lg p-1">
+      <div className="flex space-x-2 mb-8 bg-black/50 rounded-lg p-2 border border-pink-500">
         <button
           onClick={() => setActiveTab('BOAT')}
-          className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`flex-1 px-4 py-3 rounded-lg text-sm font-bold transition-all duration-300 ${
             activeTab === 'BOAT'
-              ? 'bg-blue-500 text-white'
-              : 'text-white hover:bg-white hover:bg-opacity-10'
+              ? 'vice-button neon-glow'
+              : 'text-cyan-400 hover:bg-cyan-900/20 border border-cyan-400/50'
           }`}
+          style={{ fontFamily: 'Orbitron, monospace' }}
         >
           🚤 $BOAT
         </button>
         <button
           onClick={() => setActiveTab('JOINT')}
-          className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`flex-1 px-4 py-3 rounded-lg text-sm font-bold transition-all duration-300 ${
             activeTab === 'JOINT'
-              ? 'bg-green-500 text-white'
-              : 'text-white hover:bg-white hover:bg-opacity-10'
+              ? 'vice-button neon-glow'
+              : 'text-cyan-400 hover:bg-cyan-900/20 border border-cyan-400/50'
           }`}
+          style={{ fontFamily: 'Orbitron, monospace' }}
         >
           🌿 $JOINT
         </button>
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-6 relative z-10">
         {stats.map((stat, index) => (
-          <div key={index} className="text-center">
-            <div className="text-2xl mb-2">{stat.icon}</div>
-            <div className="text-lg font-bold text-white">
-              {stat.value} <span className="text-sm font-normal">{stat.suffix}</span>
+          <div key={index} className="text-center p-4 border border-pink-500/50 rounded-lg bg-black/30">
+            <div className="text-4xl mb-3 neon-glow" style={{ filter: 'drop-shadow(0 0 10px currentColor)' }}>
+              {stat.icon}
             </div>
-            <div className="text-sm text-white opacity-80">
-              {stat.label}
+            <div className="text-xl font-bold text-cyan-400 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+              {stat.value} <span className="text-sm font-normal text-pink-400">{stat.suffix}</span>
+            </div>
+            <div className="text-sm text-pink-400 font-semibold mt-2" style={{ fontFamily: 'Rajdhani, monospace' }}>
+              {stat.label.toUpperCase()}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 pt-4 border-t border-white border-opacity-20">
-        <div className="text-center text-white opacity-80 text-sm">
-          💡 The prize pool grows with every failed smuggling run!
+      <div className="mt-8 pt-4 border-t border-cyan-400/50">
+        <div className="text-center text-yellow-400 font-bold text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+          ⚠️ INTEL: Pool grows with every bust. High risk, high reward.
         </div>
       </div>
     </div>

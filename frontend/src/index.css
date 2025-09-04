@@ -1,19 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Rajdhani', 'Orbitron', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #000814;
+  color: #ffffff;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: 'Orbitron', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* 80s Neon Effects */
+.neon-text {
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor,
+    0 0 20px #ff006e,
+    0 0 35px #ff006e,
+    0 0 40px #ff006e;
+}
+
+.neon-border {
+  border: 2px solid #00f5ff;
+  box-shadow: 
+    0 0 5px #00f5ff,
+    0 0 10px #00f5ff,
+    0 0 15px #00f5ff,
+    inset 0 0 5px #00f5ff;
+}
+
+.neon-glow {
+  box-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor,
+    0 0 20px currentColor;
 }
 
 /* Custom animations */
@@ -36,15 +68,113 @@ code {
   animation: float 3s ease-in-out infinite;
 }
 
-/* Gradient backgrounds */
+@keyframes neonPulse {
+  0%, 100% { 
+    text-shadow: 
+      0 0 5px currentColor,
+      0 0 10px currentColor,
+      0 0 15px currentColor,
+      0 0 20px #ff006e,
+      0 0 35px #ff006e;
+  }
+  50% { 
+    text-shadow: 
+      0 0 2px currentColor,
+      0 0 5px currentColor,
+      0 0 8px currentColor,
+      0 0 12px #ff006e,
+      0 0 18px #ff006e;
+  }
+}
+
+.neon-pulse {
+  animation: neonPulse 2s ease-in-out infinite;
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanlines::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00f5ff, transparent);
+  animation: scanlines 3s linear infinite;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* 80s Gradient backgrounds */
+.miami-gradient {
+  background: linear-gradient(135deg, #ff006e 0%, #8338ec 25%, #3a86ff 75%, #06ffa5 100%);
+}
+
 .ocean-gradient {
-  background: linear-gradient(135deg, #0ea5e9 0%, #075985 100%);
+  background: linear-gradient(135deg, #000814 0%, #001d3d 25%, #003566 50%, #006a75 75%, #00f5ff 100%);
+}
+
+.night-ocean {
+  background: linear-gradient(135deg, #000814 0%, #001122 25%, #002233 50%, #003344 75%, #004455 100%);
 }
 
 .success-gradient {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #06ffa5 0%, #00d4aa 50%, #059669 100%);
 }
 
 .danger-gradient {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #ff006e 0%, #ff4081 50%, #dc2626 100%);
+}
+
+.warning-gradient {
+  background: linear-gradient(135deg, #ffd60a 0%, #ffbe0b 50%, #fb8500 100%);
+}
+
+/* Retro terminal effect */
+.terminal-bg {
+  background: #000814;
+  border: 1px solid #00f5ff;
+  position: relative;
+}
+
+.terminal-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 245, 255, 0.03) 2px,
+    rgba(0, 245, 255, 0.03) 4px
+  );
+  pointer-events: none;
+}
+
+/* Vice-style buttons */
+.vice-button {
+  background: linear-gradient(145deg, #ff006e, #8338ec);
+  border: 2px solid #00f5ff;
+  color: white;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.vice-button:hover {
+  background: linear-gradient(145deg, #8338ec, #ff006e);
+  box-shadow: 
+    0 0 10px #00f5ff,
+    0 0 20px #00f5ff,
+    0 0 30px #00f5ff;
+  transform: translateY(-2px);
 }

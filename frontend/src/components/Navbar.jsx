@@ -18,22 +18,22 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="p-4 bg-black bg-opacity-20 backdrop-blur-sm">
+    <nav className="p-4 terminal-bg border-b-2 border-cyan-400">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <h1 className="text-3xl font-bold text-white flex items-center">
-            <span className="wave mr-2">⛵</span>
-            BOAT MONEY
+          <h1 className="text-4xl font-bold text-cyan-400 flex items-center neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+            <span className="wave mr-3 text-5xl">🚤</span>
+            BOAT RUNNER
           </h1>
-          <div className="text-sm text-white opacity-80">
-            Smuggler's Game
+          <div className="text-sm text-pink-400 font-semibold" style={{ fontFamily: 'Orbitron, monospace' }}>
+            [ MIAMI '85 ]
           </div>
         </div>
         
         <div className="flex items-center space-x-4">
           {isConnected && (
-            <div className="text-white text-sm">
-              <div className="bg-white bg-opacity-20 px-2 py-1 rounded">
+            <div className="text-cyan-400 text-sm font-semibold">
+              <div className="neon-border px-3 py-1 rounded bg-black bg-opacity-50" style={{ fontFamily: 'Orbitron, monospace' }}>
                 {getChainName(chainId)}
               </div>
             </div>
@@ -41,22 +41,22 @@ export default function Navbar() {
           
           {isConnected ? (
             <div className="flex items-center space-x-4">
-              <div className="bg-white bg-opacity-20 px-3 py-2 rounded-lg text-white font-mono text-sm">
+              <div className="neon-border px-4 py-2 rounded bg-black bg-opacity-70 text-cyan-400 font-mono text-sm">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </div>
               <button 
                 onClick={() => disconnect()}
-                className="danger-gradient px-4 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
+                className="vice-button px-6 py-2 rounded-lg text-white font-semibold"
               >
-                Disconnect
+                JACK OUT
               </button>
             </div>
           ) : (
             <button 
               onClick={() => connect({ connector: injected() })}
-              className="success-gradient px-6 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
+              className="vice-button px-8 py-3 rounded-lg text-white font-semibold neon-glow"
             >
-              Connect Wallet
+              JACK IN
             </button>
           )}
         </div>
