@@ -4,6 +4,7 @@ import UserStats from './UserStats'
 import BoatGallery from './BoatGallery'
 import BuyRaftCard from './BuyRaftCard'
 import Instructions from './Instructions'
+import Leaderboard from './Leaderboard'
 
 export default function GameDashboard() {
   const { isConnected } = useAccount()
@@ -85,6 +86,11 @@ export default function GameDashboard() {
           YOUR FLEET
         </h2>
         <BoatGallery />
+      </div>
+      
+      {/* Leaderboard */}
+      <div className="space-y-4">
+        <Leaderboard />
       </div>
     </div>
   )
