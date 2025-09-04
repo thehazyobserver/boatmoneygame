@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { usePublicClient, useReadContract } from 'wagmi'
-import { formatEther } from 'viem'
+import { usePublicClient, useAccount } from 'wagmi'
+import { formatEther, parseEther } from 'viem'
 import { contracts } from '../config/contracts'
 
 const BOAT_EMOJIS = {
@@ -23,7 +23,9 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [lastFetch, setLastFetch] = useState(0)
+  const [hasLoaded, setHasLoaded] = useState(false)
   const publicClient = usePublicClient()
+  const { isConnected } = useAccount()
 
   // Mock data for when API limits are hit
   const getMockData = () => {
@@ -76,24 +78,57 @@ export default function Leaderboard() {
   // Simple sleep function for rate limiting
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
-  // Get recent game events to build leaderboard
+  // Load cached data on component mount
   useEffect(() => {
-    // Prevent too frequent API calls (minimum 30 seconds between fetches)
-    const now = Date.now()
-    if (now - lastFetch < 30000) {
+    const cached = getCachedData(selectedGame)
+    if (cached) {
+      setLeaderboardData(cached.data)
+      setLastFetch(cached.timestamp)
+      setHasLoaded(true)
+      setError('CACHED DATA - Click "Refresh" for latest')
+    }
+  }, [selectedGame])
+
+  // Cache management
+  const getCachedData = (game) => {
+    try {
+      const cached = localStorage.getItem(`leaderboard_${game}`)
+      if (cached) {
+        const data = JSON.parse(cached)
+        // Cache is valid for 5 minutes
+        if (Date.now() - data.timestamp < 300000) {
+          return data
+        }
+      }
+    } catch (error) {
+      console.error('Error reading cache:', error)
+    }
+    return null
+  }
+
+  const setCachedData = (game, data) => {
+    try {
+      localStorage.setItem(`leaderboard_${game}`, JSON.stringify({
+        data,
+        timestamp: Date.now()
+      }))
+    } catch (error) {
+      console.error('Error writing cache:', error)
+    }
+  }
+
+  const fetchLeaderboardData = async () => {
+    // Check if user has wallet connected for RPC access
+    if (!publicClient || !isConnected) {
+      setError('Connect wallet to load leaderboard data via your RPC')
       return
     }
     
-    fetchLeaderboardData()
-  }, [selectedGame, publicClient])
-
-  const fetchLeaderboardData = async () => {
-    if (!publicClient) return
-    
-    // Check if we've fetched recently to avoid rate limits
+    // Check if we've fetched recently to avoid overwhelming user's RPC
     const now = Date.now()
-    if (now - lastFetch < 30000) {
-      console.log('Rate limit protection: using cached data')
+    if (now - lastFetch < 15000) { // Reduced to 15 seconds since using user's RPC
+      console.log('Rate limit protection: please wait 15 seconds between requests')
+      setError('Please wait 15 seconds between requests')
       return
     }
     
@@ -101,36 +136,105 @@ export default function Leaderboard() {
     setError(null)
     
     try {
-      // Try the most minimal approach first - just last 10 blocks
+      // Check if we have cached data first (extended cache time)
+      const cached = getCachedData(selectedGame)
+      if (cached && Date.now() - cached.timestamp < 120000) { // 2 minute cache for user RPC
+        setLeaderboardData(cached.data)
+        setError('CACHED DATA - Using your wallet RPC')
+        setLastFetch(cached.timestamp)
+        setLoading(false)
+        setHasLoaded(true)
+        return
+      }
+
+      // Use user's wallet RPC - much more efficient and no API limits
       const currentBlock = await publicClient.getBlockNumber()
       const contract = selectedGame === 'BOAT' ? contracts.boatGame : contracts.jointBoatGame
       const eventName = selectedGame === 'BOAT' ? 'RunResult' : 'JointRun'
       
-      // Add delay before making request
-      await sleep(1000)
+      // Start with very recent blocks first (last 50 blocks = ~10 minutes)
+      let fromBlock = currentBlock - 50n
+      let allLogs = []
       
-      const logs = await publicClient.getLogs({
-        address: contract.address,
-        event: {
-          type: 'event',
-          name: eventName,
-          inputs: [
-            { name: 'user', type: 'address', indexed: true },
-            { name: 'tokenId', type: 'uint256', indexed: true },
-            { name: 'level', type: 'uint8', indexed: false },
-            { name: 'stake', type: 'uint256', indexed: false },
-            { name: 'success', type: 'bool', indexed: false },
-            { name: 'rewardPaid', type: 'uint256', indexed: false }
-          ]
-        },
-        fromBlock: currentBlock - 10n, // Only last 10 blocks
-        toBlock: 'latest'
-      })
+      console.log(`Fetching ${selectedGame} events via your wallet RPC...`)
+      
+      try {
+        // Single request for recent activity using user's RPC
+        const logs = await publicClient.getLogs({
+          address: contract.address,
+          event: {
+            type: 'event',
+            name: eventName,
+            inputs: [
+              { name: 'user', type: 'address', indexed: true },
+              { name: 'tokenId', type: 'uint256', indexed: true },
+              { name: 'level', type: 'uint8', indexed: false },
+              { name: 'stake', type: 'uint256', indexed: false },
+              { name: 'success', type: 'bool', indexed: false },
+              { name: 'rewardPaid', type: 'uint256', indexed: false }
+            ]
+          },
+          fromBlock,
+          toBlock: 'latest'
+        })
+
+        allLogs = logs
+        
+        // If we don't have enough data, try a slightly larger range
+        if (logs.length < 5 && fromBlock > currentBlock - 200n) {
+          console.log('Expanding search to last 200 blocks for more data...')
+          await sleep(500) // Brief pause for user's RPC
+          
+          const expandedLogs = await publicClient.getLogs({
+            address: contract.address,
+            event: {
+              type: 'event',
+              name: eventName,
+              inputs: [
+                { name: 'user', type: 'address', indexed: true },
+                { name: 'tokenId', type: 'uint256', indexed: true },
+                { name: 'level', type: 'uint8', indexed: false },
+                { name: 'stake', type: 'uint256', indexed: false },
+                { name: 'success', type: 'bool', indexed: false },
+                { name: 'rewardPaid', type: 'uint256', indexed: false }
+              ]
+            },
+            fromBlock: currentBlock - 200n,
+            toBlock: 'latest'
+          })
+          
+          allLogs = expandedLogs
+        }
+        
+      } catch (blockError) {
+        console.warn('RPC request failed, using minimal range:', blockError)
+        // Final fallback to very small range
+        fromBlock = currentBlock - 20n
+        await sleep(300)
+        
+        allLogs = await publicClient.getLogs({
+          address: contract.address,
+          event: {
+            type: 'event',
+            name: eventName,
+            inputs: [
+              { name: 'user', type: 'address', indexed: true },
+              { name: 'tokenId', type: 'uint256', indexed: true },
+              { name: 'level', type: 'uint8', indexed: false },
+              { name: 'stake', type: 'uint256', indexed: false },
+              { name: 'success', type: 'bool', indexed: false },
+              { name: 'rewardPaid', type: 'uint256', indexed: false }
+            ]
+          },
+          fromBlock,
+          toBlock: 'latest'
+        })
+      }
 
       // Process logs to create leaderboard
       const playerStats = {}
       
-      logs.forEach((log) => {
+      allLogs.forEach((log) => {
         const { user, level, stake, success, rewardPaid } = log.args
         const userAddress = user.toLowerCase()
         
@@ -177,25 +281,39 @@ export default function Leaderboard() {
 
       // If no recent data, use mock data to show the interface
       if (sortedPlayers.length === 0) {
-        console.log('No recent activity, showing demo data')
-        setLeaderboardData(getMockData())
-        setError('DEMO DATA - No recent activity found')
+        console.log('No recent activity found via wallet RPC, showing demo data')
+        const mockData = getMockData()
+        setLeaderboardData(mockData)
+        setCachedData(selectedGame, mockData)
+        setError('DEMO DATA - No recent blockchain activity (via your wallet RPC)')
       } else {
         setLeaderboardData(sortedPlayers)
+        setCachedData(selectedGame, sortedPlayers)
+        setError(`LIVE DATA - ${allLogs.length} events found via your wallet RPC`)
+        console.log(`Successfully loaded ${sortedPlayers.length} players from ${allLogs.length} events`)
       }
       
       setLastFetch(now)
+      setHasLoaded(true)
     } catch (error) {
-      console.error('Error fetching leaderboard:', error)
+      console.error('Error fetching leaderboard via wallet RPC:', error)
       
-      // Use mock data when rate limited
-      console.log('API limit reached, showing demo data')
-      setLeaderboardData(getMockData())
-      setError('DEMO DATA - API limit reached')
-      setLastFetch(now) // Still update to prevent spam
+      // Use mock data when RPC fails or other errors
+      console.log('Wallet RPC error, showing demo data')
+      const mockData = getMockData()
+      setLeaderboardData(mockData)
+      setCachedData(selectedGame, mockData)
+      setError('DEMO DATA - Wallet RPC error (check connection)')
+      setLastFetch(now)
+      setHasLoaded(true)
     } finally {
       setLoading(false)
     }
+  }
+
+  // Manual load function for the button
+  const handleLoadLeaderboard = () => {
+    fetchLeaderboardData()
   }
 
   const formatAddress = (address) => {
@@ -249,27 +367,67 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      {/* Subtitle */}
+      {/* Load/Refresh Button */}
       <div className="text-center mb-6">
-        <p className="text-pink-400 font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
-          [ TOP SMUGGLERS BY NET PROFIT - {selectedGame} GAME ]
-        </p>
-        <p className="text-yellow-400 text-sm mt-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
-          Last 10 blocks only • Rate limit friendly • {error && <span className="text-orange-400">{error}</span>}
-        </p>
+        <button
+          onClick={handleLoadLeaderboard}
+          disabled={loading || !isConnected}
+          className={`vice-button px-8 py-3 text-lg font-bold transition-all duration-300 ${
+            loading || !isConnected ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+          }`}
+          style={{ fontFamily: 'Orbitron, monospace' }}
+        >
+          {!isConnected ? '🔌 CONNECT WALLET' : 
+           loading ? '🔄 SCANNING RPC...' : 
+           hasLoaded ? '🔄 REFRESH VIA RPC' : '📊 LOAD VIA WALLET RPC'}
+        </button>
+        <div className="mt-2">
+          <p className="text-pink-400 font-semibold text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+            [ TOP SMUGGLERS BY NET PROFIT - {selectedGame} GAME ]
+          </p>
+          <p className="text-yellow-400 text-xs mt-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
+            {isConnected 
+              ? '🔗 Using your wallet RPC • No API limits • Smart caching'
+              : '⚠️ Connect wallet to load leaderboard data'}
+          </p>
+          {error && (
+            <p className="text-orange-400 text-xs mt-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
+              {error}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Loading State */}
       {loading && (
         <div className="text-center py-8">
           <div className="text-cyan-400 text-lg font-bold animate-pulse" style={{ fontFamily: 'Orbitron, monospace' }}>
-            SCANNING THE WATERS...
+            SCANNING YOUR WALLET RPC...
           </div>
         </div>
       )}
 
+      {/* No Data State */}
+      {!loading && !hasLoaded && leaderboardData.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-yellow-400 text-lg font-bold mb-4" style={{ fontFamily: 'Orbitron, monospace' }}>
+            {!isConnected ? '� WALLET NOT CONNECTED' : '�📊 LEADERBOARD NOT LOADED'}
+          </div>
+          <p className="text-pink-400" style={{ fontFamily: 'Rajdhani, monospace' }}>
+            {!isConnected 
+              ? 'Connect your wallet to access leaderboard via your RPC connection'
+              : 'Click "LOAD VIA WALLET RPC" to fetch the latest smuggler rankings'}
+          </p>
+          <p className="text-cyan-400 text-sm mt-2" style={{ fontFamily: 'Rajdhani, monospace' }}>
+            {!isConnected 
+              ? 'Uses your wallet RPC • No external API limits • Better privacy'
+              : 'Smart caching • Uses your wallet RPC connection'}
+          </p>
+        </div>
+      )}
+
       {/* Leaderboard Table */}
-      {!loading && (
+      {!loading && hasLoaded && leaderboardData.length > 0 && (
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -323,34 +481,8 @@ export default function Leaderboard() {
               ))}
             </tbody>
           </table>
-
-          {leaderboardData.length === 0 && !loading && (
-            <div className="text-center py-8">
-              <div className="text-pink-400 font-bold" style={{ fontFamily: 'Orbitron, monospace' }}>
-                NO QUALIFIED SMUGGLERS YET
-              </div>
-              <div className="text-yellow-400 text-sm mt-2" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                Be the first to complete 3+ runs and claim your spot!
-              </div>
-            </div>
-          )}
         </div>
       )}
-
-      {/* Refresh Button */}
-      <div className="mt-6 text-center">
-        <button
-          onClick={fetchLeaderboardData}
-          disabled={loading || (Date.now() - lastFetch < 30000)}
-          className="px-6 py-2 vice-button disabled:opacity-50 font-bold"
-          style={{ fontFamily: 'Orbitron, monospace' }}
-        >
-          {loading ? 'SCANNING...' : 
-           (Date.now() - lastFetch < 30000) ? 
-           `COOLDOWN (${Math.ceil((30000 - (Date.now() - lastFetch)) / 1000)}s)` : 
-           'REFRESH LEADERBOARD'}
-        </button>
-      </div>
 
       {/* Legend */}
       <div className="mt-6 pt-4 border-t border-cyan-400 text-center">
