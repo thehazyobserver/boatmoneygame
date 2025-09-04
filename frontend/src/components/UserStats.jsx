@@ -3,9 +3,9 @@ import { useAccount, useReadContract } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
 
-export default function UserStats({ selectedToken }) {
+export default function UserStats() {
   const { address, isConnected } = useAccount()
-  const [activeTab, setActiveTab] = useState(selectedToken || 'BOAT')
+  const [activeTab, setActiveTab] = useState('BOAT')
 
   // Get game config for active tab
   const gameConfig = GAME_CONFIGS[activeTab]

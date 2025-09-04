@@ -1,17 +1,13 @@
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState } from 'react'
 import Navbar from './components/Navbar'
 import GameDashboard from './components/GameDashboard'
 import RunResults from './components/RunResults'
-import TokenSelector from './components/TokenSelector'
 import { config } from './config/wagmi'
 
 const queryClient = new QueryClient()
 
 function App() {
-  const [selectedToken, setSelectedToken] = useState('BOAT') // Default to BOAT game
-
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -27,13 +23,9 @@ function App() {
           
           <Navbar />
           <div className="container mx-auto px-4 pt-6 relative z-10">
-            <TokenSelector 
-              selectedToken={selectedToken}
-              onTokenChange={setSelectedToken}
-            />
-            <RunResults selectedToken={selectedToken} />
+            <RunResults />
           </div>
-          <GameDashboard selectedToken={selectedToken} />
+          <GameDashboard />
         </div>
       </QueryClientProvider>
     </WagmiProvider>

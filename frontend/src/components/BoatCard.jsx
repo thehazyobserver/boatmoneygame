@@ -19,7 +19,7 @@ const BOAT_NAMES = {
   4: 'Yacht'
 }
 
-export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
+export default function BoatCard({ tokenId, level, onRefresh }) {
   const { address } = useAccount()
   const [isRunning, setIsRunning] = useState(false)
   const [cardSelectedToken, setCardSelectedToken] = useState(selectedToken) // Local token selection for this card

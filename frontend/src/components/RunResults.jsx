@@ -3,31 +3,19 @@ import { useAccount, useWatchContractEvent } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts, GAME_CONFIGS } from '../config/contracts'
 
-export default function RunResults({ selectedToken }) {
+export default function RunResults() {
   const { address } = useAccount()
   const [results, setResults] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [currentResult, setCurrentResult] = useState(null)
 
-  // Get contract config based on selected token
-  const getContractConfig = () => {
-    if (selectedToken === 'BOAT') {
-      return contracts.boatGame
-    } else if (selectedToken === 'JOINT') {
-      return contracts.jointBoatGame
-    }
-    return contracts.boatGame // fallback
-  }
+  // Watch events from both BOAT and JOINT contracts
 
   // Get event name based on selected token
-  const getEventName = () => {
-    return selectedToken === 'JOINT' ? 'JointRun' : 'RunResult'
-  }
-
-  // Watch for RunResult/JointRun events
+  // Watch for BOAT game RunResult events
   useWatchContractEvent({
-    ...getContractConfig(),
-    eventName: getEventName(),
+    ...contracts.boatGame,
+    eventName: 'RunResult',
     onLogs(logs) {
       logs.forEach((log) => {
         const { user, tokenId, level, stake, success, rewardPaid } = log.args
@@ -43,7 +31,7 @@ export default function RunResults({ selectedToken }) {
             rewardPaid: rewardPaid ? formatEther(rewardPaid) : '0',
             timestamp: new Date(),
             type: 'run',
-            gameToken: selectedToken // Track which game this result is from
+            gameToken: 'BOAT' // Track which game this result is from
           }
           
           setCurrentResult(result)
@@ -57,9 +45,42 @@ export default function RunResults({ selectedToken }) {
     }
   })
 
-  // Watch for BoatBurned events (both contracts emit same event)
+  // Watch for JOINT game JointRun events
   useWatchContractEvent({
-    ...getContractConfig(),
+    ...contracts.jointBoatGame,
+    eventName: 'JointRun',
+    onLogs(logs) {
+      logs.forEach((log) => {
+        const { user, tokenId, level, stake, success, rewardPaid } = log.args
+        
+        // Only show results for the current user
+        if (user?.toLowerCase() === address?.toLowerCase()) {
+          const result = {
+            id: Date.now() + Math.random(),
+            tokenId: tokenId.toString(),
+            level: parseInt(level),
+            stake: formatEther(stake),
+            success,
+            rewardPaid: rewardPaid ? formatEther(rewardPaid) : '0',
+            timestamp: new Date(),
+            type: 'run',
+            gameToken: 'JOINT' // Track which game this result is from
+          }
+          
+          setCurrentResult(result)
+          setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
+          setShowModal(true)
+          
+          // Auto-hide modal after 8 seconds
+          setTimeout(() => setShowModal(false), 8000)
+        }
+      })
+    }
+  })
+
+  // Watch for BOAT game BoatBurned events
+  useWatchContractEvent({
+    ...contracts.boatGame,
     eventName: 'BoatBurned',
     onLogs(logs) {
       logs.forEach((log) => {
@@ -71,7 +92,7 @@ export default function RunResults({ selectedToken }) {
           level: parseInt(level),
           timestamp: new Date(),
           type: 'burned',
-          gameToken: selectedToken
+          gameToken: 'BOAT'
         }
         
         setResults(prev => [result, ...prev.slice(0, 9)])
@@ -79,9 +100,31 @@ export default function RunResults({ selectedToken }) {
     }
   })
 
-  // Watch for BoatDowngraded events (both contracts emit same event)
+  // Watch for JOINT game BoatBurned events
   useWatchContractEvent({
-    ...getContractConfig(),
+    ...contracts.jointBoatGame,
+    eventName: 'BoatBurned',
+    onLogs(logs) {
+      logs.forEach((log) => {
+        const { tokenId, level } = log.args
+        
+        const result = {
+          id: Date.now() + Math.random(),
+          tokenId: tokenId.toString(),
+          level: parseInt(level),
+          timestamp: new Date(),
+          type: 'burned',
+          gameToken: 'JOINT'
+        }
+        
+        setResults(prev => [result, ...prev.slice(0, 9)])
+      })
+    }
+  })
+
+  // Watch for BOAT game BoatDowngraded events
+  useWatchContractEvent({
+    ...contracts.boatGame,
     eventName: 'BoatDowngraded',
     onLogs(logs) {
       logs.forEach((log) => {
@@ -94,7 +137,30 @@ export default function RunResults({ selectedToken }) {
           toLevel: parseInt(toLevel),
           timestamp: new Date(),
           type: 'downgraded',
-          gameToken: selectedToken
+          gameToken: 'BOAT'
+        }
+        
+        setResults(prev => [result, ...prev.slice(0, 9)])
+      })
+    }
+  })
+
+  // Watch for JOINT game BoatDowngraded events
+  useWatchContractEvent({
+    ...contracts.jointBoatGame,
+    eventName: 'BoatDowngraded',
+    onLogs(logs) {
+      logs.forEach((log) => {
+        const { tokenId, fromLevel, toLevel } = log.args
+        
+        const result = {
+          id: Date.now() + Math.random(),
+          tokenId: tokenId.toString(),
+          fromLevel: parseInt(fromLevel),
+          toLevel: parseInt(toLevel),
+          timestamp: new Date(),
+          type: 'downgraded',
+          gameToken: 'JOINT'
         }
         
         setResults(prev => [result, ...prev.slice(0, 9)])
@@ -106,7 +172,6 @@ export default function RunResults({ selectedToken }) {
   useWatchContractEvent({
     ...contracts.boatGame,
     eventName: 'RaftSpawned',
-    enabled: selectedToken === 'BOAT', // Only listen when BOAT game is selected
     onLogs(logs) {
       logs.forEach((log) => {
         const { to, tokenId } = log.args
