@@ -1,18 +1,33 @@
 import { useState, useEffect } from 'react'
 import { useAccount, useWatchContractEvent } from 'wagmi'
 import { formatEther } from 'viem'
-import { contracts } from '../config/contracts'
+import { contracts, GAME_CONFIGS } from '../config/contracts'
 
-export default function RunResults() {
+export default function RunResults({ selectedToken }) {
   const { address } = useAccount()
   const [results, setResults] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [currentResult, setCurrentResult] = useState(null)
 
-  // Watch for RunResult events
+  // Get contract config based on selected token
+  const getContractConfig = () => {
+    if (selectedToken === 'BOAT') {
+      return contracts.boatGame
+    } else if (selectedToken === 'JOINT') {
+      return contracts.jointBoatGame
+    }
+    return contracts.boatGame // fallback
+  }
+
+  // Get event name based on selected token
+  const getEventName = () => {
+    return selectedToken === 'JOINT' ? 'JointRun' : 'RunResult'
+  }
+
+  // Watch for RunResult/JointRun events
   useWatchContractEvent({
-    ...contracts.boatGame,
-    eventName: 'RunResult',
+    ...getContractConfig(),
+    eventName: getEventName(),
     onLogs(logs) {
       logs.forEach((log) => {
         const { user, tokenId, level, stake, success, rewardPaid } = log.args
@@ -27,7 +42,8 @@ export default function RunResults() {
             success,
             rewardPaid: rewardPaid ? formatEther(rewardPaid) : '0',
             timestamp: new Date(),
-            type: 'run'
+            type: 'run',
+            gameToken: selectedToken // Track which game this result is from
           }
           
           setCurrentResult(result)
@@ -41,9 +57,9 @@ export default function RunResults() {
     }
   })
 
-  // Watch for BoatBurned events
+  // Watch for BoatBurned events (both contracts emit same event)
   useWatchContractEvent({
-    ...contracts.boatGame,
+    ...getContractConfig(),
     eventName: 'BoatBurned',
     onLogs(logs) {
       logs.forEach((log) => {
@@ -54,7 +70,8 @@ export default function RunResults() {
           tokenId: tokenId.toString(),
           level: parseInt(level),
           timestamp: new Date(),
-          type: 'burned'
+          type: 'burned',
+          gameToken: selectedToken
         }
         
         setResults(prev => [result, ...prev.slice(0, 9)])
@@ -62,9 +79,9 @@ export default function RunResults() {
     }
   })
 
-  // Watch for BoatDowngraded events
+  // Watch for BoatDowngraded events (both contracts emit same event)
   useWatchContractEvent({
-    ...contracts.boatGame,
+    ...getContractConfig(),
     eventName: 'BoatDowngraded',
     onLogs(logs) {
       logs.forEach((log) => {
@@ -76,7 +93,8 @@ export default function RunResults() {
           fromLevel: parseInt(fromLevel),
           toLevel: parseInt(toLevel),
           timestamp: new Date(),
-          type: 'downgraded'
+          type: 'downgraded',
+          gameToken: selectedToken
         }
         
         setResults(prev => [result, ...prev.slice(0, 9)])
@@ -84,10 +102,11 @@ export default function RunResults() {
     }
   })
 
-  // Watch for RaftSpawned events (bonus rafts from yachts)
+  // Watch for RaftSpawned events (bonus rafts from yachts) - BOAT game only
   useWatchContractEvent({
     ...contracts.boatGame,
     eventName: 'RaftSpawned',
+    enabled: selectedToken === 'BOAT', // Only listen when BOAT game is selected
     onLogs(logs) {
       logs.forEach((log) => {
         const { to, tokenId } = log.args
@@ -98,7 +117,8 @@ export default function RunResults() {
             id: Date.now() + Math.random(),
             tokenId: tokenId.toString(),
             timestamp: new Date(),
-            type: 'spawned'
+            type: 'spawned',
+            gameToken: 'BOAT'
           }
           
           setResults(prev => [result, ...prev.slice(0, 9)])
@@ -118,13 +138,15 @@ export default function RunResults() {
   }
 
   const formatResult = (result) => {
+    const tokenSymbol = result.gameToken === 'JOINT' ? 'JOINT' : 'BOAT'
+    
     switch (result.type) {
       case 'run':
         return {
           title: result.success ? '🎉 Successful Run!' : '💥 Run Failed!',
           message: result.success 
-            ? `Your ${getBoatName(result.level)} #${result.tokenId} completed a successful smuggling run! You won ${parseFloat(result.rewardPaid).toFixed(0)} BOAT tokens.`
-            : `Your ${getBoatName(result.level)} #${result.tokenId} failed the smuggling run. You lost ${parseFloat(result.stake).toFixed(0)} BOAT tokens. ${result.level === 1 ? 'Your raft will be BURNED!' : 'Your boat will be DOWNGRADED!'}`,
+            ? `Your ${getBoatName(result.level)} #${result.tokenId} completed a successful smuggling run! You won ${parseFloat(result.rewardPaid).toFixed(0)} ${tokenSymbol} tokens.`
+            : `Your ${getBoatName(result.level)} #${result.tokenId} failed the smuggling run. You lost ${parseFloat(result.stake).toFixed(0)} ${tokenSymbol} tokens. ${result.level === 1 ? 'Your raft will be BURNED!' : 'Your boat will be DOWNGRADED!'}`,
           color: result.success ? 'green' : 'red',
           emoji: result.success ? '💰' : '💸'
         }

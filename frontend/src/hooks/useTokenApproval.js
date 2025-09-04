@@ -1,27 +1,29 @@
 import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { parseEther } from 'viem'
-import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
+import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
 
-export function useTokenApproval() {
+export function useTokenApproval(selectedToken = 'BOAT') {
   const { address } = useAccount()
   const [isApproving, setIsApproving] = useState(false)
   
   const { writeContract: writeApproval, isPending: isApprovePending } = useWriteContract()
 
-  // Get BOAT token address
-  const { data: boatTokenAddress } = useReadContract({
-    ...contracts.boatGame,
-    functionName: 'BOAT'
-  })
+  // Get game config
+  const gameConfig = GAME_CONFIGS[selectedToken]
+  
+  // Get contract configuration based on selected token
+  const getGameContract = () => {
+    return selectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+  }
 
   // Check current allowance
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: boatTokenAddress,
+    address: gameConfig.tokenAddress,
     abi: BOAT_TOKEN_ABI,
     functionName: 'allowance',
-    args: [address, contracts.boatGame.address],
-    query: { enabled: !!address && !!boatTokenAddress }
+    args: [address, getGameContract().address],
+    query: { enabled: !!address }
   })
 
   // Check if we have enough allowance for a specific amount
@@ -32,15 +34,13 @@ export function useTokenApproval() {
 
   // Approve tokens
   const approveTokens = async (amount) => {
-    if (!boatTokenAddress) return false
-    
     setIsApproving(true)
     try {
       const result = await writeApproval({
-        address: boatTokenAddress,
+        address: gameConfig.tokenAddress,
         abi: BOAT_TOKEN_ABI,
         functionName: 'approve',
-        args: [contracts.boatGame.address, amount]
+        args: [getGameContract().address, amount]
       })
       
       // Wait a bit and refetch allowance
@@ -57,7 +57,7 @@ export function useTokenApproval() {
     }
   }
 
-  // Approve a large amount for convenience (1M BOAT)
+  // Approve a large amount for convenience (1M tokens)
   const approveMax = () => approveTokens(parseEther('1000000'))
 
   return {
@@ -66,6 +66,6 @@ export function useTokenApproval() {
     approveTokens,
     approveMax,
     isApproving: isApproving || isApprovePending,
-    boatTokenAddress
+    tokenAddress: gameConfig.tokenAddress
   }
 }

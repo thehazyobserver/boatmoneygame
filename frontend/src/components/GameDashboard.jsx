@@ -5,7 +5,7 @@ import BoatGallery from './BoatGallery'
 import BuyRaftCard from './BuyRaftCard'
 import Instructions from './Instructions'
 
-export default function GameDashboard() {
+export default function GameDashboard({ selectedToken }) {
   const { isConnected } = useAccount()
 
   if (!isConnected) {
@@ -53,19 +53,19 @@ export default function GameDashboard() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Instructions */}
-      <Instructions />
+      <Instructions selectedToken={selectedToken} />
       
       {/* Top Stats Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <PoolStats />
-        <UserStats />
+        <PoolStats selectedToken={selectedToken} />
+        <UserStats selectedToken={selectedToken} />
       </div>
       
-      {/* Buy Raft Card */}
-      <BuyRaftCard />
+      {/* Buy Raft Card - Only show for BOAT game */}
+      {selectedToken === 'BOAT' && <BuyRaftCard />}
       
       {/* User's Boats */}
-      <BoatGallery />
+      <BoatGallery selectedToken={selectedToken} />
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { useAccount, useReadContract } from 'wagmi'
 import { contracts } from '../config/contracts'
 import BoatCard from './BoatCard'
 
-export default function BoatGallery() {
+export default function BoatGallery({ selectedToken }) {
   const { address, isConnected } = useAccount()
 
   // Read user's boat count
@@ -146,6 +146,7 @@ export default function BoatGallery() {
             key={tokenId}
             tokenId={tokenId}
             level={1} // Will be read from contract in BoatCard component
+            selectedToken={selectedToken}
             onRefresh={() => {
               // Trigger refresh of boat data
               // This would typically refetch the queries

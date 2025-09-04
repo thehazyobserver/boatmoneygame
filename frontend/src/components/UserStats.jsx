@@ -1,23 +1,20 @@
 import { useAccount, useReadContract } from 'wagmi'
 import { formatEther } from 'viem'
-import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
+import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
 
-export default function UserStats() {
+export default function UserStats({ selectedToken }) {
   const { address, isConnected } = useAccount()
 
-  // First, read the BOAT token address from the game contract
-  const { data: boatTokenAddress } = useReadContract({
-    ...contracts.boatGame,
-    functionName: 'BOAT'
-  })
+  // Get game config
+  const gameConfig = GAME_CONFIGS[selectedToken]
 
-  // Read user's BOAT token balance from the actual BOAT token contract
-  const { data: boatBalance } = useReadContract({
-    address: boatTokenAddress,
+  // Read user's token balance from the token contract
+  const { data: tokenBalance } = useReadContract({
+    address: gameConfig.tokenAddress,
     abi: BOAT_TOKEN_ABI,
     functionName: 'balanceOf',
     args: [address],
-    query: { enabled: isConnected && !!boatTokenAddress }
+    query: { enabled: isConnected }
   })
 
   // Read user's boat count
@@ -51,9 +48,9 @@ export default function UserStats() {
 
   const stats = [
     {
-      label: 'BOAT Tokens',
-      value: boatBalance ? parseFloat(formatEther(boatBalance)).toFixed(2) : '0.00',
-      suffix: 'BOAT',
+      label: `${gameConfig.symbol} Tokens`,
+      value: tokenBalance ? parseFloat(formatEther(tokenBalance)).toFixed(2) : '0.00',
+      suffix: gameConfig.symbol,
       icon: '🪙'
     },
     {

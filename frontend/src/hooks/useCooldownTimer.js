@@ -2,19 +2,24 @@ import { useState, useEffect } from 'react'
 import { useReadContract } from 'wagmi'
 import { contracts } from '../config/contracts'
 
-export function useCooldownTimer(tokenId) {
+export function useCooldownTimer(selectedToken, tokenId) {
   const [timeLeft, setTimeLeft] = useState(0)
   const [isOnCooldown, setIsOnCooldown] = useState(false)
 
+  // Get contract configuration based on selected token
+  const getGameContract = () => {
+    return selectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+  }
+
   // Read the cooldown duration from contract
   const { data: cooldownDuration } = useReadContract({
-    ...contracts.boatGame,
+    ...getGameContract(),
     functionName: 'runCooldown'
   })
 
   // Read when this boat last ran
   const { data: lastRunAt } = useReadContract({
-    ...contracts.boatGame,
+    ...getGameContract(),
     functionName: 'lastRunAt',
     args: [tokenId],
     query: { enabled: !!tokenId }
