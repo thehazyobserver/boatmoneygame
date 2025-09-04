@@ -162,8 +162,8 @@ export default function BoatGallery({ selectedToken }) {
             <div className="text-2xl">🎯</div>
             <div className="font-bold">Run Smuggling Operations</div>
             <div className="opacity-80">
-              Stake BOAT and run missions. Success = win BOAT tokens (1.5x-3.0x your stake). 
-              Failure = lose your stake. Level 1 boats get BURNED, higher levels get DOWNGRADED.
+              Play BOAT and run missions. Success = win BOAT tokens (1.5x-3.0x your play). 
+              Failure = lose your play. Level 1 boats get BURNED, higher levels get DOWNGRADED.
             </div>
           </div>
           <div className="space-y-2">

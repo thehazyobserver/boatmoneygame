@@ -20,7 +20,7 @@ const TokenSelector = ({ selectedToken, onTokenChange }) => {
               <div className="font-bold text-lg">{config.symbol}</div>
               <div className="text-sm opacity-75">{config.name}</div>
               <div className="text-xs mt-2 opacity-60">
-                Stake: {parseInt(config.minStake).toLocaleString()} - {parseInt(config.maxStake).toLocaleString()}
+                Play: {parseInt(config.minStake).toLocaleString()} - {parseInt(config.maxStake).toLocaleString()}
               </div>
             </div>
           </button>

@@ -11,6 +11,7 @@ export const GAME_CONFIGS = {
     name: 'BOAT Game',
     symbol: '$BOAT',
     contractAddress: BOAT_GAME_ADDRESS,
+    tokenAddress: BOAT_GAME_ADDRESS, // BOAT token address will be read from the game contract
     minStake: '10000',
     maxStake: '80000',
     decimals: 18

@@ -112,7 +112,7 @@ export default function Instructions() {
                         <div className="text-xl mt-1">1️⃣</div>
                         <div>
                           <div className="font-semibold">Get BOAT Tokens</div>
-                          <div className="text-sm opacity-80">You need BOAT tokens to buy rafts and stake on runs</div>
+                          <div className="text-sm opacity-80">You need BOAT tokens to buy rafts and play on runs</div>
                         </div>
                       </div>
                       <div className="flex items-start space-x-3">
@@ -126,7 +126,7 @@ export default function Instructions() {
                         <div className="text-xl mt-1">3️⃣</div>
                         <div>
                           <div className="font-semibold">Start Smuggling</div>
-                          <div className="text-sm opacity-80">Stake 10,000-80,000 BOAT per run</div>
+                          <div className="text-sm opacity-80">Play 10,000-80,000 BOAT per run</div>
                         </div>
                       </div>
                       <div className="flex items-start space-x-3">
@@ -153,7 +153,7 @@ export default function Instructions() {
                       <div className="p-4 bg-green-500 bg-opacity-20 rounded-lg border border-green-500 border-opacity-50">
                         <div className="font-bold text-green-200 mb-2">✅ SUCCESS</div>
                         <ul className="text-sm space-y-1 text-green-100">
-                          <li>• Win 1.5x-3.0x your stake back</li>
+                          <li>• Win 1.5x-3.0x your play back</li>
                           <li>• Boat keeps its level</li>
                           <li>• Yachts have 15% chance to spawn bonus raft</li>
                         </ul>
@@ -161,7 +161,7 @@ export default function Instructions() {
                       <div className="p-4 bg-red-500 bg-opacity-20 rounded-lg border border-red-500 border-opacity-50">
                         <div className="font-bold text-red-200 mb-2">❌ FAILURE</div>
                         <ul className="text-sm space-y-1 text-red-100">
-                          <li>• Lose your entire stake</li>
+                          <li>• Lose your entire play</li>
                           <li>• Rafts get BURNED (destroyed)</li>
                           <li>• Higher level boats get DOWNGRADED</li>
                         </ul>
@@ -177,7 +177,7 @@ export default function Instructions() {
                         <div className="text-sm opacity-80">10 minutes between runs per boat</div>
                       </div>
                       <div className="p-3 bg-white bg-opacity-10 rounded-lg">
-                        <div className="font-semibold mb-1">Stake Range</div>
+                        <div className="font-semibold mb-1">Play Range</div>
                         <div className="text-sm opacity-80">Minimum: 10,000 BOAT<br/>Maximum: 80,000 BOAT</div>
                       </div>
                       <div className="p-3 bg-white bg-opacity-10 rounded-lg">
@@ -212,7 +212,7 @@ export default function Instructions() {
                         <div className="font-semibold mb-2">Start Conservative</div>
                         <ul className="text-sm space-y-1 opacity-90">
                           <li>• Buy 2-3 rafts initially</li>
-                          <li>• Stake smaller amounts (10k-20k BOAT)</li>
+                          <li>• Play smaller amounts (10k-20k BOAT)</li>
                           <li>• Accept that some rafts will burn</li>
                           <li>• Use winnings to get more rafts</li>
                         </ul>
@@ -237,7 +237,7 @@ export default function Instructions() {
                           <li>• 85% success rate is very high</li>
                           <li>• 3.0x multiplier on wins</li>
                           <li>• 15% chance for bonus rafts</li>
-                          <li>• Good for large stakes</li>
+                          <li>• Good for large plays</li>
                         </ul>
                       </div>
                       <div className="p-3 bg-yellow-500 bg-opacity-20 rounded-lg">
@@ -253,7 +253,7 @@ export default function Instructions() {
                         <div className="font-semibold mb-2">Smart Play</div>
                         <ul className="text-sm space-y-1 opacity-90">
                           <li>• Only play with tokens you can afford to lose</li>
-                          <li>• Spread stakes across multiple boats</li>
+                          <li>• Spread plays across multiple boats</li>
                           <li>• Consider upgrade costs when planning</li>
                         </ul>
                       </div>

@@ -9,8 +9,8 @@ export default function BuyRaftCard() {
   const [isBuying, setIsBuying] = useState(false)
   const [lastTxHash, setLastTxHash] = useState(null)
 
-  // Token approval hook
-  const { hasAllowance, approveMax, isApproving } = useTokenApproval()
+  // Token approval hook - explicitly for BOAT tokens only
+  const { hasAllowance, approveMax, isApproving } = useTokenApproval('BOAT')
 
   // Contract write hook
   const { writeContract, isPending } = useWriteContract()
@@ -163,7 +163,7 @@ export default function BuyRaftCard() {
       {/* Bottom Info */}
       <div className="mt-4 pt-4 border-t border-white border-opacity-20 text-center text-white text-sm opacity-90">
         💡 <strong>New to the game?</strong> You'll get BOAT tokens from successful runs. 
-        Success = win 1.5x your stake. Failure = lose your stake and raft gets BURNED!
+        Success = win 1.5x your play. Failure = lose your play and raft gets BURNED!
       </div>
     </div>
   )

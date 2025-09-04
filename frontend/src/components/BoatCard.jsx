@@ -190,7 +190,7 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
         <div className="w-full space-y-3">
           <div className="text-center">
             <label className="text-white text-sm opacity-80 block mb-2">
-              Stake Amount ({gameConfig.symbol})
+              Play Amount ({gameConfig.symbol})
             </label>
             <input
               type="number"
@@ -216,7 +216,7 @@ export default function BoatCard({ tokenId, level, selectedToken, onRefresh }) {
             {isOnCooldown ? (
               <span className="text-orange-300">Cooldown: {formattedTime} remaining</span>
             ) : (
-              <span>10-minute cooldown | Stake: {parseInt(gameConfig.minStake).toLocaleString()}-{parseInt(gameConfig.maxStake).toLocaleString()} {gameConfig.symbol}</span>
+              <span>10-minute cooldown | Play: {parseInt(gameConfig.minStake).toLocaleString()}-{parseInt(gameConfig.maxStake).toLocaleString()} {gameConfig.symbol}</span>
             )}
           </div>
         </div>
