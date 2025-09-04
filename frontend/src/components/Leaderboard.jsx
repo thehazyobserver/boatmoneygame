@@ -21,67 +21,116 @@ export default function Leaderboard() {
   const [selectedGame, setSelectedGame] = useState('BOAT')
   const [leaderboardData, setLeaderboardData] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [lastFetch, setLastFetch] = useState(0)
   const publicClient = usePublicClient()
+
+  // Mock data for when API limits are hit
+  const getMockData = () => {
+    const mockPlayers = [
+      {
+        address: '0x1234567890abcdef1234567890abcdef12345678',
+        totalRuns: 15,
+        totalWins: 12,
+        totalEarnings: parseEther('2400'),
+        totalWagered: parseEther('1200'),
+        highestLevel: 4,
+        winRate: 80,
+        netProfit: parseEther('1200')
+      },
+      {
+        address: '0xabcdef1234567890abcdef1234567890abcdef12',
+        totalRuns: 10,
+        totalWins: 7,
+        totalEarnings: parseEther('1400'),
+        totalWagered: parseEther('800'),
+        highestLevel: 3,
+        winRate: 70,
+        netProfit: parseEther('600')
+      },
+      {
+        address: '0x9876543210fedcba9876543210fedcba98765432',
+        totalRuns: 8,
+        totalWins: 5,
+        totalEarnings: parseEther('1000'),
+        totalWagered: parseEther('640'),
+        highestLevel: 3,
+        winRate: 62.5,
+        netProfit: parseEther('360')
+      },
+      {
+        address: '0xfedcba9876543210fedcba9876543210fedcba98',
+        totalRuns: 12,
+        totalWins: 6,
+        totalEarnings: parseEther('720'),
+        totalWagered: parseEther('960'),
+        highestLevel: 2,
+        winRate: 50,
+        netProfit: parseEther('-240')
+      }
+    ]
+    
+    return mockPlayers
+  }
+
+  // Simple sleep function for rate limiting
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
   // Get recent game events to build leaderboard
   useEffect(() => {
+    // Prevent too frequent API calls (minimum 30 seconds between fetches)
+    const now = Date.now()
+    if (now - lastFetch < 30000) {
+      return
+    }
+    
     fetchLeaderboardData()
   }, [selectedGame, publicClient])
 
   const fetchLeaderboardData = async () => {
     if (!publicClient) return
     
+    // Check if we've fetched recently to avoid rate limits
+    const now = Date.now()
+    if (now - lastFetch < 30000) {
+      console.log('Rate limit protection: using cached data')
+      return
+    }
+    
     setLoading(true)
+    setError(null)
+    
     try {
+      // Try the most minimal approach first - just last 10 blocks
+      const currentBlock = await publicClient.getBlockNumber()
       const contract = selectedGame === 'BOAT' ? contracts.boatGame : contracts.jointBoatGame
       const eventName = selectedGame === 'BOAT' ? 'RunResult' : 'JointRun'
       
-      // Get recent events in smaller chunks to avoid rate limits
-      const currentBlock = await publicClient.getBlockNumber()
-      const totalBlocks = 1000n // Reduced from 10000 to 1000 blocks
-      const chunkSize = 10n // Process 10 blocks at a time for free tier
-      const fromBlock = currentBlock - totalBlocks
+      // Add delay before making request
+      await sleep(1000)
       
-      let allLogs = []
-      
-      // Fetch logs in chunks to respect rate limits
-      for (let i = 0; i < totalBlocks; i += chunkSize) {
-        const chunkStart = fromBlock + BigInt(i)
-        const chunkEnd = fromBlock + BigInt(i) + chunkSize - 1n
-        
-        try {
-          const logs = await publicClient.getLogs({
-            address: contract.address,
-            event: {
-              type: 'event',
-              name: eventName,
-              inputs: [
-                { name: 'user', type: 'address', indexed: true },
-                { name: 'tokenId', type: 'uint256', indexed: true },
-                { name: 'level', type: 'uint8', indexed: false },
-                { name: 'stake', type: 'uint256', indexed: false },
-                { name: 'success', type: 'bool', indexed: false },
-                { name: 'rewardPaid', type: 'uint256', indexed: false }
-              ]
-            },
-            fromBlock: chunkStart,
-            toBlock: chunkEnd
-          })
-          
-          allLogs = [...allLogs, ...logs]
-          
-          // Small delay to avoid hitting rate limits
-          await new Promise(resolve => setTimeout(resolve, 100))
-        } catch (chunkError) {
-          console.warn(`Error fetching chunk ${chunkStart}-${chunkEnd}:`, chunkError)
-          // Continue with other chunks even if one fails
-        }
-      }
+      const logs = await publicClient.getLogs({
+        address: contract.address,
+        event: {
+          type: 'event',
+          name: eventName,
+          inputs: [
+            { name: 'user', type: 'address', indexed: true },
+            { name: 'tokenId', type: 'uint256', indexed: true },
+            { name: 'level', type: 'uint8', indexed: false },
+            { name: 'stake', type: 'uint256', indexed: false },
+            { name: 'success', type: 'bool', indexed: false },
+            { name: 'rewardPaid', type: 'uint256', indexed: false }
+          ]
+        },
+        fromBlock: currentBlock - 10n, // Only last 10 blocks
+        toBlock: 'latest'
+      })
 
       // Process logs to create leaderboard
       const playerStats = {}
       
-      allLogs.forEach((log) => {
+      logs.forEach((log) => {
         const { user, level, stake, success, rewardPaid } = log.args
         const userAddress = user.toLowerCase()
         
@@ -117,7 +166,7 @@ export default function Leaderboard() {
 
       // Convert to array and sort by net profit
       const sortedPlayers = Object.values(playerStats)
-        .filter(player => player.totalRuns >= 3) // Minimum 3 runs to qualify
+        .filter(player => player.totalRuns >= 1) // Minimum 1 run to qualify
         .sort((a, b) => {
           if (b.netProfit === a.netProfit) {
             return b.totalEarnings - a.totalEarnings
@@ -126,80 +175,24 @@ export default function Leaderboard() {
         })
         .slice(0, 20) // Top 20 players
 
-      setLeaderboardData(sortedPlayers)
+      // If no recent data, use mock data to show the interface
+      if (sortedPlayers.length === 0) {
+        console.log('No recent activity, showing demo data')
+        setLeaderboardData(getMockData())
+        setError('DEMO DATA - No recent activity found')
+      } else {
+        setLeaderboardData(sortedPlayers)
+      }
+      
+      setLastFetch(now)
     } catch (error) {
       console.error('Error fetching leaderboard:', error)
       
-      // Fallback: Try with just the last 50 blocks
-      try {
-        const currentBlock = await publicClient.getBlockNumber()
-        const contract = selectedGame === 'BOAT' ? contracts.boatGame : contracts.jointBoatGame
-        const eventName = selectedGame === 'BOAT' ? 'RunResult' : 'JointRun'
-        
-        const logs = await publicClient.getLogs({
-          address: contract.address,
-          event: {
-            type: 'event',
-            name: eventName,
-            inputs: [
-              { name: 'user', type: 'address', indexed: true },
-              { name: 'tokenId', type: 'uint256', indexed: true },
-              { name: 'level', type: 'uint8', indexed: false },
-              { name: 'stake', type: 'uint256', indexed: false },
-              { name: 'success', type: 'bool', indexed: false },
-              { name: 'rewardPaid', type: 'uint256', indexed: false }
-            ]
-          },
-          fromBlock: currentBlock - 50n,
-          toBlock: 'latest'
-        })
-        
-        // Simple processing for fallback
-        const playerStats = {}
-        logs.forEach((log) => {
-          const { user, level, stake, success, rewardPaid } = log.args
-          const userAddress = user.toLowerCase()
-          
-          if (!playerStats[userAddress]) {
-            playerStats[userAddress] = {
-              address: userAddress,
-              totalRuns: 0,
-              totalWins: 0,
-              totalEarnings: 0n,
-              totalWagered: 0n,
-              highestLevel: Number(level),
-              winRate: 0,
-              netProfit: 0n
-            }
-          }
-          
-          const stats = playerStats[userAddress]
-          stats.totalRuns++
-          stats.totalWagered += stake
-          
-          if (success) {
-            stats.totalWins++
-            stats.totalEarnings += rewardPaid
-          }
-          
-          if (Number(level) > stats.highestLevel) {
-            stats.highestLevel = Number(level)
-          }
-          
-          stats.winRate = (stats.totalWins / stats.totalRuns) * 100
-          stats.netProfit = stats.totalEarnings - stats.totalWagered
-        })
-        
-        const sortedPlayers = Object.values(playerStats)
-          .filter(player => player.totalRuns >= 1) // Lower requirement for fallback
-          .sort((a, b) => Number(b.netProfit - a.netProfit))
-          .slice(0, 20)
-        
-        setLeaderboardData(sortedPlayers)
-      } catch (fallbackError) {
-        console.error('Fallback also failed:', fallbackError)
-        setLeaderboardData([])
-      }
+      // Use mock data when rate limited
+      console.log('API limit reached, showing demo data')
+      setLeaderboardData(getMockData())
+      setError('DEMO DATA - API limit reached')
+      setLastFetch(now) // Still update to prevent spam
     } finally {
       setLoading(false)
     }
@@ -262,7 +255,7 @@ export default function Leaderboard() {
           [ TOP SMUGGLERS BY NET PROFIT - {selectedGame} GAME ]
         </p>
         <p className="text-yellow-400 text-sm mt-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
-          Minimum 3 runs required • Last 1,000 blocks (rate limit friendly)
+          Last 10 blocks only • Rate limit friendly • {error && <span className="text-orange-400">{error}</span>}
         </p>
       </div>
 
@@ -348,11 +341,14 @@ export default function Leaderboard() {
       <div className="mt-6 text-center">
         <button
           onClick={fetchLeaderboardData}
-          disabled={loading}
+          disabled={loading || (Date.now() - lastFetch < 30000)}
           className="px-6 py-2 vice-button disabled:opacity-50 font-bold"
           style={{ fontFamily: 'Orbitron, monospace' }}
         >
-          {loading ? 'SCANNING...' : 'REFRESH LEADERBOARD'}
+          {loading ? 'SCANNING...' : 
+           (Date.now() - lastFetch < 30000) ? 
+           `COOLDOWN (${Math.ceil((30000 - (Date.now() - lastFetch)) / 1000)}s)` : 
+           'REFRESH LEADERBOARD'}
         </button>
       </div>
 
