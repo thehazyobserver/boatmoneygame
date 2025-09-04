@@ -36,32 +36,52 @@ export default function Leaderboard() {
       const contract = selectedGame === 'BOAT' ? contracts.boatGame : contracts.jointBoatGame
       const eventName = selectedGame === 'BOAT' ? 'RunResult' : 'JointRun'
       
-      // Get recent events (last 10000 blocks)
+      // Get recent events in smaller chunks to avoid rate limits
       const currentBlock = await publicClient.getBlockNumber()
-      const fromBlock = currentBlock - 10000n
+      const totalBlocks = 1000n // Reduced from 10000 to 1000 blocks
+      const chunkSize = 10n // Process 10 blocks at a time for free tier
+      const fromBlock = currentBlock - totalBlocks
       
-      const logs = await publicClient.getLogs({
-        address: contract.address,
-        event: {
-          type: 'event',
-          name: eventName,
-          inputs: [
-            { name: 'user', type: 'address', indexed: true },
-            { name: 'tokenId', type: 'uint256', indexed: true },
-            { name: 'level', type: 'uint8', indexed: false },
-            { name: 'stake', type: 'uint256', indexed: false },
-            { name: 'success', type: 'bool', indexed: false },
-            { name: 'rewardPaid', type: 'uint256', indexed: false }
-          ]
-        },
-        fromBlock,
-        toBlock: 'latest'
-      })
+      let allLogs = []
+      
+      // Fetch logs in chunks to respect rate limits
+      for (let i = 0; i < totalBlocks; i += chunkSize) {
+        const chunkStart = fromBlock + BigInt(i)
+        const chunkEnd = fromBlock + BigInt(i) + chunkSize - 1n
+        
+        try {
+          const logs = await publicClient.getLogs({
+            address: contract.address,
+            event: {
+              type: 'event',
+              name: eventName,
+              inputs: [
+                { name: 'user', type: 'address', indexed: true },
+                { name: 'tokenId', type: 'uint256', indexed: true },
+                { name: 'level', type: 'uint8', indexed: false },
+                { name: 'stake', type: 'uint256', indexed: false },
+                { name: 'success', type: 'bool', indexed: false },
+                { name: 'rewardPaid', type: 'uint256', indexed: false }
+              ]
+            },
+            fromBlock: chunkStart,
+            toBlock: chunkEnd
+          })
+          
+          allLogs = [...allLogs, ...logs]
+          
+          // Small delay to avoid hitting rate limits
+          await new Promise(resolve => setTimeout(resolve, 100))
+        } catch (chunkError) {
+          console.warn(`Error fetching chunk ${chunkStart}-${chunkEnd}:`, chunkError)
+          // Continue with other chunks even if one fails
+        }
+      }
 
       // Process logs to create leaderboard
       const playerStats = {}
       
-      logs.forEach((log) => {
+      allLogs.forEach((log) => {
         const { user, level, stake, success, rewardPaid } = log.args
         const userAddress = user.toLowerCase()
         
@@ -109,6 +129,77 @@ export default function Leaderboard() {
       setLeaderboardData(sortedPlayers)
     } catch (error) {
       console.error('Error fetching leaderboard:', error)
+      
+      // Fallback: Try with just the last 50 blocks
+      try {
+        const currentBlock = await publicClient.getBlockNumber()
+        const contract = selectedGame === 'BOAT' ? contracts.boatGame : contracts.jointBoatGame
+        const eventName = selectedGame === 'BOAT' ? 'RunResult' : 'JointRun'
+        
+        const logs = await publicClient.getLogs({
+          address: contract.address,
+          event: {
+            type: 'event',
+            name: eventName,
+            inputs: [
+              { name: 'user', type: 'address', indexed: true },
+              { name: 'tokenId', type: 'uint256', indexed: true },
+              { name: 'level', type: 'uint8', indexed: false },
+              { name: 'stake', type: 'uint256', indexed: false },
+              { name: 'success', type: 'bool', indexed: false },
+              { name: 'rewardPaid', type: 'uint256', indexed: false }
+            ]
+          },
+          fromBlock: currentBlock - 50n,
+          toBlock: 'latest'
+        })
+        
+        // Simple processing for fallback
+        const playerStats = {}
+        logs.forEach((log) => {
+          const { user, level, stake, success, rewardPaid } = log.args
+          const userAddress = user.toLowerCase()
+          
+          if (!playerStats[userAddress]) {
+            playerStats[userAddress] = {
+              address: userAddress,
+              totalRuns: 0,
+              totalWins: 0,
+              totalEarnings: 0n,
+              totalWagered: 0n,
+              highestLevel: Number(level),
+              winRate: 0,
+              netProfit: 0n
+            }
+          }
+          
+          const stats = playerStats[userAddress]
+          stats.totalRuns++
+          stats.totalWagered += stake
+          
+          if (success) {
+            stats.totalWins++
+            stats.totalEarnings += rewardPaid
+          }
+          
+          if (Number(level) > stats.highestLevel) {
+            stats.highestLevel = Number(level)
+          }
+          
+          stats.winRate = (stats.totalWins / stats.totalRuns) * 100
+          stats.netProfit = stats.totalEarnings - stats.totalWagered
+        })
+        
+        const sortedPlayers = Object.values(playerStats)
+          .filter(player => player.totalRuns >= 1) // Lower requirement for fallback
+          .sort((a, b) => Number(b.netProfit - a.netProfit))
+          .slice(0, 20)
+        
+        setLeaderboardData(sortedPlayers)
+      } catch (fallbackError) {
+        console.error('Fallback also failed:', fallbackError)
+        setLeaderboardData([])
+      }
     } finally {
       setLoading(false)
     }
@@ -171,7 +262,7 @@ export default function Leaderboard() {
           [ TOP SMUGGLERS BY NET PROFIT - {selectedGame} GAME ]
         </p>
         <p className="text-yellow-400 text-sm mt-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
-          Minimum 3 runs required • Updated from last 10,000 blocks
+          Minimum 3 runs required • Last 1,000 blocks (rate limit friendly)
         </p>
       </div>
 
