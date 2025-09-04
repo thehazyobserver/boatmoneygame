@@ -7,136 +7,106 @@ export default function Instructions() {
   const [activeTab, setActiveTab] = useState('basics')
 
   const tabs = [
-    { id: 'basics', label: '🎮 Basics', icon: '🎯' },
-    { id: 'gameplay', label: '⚓ Gameplay', icon: '🚤' },
-    { id: 'strategy', label: '🧠 Strategy', icon: '💡' }
+    { id: 'basics', label: 'BASICS', icon: '🎯' },
+    { id: 'gameplay', label: 'GAMEPLAY', icon: '🚤' },
+    { id: 'strategy', label: 'STRATEGY', icon: '💡' }
   ]
 
   return (
-    <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl border border-white border-opacity-20 mb-6">
+    <div className="terminal-bg rounded-xl border-2 border-cyan-400 mb-6 neon-glow">
       {/* Header */}
       <div 
-        className="p-4 cursor-pointer flex items-center justify-between"
+        className="p-4 cursor-pointer flex items-center justify-between hover:bg-cyan-400 hover:bg-opacity-10 transition-all"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center space-x-3">
-          <div className="text-2xl">📚</div>
+          <div className="text-3xl">📊</div>
           <div>
-            <h2 className="text-xl font-bold text-white">Game Instructions</h2>
-            <p className="text-white opacity-80 text-sm">
-              {isExpanded ? 'Click to minimize' : 'Click to learn how to play BOAT MONEY'}
+            <h2 className="text-xl font-bold text-cyan-400 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+              OPERATION MANUAL
+            </h2>
+            <p className="text-pink-400 text-sm font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
+              {isExpanded ? '[ COLLAPSE INTEL ]' : '[ EXPAND INTEL ]'}
             </p>
           </div>
         </div>
-        <div className="text-white text-2xl">
-          {isExpanded ? '🔼' : '🔽'}
+        <div className="text-cyan-400 text-2xl neon-text">
+          {isExpanded ? '▲' : '▼'}
         </div>
       </div>
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="border-t border-white border-opacity-20">
+        <div className="border-t-2 border-cyan-400">
           {/* Tab Navigation */}
-          <div className="flex flex-wrap gap-2 p-4 border-b border-white border-opacity-20">
+          <div className="flex flex-wrap gap-2 p-4 mobile-stack border-b border-cyan-400 border-opacity-50">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                className={`px-4 py-2 rounded-lg font-bold transition-all duration-300 mobile-text-sm ${
                   activeTab === tab.id
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                    ? 'vice-button'
+                    : 'terminal-bg border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:bg-opacity-20'
                 }`}
+                style={{ fontFamily: 'Orbitron, monospace' }}
               >
-                {tab.icon} {tab.label}
+                <span className="mr-2">{tab.icon}</span>
+                {tab.label}
               </button>
             ))}
           </div>
 
           {/* Tab Content */}
-          <div className="p-6 text-white">
+          <div className="p-6 mobile-p-4">
             {activeTab === 'basics' && (
               <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-bold mb-4 flex items-center">
-                    🎯 Welcome to BOAT MONEY
+                <div className="terminal-bg p-4 rounded-lg border border-cyan-400 border-opacity-50">
+                  <h3 className="text-lg font-bold text-cyan-400 mb-3 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+                    🚤 THE OPERATION
                   </h3>
-                  <p className="text-lg mb-4 opacity-90">
-                    Money can’t buy happiness, but it can buy me some hoes and a $BOAT
-                  </p>
+                  <div className="space-y-3 text-white" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                    <p className="text-pink-400">
+                      <strong>BOAT RUNNER</strong> is a high-stakes blockchain game where you operate smuggling boats in the neon-soaked waters of Miami '85.
+                    </p>
+                    <p>
+                      • <strong className="text-yellow-400">BUY RAFTS:</strong> Start with basic rafts using $BOAT tokens
+                    </p>
+                    <p>
+                      • <strong className="text-yellow-400">RUN OPERATIONS:</strong> Execute smuggling runs with either $BOAT or $JOINT tokens
+                    </p>
+                    <p>
+                      • <strong className="text-yellow-400">UPGRADE FLEET:</strong> Use $BOAT to upgrade boats for better success rates
+                    </p>
+                    <p>
+                      • <strong className="text-yellow-400">STACK PAPER:</strong> Win big payouts or lose everything trying
+                    </p>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h4 className="font-bold text-lg">🚤 Your Fleet</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
-                        <div className="text-2xl">🪜</div>
-                        <div>
-                          <div className="font-semibold">Raft (Level 1)</div>
-                          <div className="text-sm opacity-80">55% success rate, 1.5x tokens, gets BURNED on failure</div>
-                          <div className="text-xs opacity-60 mt-1">💰 Buy: 100,000 BOAT | Upgrade to Dinghy: 150,000 BOAT</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
-                        <div className="text-2xl">🛶</div>
-                        <div>
-                          <div className="font-semibold">Dinghy (Level 2)</div>
-                          <div className="text-sm opacity-80">65% success rate, 2.0x tokens, downgrades on failure</div>
-                          <div className="text-xs opacity-60 mt-1">💰 Upgrade to Speedboat: 300,000 BOAT</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
-                        <div className="text-2xl">🚤</div>
-                        <div>
-                          <div className="font-semibold">Speedboat (Level 3)</div>
-                          <div className="text-sm opacity-80">75% success rate, 2.4x tokens, downgrades on failure</div>
-                          <div className="text-xs opacity-60 mt-1">💰 Upgrade to Yacht: 600,000 BOAT</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3 p-3 bg-white bg-opacity-10 rounded-lg">
-                        <div className="text-2xl">🛥️</div>
-                        <div>
-                          <div className="font-semibold">Yacht (Level 4)</div>
-                          <div className="text-sm opacity-80">85% success rate, 3.0x tokens, 15% bonus raft spawn chance</div>
-                          <div className="text-xs opacity-60 mt-1">💰 Maximum level - no further upgrades available</div>
-                        </div>
-                      </div>
-                    </div>
+                <div className="responsive-grid">
+                  <div className="terminal-bg p-4 rounded-lg border border-yellow-400 border-opacity-50">
+                    <h4 className="text-md font-bold text-yellow-400 mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
+                      💰 $BOAT OPERATIONS
+                    </h4>
+                    <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                      <li>• Buy new rafts</li>
+                      <li>• Upgrade boat levels</li>
+                      <li>• Run smuggling operations</li>
+                      <li>• Lower stakes, steady gains</li>
+                    </ul>
                   </div>
-
-                  <div className="space-y-4">
-                    <h4 className="font-bold text-lg">💰 Getting Started</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-start space-x-3">
-                        <div className="text-xl mt-1">1️⃣</div>
-                        <div>
-                          <div className="font-semibold">Get BOAT Tokens</div>
-                          <div className="text-sm opacity-80">You need BOAT tokens to buy rafts and play on runs</div>
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-3">
-                        <div className="text-xl mt-1">2️⃣</div>
-                        <div>
-                          <div className="font-semibold">Buy Your First Raft</div>
-                          <div className="text-sm opacity-80">Costs 100,000 BOAT tokens to start your fleet</div>
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-3">
-                        <div className="text-xl mt-1">3️⃣</div>
-                        <div>
-                          <div className="font-semibold">Start Smuggling</div>
-                          <div className="text-sm opacity-80">Play 10,000-80,000 BOAT per run</div>
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-3">
-                        <div className="text-xl mt-1">4️⃣</div>
-                        <div>
-                          <div className="font-semibold">Upgrade & Expand</div>
-                          <div className="text-sm opacity-80">Use tokens to upgrade boats and buy more</div>
-                        </div>
-                      </div>
-                    </div>
+                  
+                  <div className="terminal-bg p-4 rounded-lg border border-pink-400 border-opacity-50">
+                    <h4 className="text-md font-bold text-pink-400 mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
+                      🔥 $JOINT OPERATIONS
+                    </h4>
+                    <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                      <li>• High-risk smuggling runs</li>
+                      <li>• Massive potential payouts</li>
+                      <li>• Higher stakes required</li>
+                      <li>• More dangerous waters</li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -144,147 +114,140 @@ export default function Instructions() {
 
             {activeTab === 'gameplay' && (
               <div className="space-y-6">
-                <h3 className="text-xl font-bold mb-4">⚓ How Smuggling Runs Work</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="terminal-bg p-4 rounded-lg border border-cyan-400 border-opacity-50">
+                  <h3 className="text-lg font-bold text-cyan-400 mb-3 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+                    ⚓ RUNNING OPERATIONS
+                  </h3>
                   <div className="space-y-4">
-                    <h4 className="font-bold text-lg">🎲 Run Mechanics</h4>
-                    <div className="space-y-3">
-                      <div className="p-4 bg-green-500 bg-opacity-20 rounded-lg border border-green-500 border-opacity-50">
-                        <div className="font-bold text-green-200 mb-2">✅ SUCCESS</div>
-                        <ul className="text-sm space-y-1 text-green-100">
-                          <li>• Win 1.5x-3.0x your play back</li>
-                          <li>• Boat keeps its level</li>
-                          <li>• Yachts have 15% chance to spawn bonus raft</li>
-                        </ul>
-                      </div>
-                      <div className="p-4 bg-red-500 bg-opacity-20 rounded-lg border border-red-500 border-opacity-50">
-                        <div className="font-bold text-red-200 mb-2">❌ FAILURE</div>
-                        <ul className="text-sm space-y-1 text-red-100">
-                          <li>• Lose your entire play</li>
-                          <li>• Rafts get BURNED (destroyed)</li>
-                          <li>• Higher level boats get DOWNGRADED</li>
-                        </ul>
+                    <div className="flex items-start space-x-3">
+                      <span className="text-2xl">1️⃣</span>
+                      <div>
+                        <h4 className="font-bold text-yellow-400">SELECT YOUR VESSEL</h4>
+                        <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                          Each boat has different success rates and risk levels. Higher level boats = better odds.
+                        </p>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="font-bold text-lg">⏱️ Cooldowns & Limits</h4>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-white bg-opacity-10 rounded-lg">
-                        <div className="font-semibold mb-1">Run Cooldown</div>
-                        <div className="text-sm opacity-80">10 minutes between runs per boat</div>
+                    
+                    <div className="flex items-start space-x-3">
+                      <span className="text-2xl">2️⃣</span>
+                      <div>
+                        <h4 className="font-bold text-yellow-400">CHOOSE OPERATION MODE</h4>
+                        <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                          Pick $BOAT (safer) or $JOINT (riskier) from the dropdown on each boat card.
+                        </p>
                       </div>
-                      <div className="p-3 bg-white bg-opacity-10 rounded-lg">
-                        <div className="font-semibold mb-1">Play Range</div>
-                        <div className="text-sm opacity-80">Minimum: 10,000 BOAT<br/>Maximum: 80,000 BOAT</div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3">
+                      <span className="text-2xl">3️⃣</span>
+                      <div>
+                        <h4 className="font-bold text-yellow-400">SET YOUR STAKE</h4>
+                        <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                          Enter how much you want to risk. Higher stakes = bigger potential rewards.
+                        </p>
                       </div>
-                      <div className="p-3 bg-white bg-opacity-10 rounded-lg">
-                        <div className="font-semibold mb-1">Token Approval</div>
-                        <div className="text-sm opacity-80">First-time users need to approve BOAT spending</div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3">
+                      <span className="text-2xl">4️⃣</span>
+                      <div>
+                        <h4 className="font-bold text-yellow-400">INITIATE RUN</h4>
+                        <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                          Hit the button and watch the blockchain determine your fate. Success pays out, failure costs you.
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-yellow-500 bg-opacity-20 rounded-lg p-4 border border-yellow-500 border-opacity-50">
-                  <div className="font-bold text-yellow-200 mb-2">⚠️ Important Notes</div>
-                  <ul className="text-sm space-y-1 text-yellow-100">
-                    <li>• Rafts are high-risk: they get permanently burned on failure</li>
-                    <li>• Higher level boats are safer but cost more to upgrade</li>
-                    <li>• You can run multiple boats simultaneously if you own several</li>
-                    <li>• Results are determined by blockchain randomness - no manipulation possible</li>
-                  </ul>
+                <div className="responsive-grid">
+                  <div className="terminal-bg p-4 rounded-lg border border-green-400 border-opacity-50">
+                    <h4 className="text-md font-bold text-green-400 mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
+                      ✅ SUCCESS OUTCOMES
+                    </h4>
+                    <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                      <li>• Win your stake multiplied by boat level</li>
+                      <li>• Yacht runs can spawn bonus rafts</li>
+                      <li>• Keep your boat for more runs</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="terminal-bg p-4 rounded-lg border border-red-400 border-opacity-50">
+                    <h4 className="text-md font-bold text-red-400 mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
+                      ❌ FAILURE OUTCOMES
+                    </h4>
+                    <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                      <li>• Lose your staked tokens</li>
+                      <li>• Boat might get burned or downgraded</li>
+                      <li>• Higher level boats = worse penalties</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             )}
 
             {activeTab === 'strategy' && (
               <div className="space-y-6">
-                <h3 className="text-xl font-bold mb-4">🧠 Game Strategies</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="terminal-bg p-4 rounded-lg border border-cyan-400 border-opacity-50">
+                  <h3 className="text-lg font-bold text-cyan-400 mb-3 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+                    🧠 CRIMINAL MASTERMIND TIPS
+                  </h3>
                   <div className="space-y-4">
-                    <h4 className="font-bold text-lg">🎯 Beginner Strategy</h4>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
-                        <div className="font-semibold mb-2">Start Conservative</div>
-                        <ul className="text-sm space-y-1 opacity-90">
-                          <li>• Buy 2-3 rafts initially</li>
-                          <li>• Play smaller amounts (10k-20k BOAT)</li>
-                          <li>• Accept that some rafts will burn</li>
-                          <li>• Use winnings to get more rafts</li>
-                        </ul>
-                      </div>
-                      <div className="p-3 bg-green-500 bg-opacity-20 rounded-lg">
-                        <div className="font-semibold mb-2">Scale Gradually</div>
-                        <ul className="text-sm space-y-1 opacity-90">
-                          <li>• Upgrade successful rafts to dinghies</li>
-                          <li>• Higher success rates = better odds</li>
-                          <li>• Keep some rafts for risky plays</li>
-                        </ul>
-                      </div>
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-yellow-400">🚀 START SMALL, SCALE UP</h4>
+                      <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                        Begin with rafts and $BOAT operations. Build your fleet before attempting high-stakes $JOINT runs.
+                      </p>
                     </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="font-bold text-lg">🚀 Advanced Strategy</h4>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
-                        <div className="font-semibold mb-2">Yacht Focus</div>
-                        <ul className="text-sm space-y-1 opacity-90">
-                          <li>• 85% success rate is very high</li>
-                          <li>• 3.0x multiplier on wins</li>
-                          <li>• 15% chance for bonus rafts</li>
-                          <li>• Good for large plays</li>
-                        </ul>
-                      </div>
-                      <div className="p-3 bg-yellow-500 bg-opacity-20 rounded-lg">
-                        <div className="font-semibold mb-2">💰 Upgrade Costs</div>
-                        <ul className="text-sm space-y-1 opacity-90">
-                          <li>• Raft → Dinghy: 150,000 BOAT</li>
-                          <li>• Dinghy → Speedboat: 300,000 BOAT</li>
-                          <li>• Speedboat → Yacht: 600,000 BOAT</li>
-                          <li>• Total to max level: 1,050,000 BOAT</li>
-                        </ul>
-                      </div>
-                      <div className="p-3 bg-orange-500 bg-opacity-20 rounded-lg">
-                        <div className="font-semibold mb-2">Smart Play</div>
-                        <ul className="text-sm space-y-1 opacity-90">
-                          <li>• Only play with tokens you can afford to lose</li>
-                          <li>• Spread plays across multiple boats</li>
-                          <li>• Consider upgrade costs when planning</li>
-                        </ul>
-                      </div>
+                    
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-yellow-400">⚖️ RISK MANAGEMENT</h4>
+                      <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                        Never stake more than you can afford to lose. Diversify across multiple boats to spread risk.
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-yellow-400">🔄 UPGRADE PATH</h4>
+                      <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                        Focus on upgrading boats to Yacht level for the best success rates and bonus raft spawning.
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-yellow-400">⏰ TIMING IS KEY</h4>
+                      <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                        Watch for cooldown periods between runs. Plan your operations during peak pool times.
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-blue-500 bg-opacity-20 rounded-lg p-4 border border-blue-500 border-opacity-50">
-                  <div className="font-bold text-blue-200 mb-3">💡 Game Tips</div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-100">
-                    <div>
-                      <div className="font-semibold mb-1">🎰 Know the Odds</div>
-                      <div>Higher level boats have better success rates but cost more to upgrade</div>
-                    </div>
-                    <div>
-                      <div className="font-semibold mb-1">⚡ Yacht Bonus</div>
-                      <div>Yachts can spawn free rafts - each raft costs 100,000 BOAT normally</div>
-                    </div>
-                    <div>
-                      <div className="font-semibold mb-1">📊 Token Management</div>
-                      <div>Keep enough BOAT to replace burned rafts and try again</div>
-                    </div>
-                    <div>
-                      <div className="font-semibold mb-1">🕒 Timing</div>
-                      <div>Run all boats at once since there's a 10-minute cooldown</div>
-                    </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
+                    <div className="text-2xl mb-2">🪜</div>
+                    <div className="text-cyan-400 font-bold text-sm">RAFT</div>
+                    <div className="text-pink-400 text-xs">Safe Start</div>
+                  </div>
+                  <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
+                    <div className="text-2xl mb-2">🛶</div>
+                    <div className="text-cyan-400 font-bold text-sm">DINGHY</div>
+                    <div className="text-pink-400 text-xs">Better Odds</div>
+                  </div>
+                  <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
+                    <div className="text-2xl mb-2">🚤</div>
+                    <div className="text-cyan-400 font-bold text-sm">SPEEDBOAT</div>
+                    <div className="text-pink-400 text-xs">High Risk</div>
+                  </div>
+                  <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
+                    <div className="text-2xl mb-2">🛥️</div>
+                    <div className="text-cyan-400 font-bold text-sm">YACHT</div>
+                    <div className="text-pink-400 text-xs">Elite Status</div>
                   </div>
                 </div>
               </div>
             )}
-
           </div>
         </div>
       )}

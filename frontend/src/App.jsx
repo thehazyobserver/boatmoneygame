@@ -12,20 +12,29 @@ function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <div className="min-h-screen night-ocean scanlines relative">
-          {/* 80s grid overlay */}
-          <div className="fixed inset-0 opacity-10 pointer-events-none" style={{
+          {/* Enhanced 80s grid overlay */}
+          <div className="fixed inset-0 opacity-5 pointer-events-none" style={{
             backgroundImage: `
-              linear-gradient(rgba(0, 245, 255, 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 245, 255, 0.3) 1px, transparent 1px)
+              linear-gradient(rgba(0, 245, 255, 0.4) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0, 245, 255, 0.4) 1px, transparent 1px)
             `,
-            backgroundSize: '50px 50px'
+            backgroundSize: '60px 60px',
+            animation: 'pulse 4s ease-in-out infinite'
           }}></div>
           
+          {/* Navbar with enhanced styling */}
           <Navbar />
-          <div className="container mx-auto px-4 pt-6 relative z-10">
-            <RunResults />
-          </div>
-          <GameDashboard />
+          
+          {/* Main content with better spacing */}
+          <main className="relative z-10">
+            {/* Run Results positioned prominently */}
+            <div className="container mx-auto px-4 pt-4">
+              <RunResults />
+            </div>
+            
+            {/* Game Dashboard with enhanced layout */}
+            <GameDashboard />
+          </main>
         </div>
       </QueryClientProvider>
     </WagmiProvider>
