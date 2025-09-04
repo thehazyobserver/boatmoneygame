@@ -42,8 +42,12 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
     uint256 public minStake = 20_000 ether;    // 20k $JOINT min
     uint256 public maxStake = 420_000 ether;   // 420k $JOINT max
     uint256 public runCooldown = 10 minutes;
+    uint16  public capBps = 500;               // max % of pool per single win (5% - more conservative)
     address public treasury;
     uint16  public treasuryBps = 0;            // optional skim from stakes (<=10%)
+
+    // Maximum absolute payouts per level for additional protection
+    mapping(uint8 => uint256) public maxPayoutAbs;
 
     mapping(uint256 => uint256) public lastRunAt;
     mapping(uint256 => uint256) public nonceOf;
@@ -61,6 +65,12 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
         JOINT = jointToken;
         NFT = boatNft;
         BOAT_GAME = boatGame;
+        
+        // Set conservative maximum absolute payouts per level
+        maxPayoutAbs[1] = 100_000 ether;  // 100k max for Raft
+        maxPayoutAbs[2] = 250_000 ether;  // 250k max for Dinghy
+        maxPayoutAbs[3] = 500_000 ether;  // 500k max for Speedboat
+        maxPayoutAbs[4] = 1_000_000 ether; // 1M max for Yacht
     }
 
     // ===== Core Game Function =====
@@ -84,8 +94,20 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
         uint256 rewardPaid = 0;
         
         if (success) {
-            rewardPaid = (stake * _getRewardMultBps(lvl)) / 10_000;
-            require(JOINT.balanceOf(address(this)) >= rewardPaid, "Insufficient pool");
+            uint256 rawReward = (stake * _getRewardMultBps(lvl)) / 10_000;
+            uint256 poolBal = JOINT.balanceOf(address(this));
+            
+            // Apply pool percentage cap (like BoatGame)
+            uint256 capByPool = (poolBal * capBps) / 10_000;
+            uint256 capped = rawReward;
+            if (capByPool > 0 && capped > capByPool) capped = capByPool;
+            
+            // Apply absolute maximum payout cap
+            uint256 maxAbs = maxPayoutAbs[lvl];
+            if (maxAbs > 0 && capped > maxAbs) capped = maxAbs;
+            
+            require(poolBal >= capped, "Insufficient pool");
+            rewardPaid = capped;
             JOINT.safeTransfer(msg.sender, rewardPaid);
             stats[msg.sender].runsWon += 1;
         } else {
