@@ -1,9 +1,14 @@
 // Contract addresses - UPDATE THESE AFTER DEPLOYMENT
 export const BOAT_GAME_ADDRESS = '0xab004722930Dd89C3698C73658FE803e8632fdF3' // Your deployed BoatGame address
-export const JOINT_BOAT_GAME_ADDRESS = '0xYourJointBoatGameAddressHere' // ADD YOUR DEPLOYED JointBoatGame ADDRESS HERE
+export const JOINT_BOAT_GAME_ADDRESS = '0x37f989151ac5B8383ca6bB541Ac2694adB0609cB' // ADD YOUR DEPLOYED JointBoatGame ADDRESS HERE
 export const BOAT_NFT_ADDRESS = '0x9CB74A9fF49c06a8119854ac86eF3920e9aCe983'  // Your deployed BoatNFT address
-export const JOINT_TOKEN_ADDRESS = '0xYourJointTokenAddressHere' // ADD YOUR $JOINT TOKEN ADDRESS HERE
+export const JOINT_TOKEN_ADDRESS = '0xC046dCb16592FBb3F9fA0C629b8D93090dD4cB76' // ADD YOUR $JOINT TOKEN ADDRESS HERE
+export const BOAT_TOKEN_ADDRESS = '0x32aF310fA33520ffB91bF8DC73251F0244Efca2C'  // BOAT token address
 // Note: BOAT token address will be read from the game contract
+
+// Check if JOINT contracts are deployed (not placeholder addresses)
+const isJointContractDeployed = JOINT_BOAT_GAME_ADDRESS !== '0xYourJointBoatGameAddressHere'
+const isJointTokenDeployed = JOINT_TOKEN_ADDRESS !== '0xYourJointTokenAddressHere'
 
 // Game configurations
 export const GAME_CONFIGS = {
@@ -11,10 +16,11 @@ export const GAME_CONFIGS = {
     name: 'BOAT Game',
     symbol: '$BOAT',
     contractAddress: BOAT_GAME_ADDRESS,
-    tokenAddress: BOAT_GAME_ADDRESS, // BOAT token address will be read from the game contract
+    tokenAddress: BOAT_TOKEN_ADDRESS,
     minStake: '10000',
     maxStake: '80000',
-    decimals: 18
+    decimals: 18,
+    isDeployed: true
   },
   JOINT: {
     name: 'JOINT Game', 
@@ -23,7 +29,8 @@ export const GAME_CONFIGS = {
     tokenAddress: JOINT_TOKEN_ADDRESS,
     minStake: '20000',
     maxStake: '420000',
-    decimals: 18
+    decimals: 18,
+    isDeployed: isJointContractDeployed && isJointTokenDeployed
   }
 }
 
@@ -50,5 +57,12 @@ export const contracts = {
     address: BOAT_NFT_ADDRESS,
     abi: BOAT_NFT_ABI
   },
-  // BOAT token contract will be accessed via the game contract's BOAT() function
+  boatToken: {
+    address: BOAT_TOKEN_ADDRESS,
+    abi: BOAT_TOKEN_ABI
+  },
+  jointToken: {
+    address: JOINT_TOKEN_ADDRESS,
+    abi: BOAT_TOKEN_ABI
+  }
 }

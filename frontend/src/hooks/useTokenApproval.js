@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { parseEther } from 'viem'
-import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
+import { contracts, BOAT_TOKEN_ABI, BOAT_GAME_ABI, JOINT_BOAT_GAME_ABI, GAME_CONFIGS } from '../config/contracts'
 
 export function useTokenApproval(selectedToken = 'BOAT') {
   const { address } = useAccount()
@@ -17,13 +17,24 @@ export function useTokenApproval(selectedToken = 'BOAT') {
     return selectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
   }
 
+  // Get the actual token address from the game contract
+  const { data: actualTokenAddress } = useReadContract({
+    address: getGameContract().address,
+    abi: selectedToken === 'JOINT' ? JOINT_BOAT_GAME_ABI : BOAT_GAME_ABI,
+    functionName: selectedToken === 'JOINT' ? 'JOINT' : 'BOAT',
+    query: { enabled: true }
+  })
+
+  // Use the actual token address if available, fallback to config
+  const tokenAddress = actualTokenAddress || gameConfig.tokenAddress
+
   // Check current allowance
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: gameConfig.tokenAddress,
+    address: tokenAddress,
     abi: BOAT_TOKEN_ABI,
     functionName: 'allowance',
     args: [address, getGameContract().address],
-    query: { enabled: !!address }
+    query: { enabled: !!address && !!tokenAddress }
   })
 
   // Check if we have enough allowance for a specific amount
@@ -34,10 +45,14 @@ export function useTokenApproval(selectedToken = 'BOAT') {
 
   // Approve tokens
   const approveTokens = async (amount) => {
+    if (!tokenAddress) {
+      throw new Error(`${selectedToken} token address not found`)
+    }
+    
     setIsApproving(true)
     try {
       const result = await writeApproval({
-        address: gameConfig.tokenAddress,
+        address: tokenAddress,
         abi: BOAT_TOKEN_ABI,
         functionName: 'approve',
         args: [getGameContract().address, amount]
@@ -66,6 +81,6 @@ export function useTokenApproval(selectedToken = 'BOAT') {
     approveTokens,
     approveMax,
     isApproving: isApproving || isApprovePending,
-    tokenAddress: gameConfig.tokenAddress
+    tokenAddress: tokenAddress
   }
 }
