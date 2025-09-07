@@ -10,27 +10,36 @@ export const BOAT_TOKEN_ADDRESS = '0x32aF310fA33520ffB91bF8DC73251F0244Efca2C'  
 const isJointContractDeployed = JOINT_BOAT_GAME_ADDRESS !== '0xYourJointBoatGameAddressHere'
 const isJointTokenDeployed = JOINT_TOKEN_ADDRESS !== '0xYourJointTokenAddressHere'
 
-// Game configurations
+// Game configurations - Self-sustaining pool model (no treasury fees)
 export const GAME_CONFIGS = {
   BOAT: {
     name: 'BOAT Game',
     symbol: '$BOAT',
     contractAddress: BOAT_GAME_ADDRESS,
     tokenAddress: BOAT_TOKEN_ADDRESS,
-    minStake: '10000',
-    maxStake: '80000',
+    minStake: '10000',        // Keep same entry point
+    maxStake: '120000',       // Increased from 80k (+50%)
     decimals: 18,
-    isDeployed: true
+    isDeployed: true,
+    // Self-sustaining costs (moderate reductions)
+    raftCost: '60000',        // Reduced from 100k (-40%)
+    upgradeCosts: {
+      1: '100000',            // L1→L2, reduced from 150k (-33%)
+      2: '200000',            // L2→L3, reduced from 300k (-33%)  
+      3: '300000'             // L3→L4, reduced from 600k (-50%)
+    }
+    // NO treasury fee - pure pool economics
   },
   JOINT: {
     name: 'JOINT Game', 
     symbol: '$JOINT',
     contractAddress: JOINT_BOAT_GAME_ADDRESS,
     tokenAddress: JOINT_TOKEN_ADDRESS,
-    minStake: '20000',
-    maxStake: '120000',
+    minStake: '30000',        // Increased from 20k (+50%)
+    maxStake: '200000',       // Increased from 120k (+67%)
     decimals: 18,
     isDeployed: isJointContractDeployed && isJointTokenDeployed
+    // NO treasury fee - pure pool economics
   }
 }
 
