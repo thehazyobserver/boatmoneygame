@@ -10,8 +10,9 @@ export const config = createConfig({
   ],
   transports: {
     [sonic.id]: fallback([
-      http('https://sonic.drpc.org'),
-      http('https://rpc.soniclabs.com'),
+      http('https://sonic.drpc.org'),                                    // Primary: Public RPC
+      http('https://rpc.soniclabs.com'),                                // Secondary: Public RPC  
+      http('https://sonic-mainnet.g.alchemy.com/v2/QiDLI_B9X1EAVYatlN9Jm'), // Fallback: Alchemy (rate limited)
     ]),
   },
 })
