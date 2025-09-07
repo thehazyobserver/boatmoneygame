@@ -55,8 +55,43 @@ export default function GameDashboard() {
             <div className="terminal-bg p-4 md:p-6 rounded-lg border border-cyan-400 neon-glow hover:border-yellow-400 transition-all duration-300">
               <div className="text-3xl md:text-4xl mb-3">🛥️</div>
               <div className="font-bold text-cyan-400 text-sm md:text-base" style={{ fontFamily: 'Orbitron, monospace' }}>YACHT</div>
-              <div className="text-xs md:text-sm text-pink-400" style={{ fontFamily: 'Rajdhani, monospace' }}>MAX PROFIT</div>
+              <div className="text-xs md:text-sm text-pink-400" style={{ fontFamily: 'Rajdhani, monospace' }}>MAX REWARDS</div>
               <div className="text-xs text-yellow-400 mt-1">Elite Status</div>
+            </div>
+          </div>
+
+          {/* Token Purchase Buttons */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center max-w-2xl">
+            <a
+              href="https://fatfinger.fun/app/token/0x32aF310fA33520ffB91bF8DC73251F0244Efca2C"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold text-center rounded-lg hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 neon-glow"
+              style={{ fontFamily: 'Orbitron, monospace' }}
+            >
+              💰 GET MORE $BOAT
+            </a>
+            <a
+              href="https://equalizer.exchange/swap?fromToken=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&toToken=0xC046dCb16592FBb3F9fA0C629b8D93090dD4cB76"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold text-center rounded-lg hover:from-pink-400 hover:to-purple-400 transition-all duration-300 neon-glow"
+              style={{ fontFamily: 'Orbitron, monospace' }}
+            >
+              🚀 GET MORE $JOINT
+            </a>
+          </div>
+
+          {/* Experimental Warning */}
+          <div className="mt-8 max-w-4xl mx-auto">
+            <div className="bg-gradient-to-r from-red-900/50 to-orange-900/50 border-2 border-red-500 rounded-lg p-4 text-center">
+              <div className="text-red-400 text-lg font-bold mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
+                ⚠️ EXPERIMENTAL GAME WARNING ⚠️
+              </div>
+              <div className="text-yellow-300 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                This is an experimental blockchain game. Use at your own risk.<br/>
+                Only invest what you can afford to lose.
+              </div>
             </div>
           </div>
         </div>
@@ -66,8 +101,45 @@ export default function GameDashboard() {
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
+      {/* Experimental Warning */}
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-gradient-to-r from-red-900/50 to-orange-900/50 border-2 border-red-500 rounded-lg p-4 text-center">
+          <div className="text-red-400 text-lg font-bold mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
+            ⚠️ EXPERIMENTAL GAME WARNING ⚠️
+          </div>
+          <div className="text-yellow-300 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
+            This is an experimental blockchain game. Use at your own risk.<br/>
+            Only invest what you can afford to lose.
+          </div>
+        </div>
+      </div>
+
       {/* Instructions - Always visible but collapsible */}
       <Instructions />
+      
+      {/* Token Purchase Buttons */}
+      <div className="max-w-4xl mx-auto">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="https://fatfinger.fun/app/token/0x32aF310fA33520ffB91bF8DC73251F0244Efca2C"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold text-center rounded-lg hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 neon-glow"
+            style={{ fontFamily: 'Orbitron, monospace' }}
+          >
+            💰 GET MORE $BOAT
+          </a>
+          <a
+            href="https://equalizer.exchange/swap?fromToken=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&toToken=0xC046dCb16592FBb3F9fA0C629b8D93090dD4cB76"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 px-6 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold text-center rounded-lg hover:from-pink-400 hover:to-purple-400 transition-all duration-300 neon-glow"
+            style={{ fontFamily: 'Orbitron, monospace' }}
+          >
+            🚀 GET MORE $JOINT
+          </a>
+        </div>
+      </div>
       
       {/* Top Stats Row - Enhanced responsive design */}
       <div className="responsive-grid">

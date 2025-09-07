@@ -121,7 +121,7 @@ export default function Leaderboard() {
         totalWins: selectedGame === 'BOAT' ? user.boatWins : user.jointWins,
         winRate: 100, // We don't track total runs yet, so assume all tracked events are wins
         highestLevel: 4, // Default to highest level for display
-        netProfit: BigInt(user.boatWins * 1000 + user.jointWins * 1500) * BigInt(10**18), // Mock profit calculation
+        netProfit: BigInt(user.boatWins * 1000 + user.jointWins * 1500) * BigInt(10**18), // Mock earnings calculation
         totalRuns: selectedGame === 'BOAT' ? user.boatWins : user.jointWins,
         totalEarnings: BigInt(user.boatWins * 1200 + user.jointWins * 1800) * BigInt(10**18), // Mock earnings
         totalWagered: BigInt(user.boatWins * 200 + user.jointWins * 300) * BigInt(10**18) // Mock wagered
@@ -189,9 +189,9 @@ export default function Leaderboard() {
     return `#${index + 1}`
   }
 
-  const getNetProfitColor = (netProfit) => {
-    if (netProfit > 0) return 'text-green-400'
-    if (netProfit < 0) return 'text-red-400'
+  const getNetEarningsColor = (netEarnings) => {
+    if (netEarnings > 0) return 'text-green-400'
+    if (netEarnings < 0) return 'text-red-400'
     return 'text-yellow-400'
   }
 
