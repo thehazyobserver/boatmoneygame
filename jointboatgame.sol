@@ -66,11 +66,26 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
         NFT = boatNft;
         BOAT_GAME = boatGame;
         
-        // Set conservative maximum absolute payouts per level
-        maxPayoutAbs[1] = 100_000 ether;  // 100k max for Raft
-        maxPayoutAbs[2] = 250_000 ether;  // 250k max for Dinghy
-        maxPayoutAbs[3] = 500_000 ether;  // 500k max for Speedboat
-        maxPayoutAbs[4] = 1_000_000 ether; // 1M max for Yacht
+        // Initialize with final deployment parameters
+        minStake = 7_800 ether;    // 7.8k $JOINT min
+        maxStake = 78_000 ether;   // 78k $JOINT max
+        
+        // Set final level parameters
+        levelSuccessBps[1] = 5000;  // 50%
+        levelSuccessBps[2] = 5500;  // 55%
+        levelSuccessBps[3] = 6000;  // 60%
+        levelSuccessBps[4] = 6500;  // 65%
+        
+        levelMultiplierBps[1] = 15000; // 1.50x
+        levelMultiplierBps[2] = 16000; // 1.60x
+        levelMultiplierBps[3] = 16500; // 1.65x
+        levelMultiplierBps[4] = 17000; // 1.70x
+        
+        // Set conservative maximum absolute payouts per level (set to 0 for unlimited)
+        maxPayoutAbs[1] = 0;  // Unlimited
+        maxPayoutAbs[2] = 0;  // Unlimited
+        maxPayoutAbs[3] = 0;  // Unlimited
+        maxPayoutAbs[4] = 0;  // Unlimited
     }
 
     // ===== Core Game Function =====
@@ -154,6 +169,30 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
         require(_bps <= 1_000, "Max 10%"); 
         treasury = _treasury; 
         treasuryBps = _bps; 
+    }
+
+    // Add configurable level parameters
+    mapping(uint8 => uint16) public levelSuccessBps;
+    mapping(uint8 => uint16) public levelMultiplierBps;
+    
+    function setLevelParams(uint8 lvl, uint16 successBps, uint8 failMode) external onlyOwner {
+        require(lvl >= 1 && lvl <= 4, "Invalid level");
+        require(successBps <= 10000, "Invalid success rate");
+        levelSuccessBps[lvl] = successBps;
+        // failMode ignored - using same logic as hardcoded (L1 burns, L2-4 downgrade)
+    }
+    
+    function setStakeParams(uint8 lvl, uint256 minStake_, uint256 maxStake_, uint16 rewardMultBps, uint256 maxPayoutAbs_) external onlyOwner {
+        require(lvl >= 1 && lvl <= 4, "Invalid level");
+        require(rewardMultBps <= 50000, "Invalid multiplier"); // max 5x
+        levelMultiplierBps[lvl] = rewardMultBps;
+        maxPayoutAbs[lvl] = maxPayoutAbs_;
+        // Only update global stakes on level 1 to keep them uniform
+        if (lvl == 1) {
+            require(minStake_ > 0 && maxStake_ >= minStake_, "Bad stake bounds");
+            minStake = minStake_;
+            maxStake = maxStake_;
+        }
     }
     
     function pause() external onlyOwner { _pause(); }
