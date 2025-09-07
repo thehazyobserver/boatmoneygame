@@ -10,36 +10,55 @@ export const BOAT_TOKEN_ADDRESS = '0x32aF310fA33520ffB91bF8DC73251F0244Efca2C'  
 const isJointContractDeployed = JOINT_BOAT_GAME_ADDRESS !== '0xYourJointBoatGameAddressHere'
 const isJointTokenDeployed = JOINT_TOKEN_ADDRESS !== '0xYourJointTokenAddressHere'
 
-// Game configurations - Self-sustaining pool model (no treasury fees)
+// Game configurations - Final uniform stakes with treasury fees
 export const GAME_CONFIGS = {
   BOAT: {
     name: 'BOAT Game',
     symbol: '$BOAT',
     contractAddress: BOAT_GAME_ADDRESS,
     tokenAddress: BOAT_TOKEN_ADDRESS,
-    minStake: '10000',        // Keep same entry point
-    maxStake: '120000',       // Increased from 80k (+50%)
+    minStake: '5000',         // Uniform stakes 5k-50k
+    maxStake: '50000',        // Uniform stakes 5k-50k
     decimals: 18,
     isDeployed: true,
-    // Self-sustaining costs (moderate reductions)
-    raftCost: '60000',        // Reduced from 100k (-40%)
+    // Final sustainable costs
+    raftCost: '50000',        // Reduced from 100k (-50%)
     upgradeCosts: {
-      1: '100000',            // L1→L2, reduced from 150k (-33%)
-      2: '200000',            // L2→L3, reduced from 300k (-33%)  
-      3: '300000'             // L3→L4, reduced from 600k (-50%)
+      1: '80000',             // L1→L2, reduced from 150k (-47%)
+      2: '150000',            // L2→L3, reduced from 300k (-50%)  
+      3: '250000'             // L3→L4, reduced from 600k (-58%)
+    },
+    treasuryFee: '0',         // 0% treasury fee
+    levels: {
+      1: { successRate: 50, multiplier: 1.50 },   // 50% success, 1.50x payout
+      2: { successRate: 55, multiplier: 1.60 },   // 55% success, 1.60x payout
+      3: { successRate: 60, multiplier: 1.65 },   // 60% success, 1.65x payout  
+      4: { successRate: 65, multiplier: 1.70 }    // 65% success, 1.70x payout
     }
-    // NO treasury fee - pure pool economics
   },
   JOINT: {
     name: 'JOINT Game', 
     symbol: '$JOINT',
     contractAddress: JOINT_BOAT_GAME_ADDRESS,
     tokenAddress: JOINT_TOKEN_ADDRESS,
-    minStake: '30000',        // Increased from 20k (+50%)
-    maxStake: '200000',       // Increased from 120k (+67%)
+    minStake: '7800',         // Equiv to 5k BOAT (1.56x ratio)
+    maxStake: '78000',        // Equiv to 50k BOAT (1.56x ratio)
     decimals: 18,
-    isDeployed: isJointContractDeployed && isJointTokenDeployed
-    // NO treasury fee - pure pool economics
+    isDeployed: isJointContractDeployed && isJointTokenDeployed,
+    treasuryFee: '2.5',       // 2.5% treasury fee for sustainability
+    // Upgrades paid in BOAT tokens (cross-token system)
+    upgradeCosts: {
+      1: '0',                 // No upgrade costs - paid in BOAT
+      2: '0',                 
+      3: '0'
+    },
+    // Inherits same success rates and multipliers as BOAT
+    levels: {
+      1: { successRate: 50, multiplier: 1.50 },
+      2: { successRate: 55, multiplier: 1.60 },
+      3: { successRate: 60, multiplier: 1.65 },
+      4: { successRate: 65, multiplier: 1.70 }
+    }
   }
 }
 
