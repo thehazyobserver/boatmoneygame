@@ -80,9 +80,15 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const needsRunApproval = playAmountWei > 0 && !hasAllowance(playAmountWei)
   const needsUpgradeApproval = upgradeCost && !hasUpgradeAllowance(upgradeCost)
   
+  // Input validation
+  const playAmountNum = parseFloat(playAmount || '0')
+  const isValidAmount = playAmountNum >= parseInt(gameConfig.minStake) && playAmountNum <= parseInt(gameConfig.maxStake)
+  const hasValidAmount = playAmount && !isNaN(playAmountNum) && isValidAmount
+  
   const getRunButtonText = () => {
     if (isOnCooldown) return 'COOLING DOWN: ' + formattedTime
     if (isPending || isConfirming) return 'RUNNING...'
+    if (!hasValidAmount) return 'ENTER VALID AMOUNT'
     if (needsRunApproval) return `APPROVE ${gameConfig.symbol} FIRST`
     if (isApproving) return 'APPROVING...'
     return 'START RUN'
@@ -96,7 +102,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   }
 
   const handleRun = async () => {
-    if (isOnCooldown || isPending || isConfirming || isApproving) return
+    if (isOnCooldown || isPending || isConfirming || isApproving || !hasValidAmount) return
     
     // Handle approval first if needed
     if (needsRunApproval) {
@@ -241,7 +247,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
           <button
             onClick={handleRun}
-            disabled={isOnCooldown || isPending || isConfirming || isApproving}
+            disabled={isOnCooldown || isPending || isConfirming || isApproving || !hasValidAmount}
             className="w-full px-6 py-4 vice-button disabled:bg-gray-700 disabled:opacity-50 text-white font-bold text-lg transition-all duration-300"
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
