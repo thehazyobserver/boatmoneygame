@@ -1,4 +1,4 @@
-import { http, createConfig } from 'wagmi'
+import { http, createConfig, fallback } from 'wagmi'
 import { sonic } from 'wagmi/chains'
 import { injected, metaMask } from 'wagmi/connectors'
 
@@ -9,9 +9,9 @@ export const config = createConfig({
     metaMask(),
   ],
   transports: {
-    [sonic.id]: [
+    [sonic.id]: fallback([
       http('https://sonic.drpc.org'),
       http('https://rpc.soniclabs.com'),
-    ],
+    ]),
   },
 })
