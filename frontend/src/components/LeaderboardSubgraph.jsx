@@ -34,7 +34,17 @@ export default function Leaderboard() {
         const data = JSON.parse(cached)
         // Cache is valid for 2 minutes
         if (Date.now() - data.timestamp < 120000) {
-          return data
+          // Convert string values back to BigInt
+          const deserializedData = data.data.map(item => ({
+            ...item,
+            netProfit: BigInt(item.netProfit || '0'),
+            totalEarnings: BigInt(item.totalEarnings || '0'),
+            totalWagered: BigInt(item.totalWagered || '0')
+          }))
+          return {
+            ...data,
+            data: deserializedData
+          }
         }
       }
     } catch (error) {
@@ -45,8 +55,16 @@ export default function Leaderboard() {
 
   const setCachedData = (game, data) => {
     try {
+      // Convert BigInt values to strings for JSON serialization
+      const serializableData = data.map(item => ({
+        ...item,
+        netProfit: item.netProfit?.toString() || '0',
+        totalEarnings: item.totalEarnings?.toString() || '0',
+        totalWagered: item.totalWagered?.toString() || '0'
+      }))
+      
       localStorage.setItem(`leaderboard_subgraph_${game}`, JSON.stringify({
-        data,
+        data: serializableData,
         timestamp: Date.now()
       }))
     } catch (error) {
@@ -118,7 +136,14 @@ export default function Leaderboard() {
       console.log(`Successfully loaded ${transformedData.length} players from subgraph`)
     } catch (error) {
       console.error('Error fetching from subgraph:', error)
-      setError('SUBGRAPH ERROR - Unable to fetch data')
+      
+      // Check if it's a syncing error
+      const errorMessage = error?.response?.errors?.[0]?.message || error.message || 'Unknown error'
+      if (errorMessage.includes('has not started syncing yet')) {
+        setError('SUBGRAPH SYNCING - Wait for blockchain activity to populate leaderboard')
+      } else {
+        setError('SUBGRAPH ERROR - Unable to fetch data')
+      }
       
       // Fallback to mock data
       const mockData = [
