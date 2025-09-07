@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { usePublicClient, useAccount } from 'wagmi'
 import { formatEther, parseEther } from 'viem'
 import { contracts } from '../config/contracts'
+import { formatCompactNumber, formatPercentage } from '../utils/formatters'
 
 const BOAT_EMOJIS = {
   1: '🚣',
@@ -331,10 +332,7 @@ export default function Leaderboard() {
   }
 
   const formatNumber = (value, decimals = 2) => {
-    const num = parseFloat(formatEther(value))
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
-    return num.toFixed(decimals)
+    return formatCompactNumber(value, decimals)
   }
 
   const getRankEmoji = (index) => {
@@ -482,7 +480,7 @@ export default function Leaderboard() {
                   </td>
                   <td className="py-4 text-right">
                     <div className="text-cyan-400 font-bold" style={{ fontFamily: 'Orbitron, monospace' }}>
-                      {player.winRate.toFixed(1)}%
+                      {formatPercentage(player.winRate)}
                     </div>
                   </td>
                   <td className="py-4 text-right">

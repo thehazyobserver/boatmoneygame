@@ -4,6 +4,7 @@ import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'
 import { useCooldownTimer } from '../hooks/useCooldownTimer'
+import { formatTokenAmount, formatInteger } from '../utils/formatters'
 
 const BOAT_EMOJIS = {
   1: '🚣',
@@ -203,7 +204,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
         {!isMaxLevel && (
           <div className="w-full text-center space-y-3 border border-yellow-400 rounded-lg p-4 bg-yellow-900/20">
             <div className="text-yellow-400 text-sm font-bold" style={{ fontFamily: 'Orbitron, monospace' }}>
-              UPGRADE COST: {upgradeCost ? formatEther(upgradeCost) : '...'} $BOAT
+              UPGRADE COST: {upgradeCost ? formatTokenAmount(upgradeCost, 0) : '...'} $BOAT
             </div>
             <button
               onClick={handleUpgrade}
@@ -232,10 +233,10 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
               style={{ fontFamily: 'Orbitron, monospace' }}
             />
             <div className="text-xs text-pink-400 mt-1 font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
-              Range: {parseInt(gameConfig.minStake).toLocaleString()} - {parseInt(gameConfig.maxStake).toLocaleString()} {gameConfig.symbol}
+              Range: {formatInteger(gameConfig.minStake)} - {formatInteger(gameConfig.maxStake)} {gameConfig.symbol}
             </div>
             <div className="text-cyan-400 text-sm font-bold mt-2" style={{ fontFamily: 'Orbitron, monospace' }}>
-              YOUR {gameConfig.symbol}: {tokenBalance ? parseFloat(formatEther(tokenBalance)).toFixed(2) : '0.00'}
+              YOUR {gameConfig.symbol}: {tokenBalance ? formatTokenAmount(tokenBalance) : '0.00'}
             </div>
           </div>
 
@@ -252,7 +253,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             {isOnCooldown ? (
               <span className="text-orange-300">Cooldown: {formattedTime} remaining</span>
             ) : (
-              <span>10-minute cooldown | Play: {parseInt(gameConfig.minStake).toLocaleString()}-{parseInt(gameConfig.maxStake).toLocaleString()} {gameConfig.symbol}</span>
+              <span>10-minute cooldown | Play: {formatInteger(gameConfig.minStake)}-{formatInteger(gameConfig.maxStake)} {gameConfig.symbol}</span>
             )}
           </div>
         </div>

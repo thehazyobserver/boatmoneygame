@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAccount, useReadContract } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
+import { formatTokenAmount, formatInteger } from '../utils/formatters'
 
 export default function UserStats() {
   const { address, isConnected } = useAccount()
@@ -56,7 +57,7 @@ export default function UserStats() {
   const stats = [
     {
       label: `${gameConfig.symbol} Tokens`,
-      value: tokenBalance ? parseFloat(formatEther(tokenBalance)).toFixed(2) : '0.00',
+      value: tokenBalance ? formatTokenAmount(tokenBalance) : '0.00',
       suffix: gameConfig.symbol,
       icon: '🪙'
     },

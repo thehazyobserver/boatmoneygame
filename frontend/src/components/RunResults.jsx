@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAccount, useWatchContractEvent } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts, GAME_CONFIGS } from '../config/contracts'
+import { formatTokenAmount, formatInteger } from '../utils/formatters'
 
 export default function RunResults() {
   const { address } = useAccount()
@@ -26,9 +27,9 @@ export default function RunResults() {
             id: Date.now() + Math.random(),
             tokenId: tokenId.toString(),
             level: parseInt(level),
-            stake: formatEther(stake),
+            stake: formatTokenAmount(stake),
             success,
-            rewardPaid: rewardPaid ? formatEther(rewardPaid) : '0',
+            rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
             timestamp: new Date(),
             type: 'run',
             gameToken: 'BOAT' // Track which game this result is from
@@ -59,9 +60,9 @@ export default function RunResults() {
             id: Date.now() + Math.random(),
             tokenId: tokenId.toString(),
             level: parseInt(level),
-            stake: formatEther(stake),
+            stake: formatTokenAmount(stake),
             success,
-            rewardPaid: rewardPaid ? formatEther(rewardPaid) : '0',
+            rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
             timestamp: new Date(),
             type: 'run',
             gameToken: 'JOINT' // Track which game this result is from
@@ -210,8 +211,8 @@ export default function RunResults() {
         return {
           title: result.success ? '🎉 Successful Run!' : '💥 Run Failed!',
           message: result.success 
-            ? `Your ${getBoatName(result.level)} #${result.tokenId} completed a successful smuggling run! You won ${parseFloat(result.rewardPaid).toFixed(0)} ${tokenSymbol} tokens.`
-            : `Your ${getBoatName(result.level)} #${result.tokenId} failed the smuggling run. You lost ${parseFloat(result.stake).toFixed(0)} ${tokenSymbol} from your play amount. ${result.level === 1 ? 'Your raft will be BURNED!' : 'Your boat will be DOWNGRADED!'}`,
+            ? `Your ${getBoatName(result.level)} #${result.tokenId} completed a successful smuggling run! You won ${formatInteger(result.rewardPaid)} ${tokenSymbol} tokens.`
+            : `Your ${getBoatName(result.level)} #${result.tokenId} failed the smuggling run. You lost ${formatInteger(result.stake)} ${tokenSymbol} from your play amount. ${result.level === 1 ? 'Your raft will be BURNED!' : 'Your boat will be DOWNGRADED!'}`,
           color: result.success ? 'green' : 'red',
           emoji: result.success ? '💰' : '💸'
         }

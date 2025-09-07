@@ -3,6 +3,7 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'
+import { formatTokenAmount, formatInteger } from '../utils/formatters'
 
 function BuyRaftCard() {
   const { address, isConnected } = useAccount()
@@ -75,7 +76,7 @@ function BuyRaftCard() {
     setLastTxHash(null)
   }
 
-  const raftPriceFormatted = raftPrice ? parseFloat(formatEther(raftPrice)).toFixed(0) : '...'
+  const raftPriceFormatted = raftPrice ? formatInteger(formatEther(raftPrice)) : '...'
   const hasEnoughBoat = boatBalance && raftPrice && boatBalance >= raftPrice
   const needsApproval = raftPrice && !hasAllowance(raftPrice)
 
@@ -139,7 +140,7 @@ function BuyRaftCard() {
         {/* Balance and Buy Section */}
         <div className="w-full text-center space-y-4">
           <div className="text-cyan-400 text-lg font-bold" style={{ fontFamily: 'Orbitron, monospace' }}>
-            YOUR $BOAT: {boatBalance ? parseFloat(formatEther(boatBalance)).toFixed(2) : '0.00'}
+            YOUR $BOAT: {boatBalance ? formatTokenAmount(boatBalance) : '0.00'}
           </div>
           
           <button

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
+import { formatTokenAmount } from '../utils/formatters'
 
 export default function TokenApproval() {
   const { address } = useAccount()
@@ -68,8 +69,8 @@ export default function TokenApproval() {
       </h3>
       
       <div className={`space-y-2 text-sm mb-4 ${needsApproval ? 'text-yellow-200' : 'text-green-200'}`}>
-        <div><strong>Your BOAT Balance:</strong> {boatBalance ? formatEther(boatBalance) : '0'}</div>
-        <div><strong>Current Allowance:</strong> {allowance ? formatEther(allowance) : '0'}</div>
+        <div><strong>Your BOAT Balance:</strong> {boatBalance ? formatTokenAmount(boatBalance) : '0'}</div>
+        <div><strong>Current Allowance:</strong> {allowance ? formatTokenAmount(allowance) : '0'}</div>
         <div><strong>Game Contract:</strong> {contracts.boatGame.address}</div>
       </div>
 
