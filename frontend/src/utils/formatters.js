@@ -9,13 +9,18 @@ import { formatEther } from 'viem'
 export function formatNumber(num, decimals = 2) {
   if (num === null || num === undefined || num === '') return '0'
   
-  const number = typeof num === 'string' ? parseFloat(num) : num
-  if (isNaN(number)) return '0'
-  
-  return number.toLocaleString('en-US', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals
-  })
+  try {
+    const number = typeof num === 'string' ? parseFloat(num) : Number(num)
+    if (isNaN(number) || !isFinite(number)) return '0'
+    
+    return number.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    })
+  } catch (error) {
+    console.warn('formatNumber: Error processing value', num, error)
+    return '0'
+  }
 }
 
 /**
@@ -25,10 +30,16 @@ export function formatNumber(num, decimals = 2) {
  * @returns {string} Formatted token amount with commas
  */
 export function formatTokenAmount(weiValue, decimals = 2) {
-  if (!weiValue) return '0.00'
+  if (!weiValue || weiValue === 0n) return '0.00'
   
-  const etherValue = parseFloat(formatEther(weiValue))
-  return formatNumber(etherValue, decimals)
+  try {
+    const etherValue = parseFloat(formatEther(weiValue))
+    if (isNaN(etherValue) || !isFinite(etherValue)) return '0.00'
+    return formatNumber(etherValue, decimals)
+  } catch (error) {
+    console.warn('formatTokenAmount: Error processing value', weiValue, error)
+    return '0.00'
+  }
 }
 
 /**
@@ -38,18 +49,29 @@ export function formatTokenAmount(weiValue, decimals = 2) {
  * @returns {string} Formatted number with K/M and commas
  */
 export function formatCompactNumber(value, decimals = 1) {
-  if (value === null || value === undefined) return '0'
+  if (value === null || value === undefined || value === '') return '0'
   
   let num
-  if (typeof value === 'bigint') {
-    num = parseFloat(formatEther(value))
-  } else if (typeof value === 'string') {
-    num = parseFloat(value)
-  } else {
-    num = value
+  try {
+    if (typeof value === 'bigint') {
+      num = parseFloat(formatEther(value))
+    } else if (typeof value === 'string') {
+      if (value === '') return '0'
+      num = parseFloat(value)
+    } else if (typeof value === 'object' && value !== null) {
+      // Handle case where value might be an object with toString method
+      const strValue = value.toString()
+      if (strValue === '') return '0'
+      num = parseFloat(strValue)
+    } else {
+      num = Number(value)
+    }
+  } catch (error) {
+    console.warn('formatCompactNumber: Error processing value', value, error)
+    return '0'
   }
   
-  if (isNaN(num)) return '0'
+  if (isNaN(num) || !isFinite(num)) return '0'
   
   if (num >= 1000000) {
     return `${formatNumber(num / 1000000, decimals)}M`

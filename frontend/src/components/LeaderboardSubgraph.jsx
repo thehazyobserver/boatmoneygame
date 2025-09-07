@@ -38,9 +38,9 @@ export default function Leaderboard() {
           // Convert string values back to BigInt
           const deserializedData = data.data.map(item => ({
             ...item,
-            netProfit: BigInt(item.netProfit || '0'),
-            totalEarnings: BigInt(item.totalEarnings || '0'),
-            totalWagered: BigInt(item.totalWagered || '0')
+            netProfit: item.netProfit ? BigInt(item.netProfit) : BigInt('0'),
+            totalEarnings: item.totalEarnings ? BigInt(item.totalEarnings) : BigInt('0'),
+            totalWagered: item.totalWagered ? BigInt(item.totalWagered) : BigInt('0')
           }))
           return {
             ...data,
@@ -59,9 +59,9 @@ export default function Leaderboard() {
       // Convert BigInt values to strings for JSON serialization
       const serializableData = data.map(item => ({
         ...item,
-        netProfit: item.netProfit?.toString() || '0',
-        totalEarnings: item.totalEarnings?.toString() || '0',
-        totalWagered: item.totalWagered?.toString() || '0'
+        netProfit: item.netProfit ? item.netProfit.toString() : '0',
+        totalEarnings: item.totalEarnings ? item.totalEarnings.toString() : '0',
+        totalWagered: item.totalWagered ? item.totalWagered.toString() : '0'
       }))
       
       localStorage.setItem(`leaderboard_subgraph_${game}`, JSON.stringify({
