@@ -176,6 +176,7 @@ export default function Leaderboard() {
   }
 
   const formatNumber = (value, decimals = 2) => {
+    if (value === undefined || value === null) return '0.00'
     const num = parseFloat(value.toString()) / (10**18)
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
@@ -190,6 +191,7 @@ export default function Leaderboard() {
   }
 
   const getNetEarningsColor = (netEarnings) => {
+    if (netEarnings === undefined || netEarnings === null) return 'text-yellow-400'
     if (netEarnings > 0) return 'text-green-400'
     if (netEarnings < 0) return 'text-red-400'
     return 'text-yellow-400'
