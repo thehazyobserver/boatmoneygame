@@ -8,8 +8,5 @@ export const config = createConfig({
     injected(),
     metaMask(),
   ],
-  transports: {
-    // Use Sonic's official RPC endpoint that supports CORS
-    [sonic.id]: http('https://rpc.sonic.fantom.network/'),
-  },
+  // No custom transports: use wallet's provider for all interactions
 })
