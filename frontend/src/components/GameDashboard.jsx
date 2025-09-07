@@ -4,7 +4,7 @@ import UserStats from './UserStats'
 import BoatGallery from './BoatGallery'
 import BuyRaftCard from './BuyRaftCard'
 import Instructions from './Instructions'
-import Leaderboard from './Leaderboard'
+import LeaderboardSubgraph from './LeaderboardSubgraph'
 
 export default function GameDashboard() {
   const { isConnected } = useAccount()
@@ -90,7 +90,7 @@ export default function GameDashboard() {
       
       {/* Leaderboard */}
       <div className="space-y-4">
-        <Leaderboard />
+        <LeaderboardSubgraph />
       </div>
     </div>
   )
