@@ -44,6 +44,8 @@ setStakeParams(4, 7800000000000000000000, 78000000000000000000000, 17000, 0);  /
 
 // Set treasury fee (identical to BOAT)
 setTreasury(TREASURY, 250);                         // 2.5% treasury fee
+
+// Note: Contract now has configurable parameters instead of hardcoded values
 ```
 
 ## 📊 Final Economics Summary

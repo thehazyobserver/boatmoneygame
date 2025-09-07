@@ -39,8 +39,8 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
     IBoatNFT public immutable NFT;
     IBoatGame public immutable BOAT_GAME;
 
-    uint256 public minStake = 20_000 ether;    // 20k $JOINT min
-    uint256 public maxStake = 420_000 ether;   // 420k $JOINT max
+    uint256 public minStake = 7_800 ether;    // 7.8k $JOINT min (configurable)
+    uint256 public maxStake = 78_000 ether;   // 78k $JOINT max (configurable)
     uint256 public runCooldown = 10 minutes;
     uint16  public capBps = 500;               // max % of pool per single win (5% - more conservative)
     address public treasury;
@@ -230,22 +230,16 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
         }
     }
 
-    // Same odds as BoatGame
-    function _getSuccessBps(uint8 lvl) internal pure returns (uint16) {
-        if (lvl == 1) return 5500;  // 55%
-        if (lvl == 2) return 6500;  // 65%
-        if (lvl == 3) return 7500;  // 75%
-        if (lvl == 4) return 8500;  // 85%
-        return 0;
+    // Use configurable odds
+    function _getSuccessBps(uint8 lvl) internal view returns (uint16) {
+        uint16 rate = levelSuccessBps[lvl];
+        return rate > 0 ? rate : 5000; // Default to 50% if not set
     }
 
-    // Same multipliers as BoatGame
-    function _getRewardMultBps(uint8 lvl) internal pure returns (uint16) {
-        if (lvl == 1) return 15000; // 1.5x
-        if (lvl == 2) return 20000; // 2.0x
-        if (lvl == 3) return 24000; // 2.4x
-        if (lvl == 4) return 30000; // 3.0x
-        return 0;
+    // Use configurable multipliers
+    function _getRewardMultBps(uint8 lvl) internal view returns (uint16) {
+        uint16 mult = levelMultiplierBps[lvl];
+        return mult > 0 ? mult : 15000; // Default to 1.50x if not set
     }
 
     function _rng(uint256 tokenId) internal returns (uint256) {
