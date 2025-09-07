@@ -8,5 +8,10 @@ export const config = createConfig({
     injected(),
     metaMask(),
   ],
-  // No custom transports: use wallet's provider for all interactions
+  transports: {
+    [sonic.id]: [
+      http('https://sonic.drpc.org'),
+      http('https://rpc.soniclabs.com'),
+    ],
+  },
 })
