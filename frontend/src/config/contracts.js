@@ -10,30 +10,31 @@ export const BOAT_TOKEN_ADDRESS = '0x32aF310fA33520ffB91bF8DC73251F0244Efca2C'  
 const isJointContractDeployed = JOINT_BOAT_GAME_ADDRESS !== '0xYourJointBoatGameAddressHere'
 const isJointTokenDeployed = JOINT_TOKEN_ADDRESS !== '0xYourJointTokenAddressHere'
 
-// Game configurations - Final uniform stakes with treasury fees
+// Game configurations - FINAL DEPLOYMENT PARAMETERS
 export const GAME_CONFIGS = {
   BOAT: {
     name: 'BOAT Game',
     symbol: '$BOAT',
     contractAddress: BOAT_GAME_ADDRESS,
     tokenAddress: BOAT_TOKEN_ADDRESS,
-    minStake: '5000',         // Uniform stakes 5k-50k
-    maxStake: '50000',        // Uniform stakes 5k-50k
+    minStake: '5000',         // Final uniform stakes 5k-50k BOAT
+    maxStake: '50000',        // Final uniform stakes 5k-50k BOAT
     decimals: 18,
     isDeployed: true,
-    // Final sustainable costs
-    raftCost: '50000',        // Reduced from 100k (-50%)
+    // Final balanced costs - deployment ready
+    raftCost: '50000',        // setBuyRaftCost(50000000000000000000000)
     upgradeCosts: {
-      1: '80000',             // L1→L2, reduced from 150k (-47%)
-      2: '150000',            // L2→L3, reduced from 300k (-50%)  
-      3: '250000'             // L3→L4, reduced from 600k (-58%)
+      1: '80000',             // setUpgradeCost(1, 80000000000000000000000)  
+      2: '150000',            // setUpgradeCost(2, 150000000000000000000000)
+      3: '250000'             // setUpgradeCost(3, 250000000000000000000000)
     },
-    treasuryFee: '0',         // 0% treasury fee
+    treasuryFee: '2.5',       // setTreasury(TREASURY, 250) = 2.5%
+    // Final level parameters - exact contract values
     levels: {
-      1: { successRate: 50, multiplier: 1.50 },   // 50% success, 1.50x payout
-      2: { successRate: 55, multiplier: 1.60 },   // 55% success, 1.60x payout
-      3: { successRate: 60, multiplier: 1.65 },   // 60% success, 1.65x payout  
-      4: { successRate: 65, multiplier: 1.70 }    // 65% success, 1.70x payout
+      1: { successRate: 50, multiplier: 1.50, failureMode: 'burn' },      // setLevelParams(1, 5000, 0) + setStakeParams multiplier 15000
+      2: { successRate: 55, multiplier: 1.60, failureMode: 'downgrade' }, // setLevelParams(2, 5500, 1) + setStakeParams multiplier 16000
+      3: { successRate: 60, multiplier: 1.65, failureMode: 'downgrade' }, // setLevelParams(3, 6000, 1) + setStakeParams multiplier 16500
+      4: { successRate: 65, multiplier: 1.70, failureMode: 'downgrade' }  // setLevelParams(4, 6500, 1) + setStakeParams multiplier 17000
     }
   },
   JOINT: {
@@ -41,23 +42,23 @@ export const GAME_CONFIGS = {
     symbol: '$JOINT',
     contractAddress: JOINT_BOAT_GAME_ADDRESS,
     tokenAddress: JOINT_TOKEN_ADDRESS,
-    minStake: '7800',         // Equiv to 5k BOAT (1.56x ratio)
-    maxStake: '78000',        // Equiv to 50k BOAT (1.56x ratio)
+    minStake: '7800',         // Final uniform stakes 7.8k-78k JOINT (1.56x BOAT ratio)
+    maxStake: '78000',        // Final uniform stakes 7.8k-78k JOINT (1.56x BOAT ratio)
     decimals: 18,
     isDeployed: isJointContractDeployed && isJointTokenDeployed,
-    treasuryFee: '2.5',       // 2.5% treasury fee for sustainability
+    treasuryFee: '2.5',       // setTreasury(TREASURY, 250) = 2.5%
     // Upgrades paid in BOAT tokens (cross-token system)
     upgradeCosts: {
       1: '0',                 // No upgrade costs - paid in BOAT
       2: '0',                 
       3: '0'
     },
-    // Inherits same success rates and multipliers as BOAT
+    // Identical mechanics to BOAT game - exact same parameters
     levels: {
-      1: { successRate: 50, multiplier: 1.50 },
-      2: { successRate: 55, multiplier: 1.60 },
-      3: { successRate: 60, multiplier: 1.65 },
-      4: { successRate: 65, multiplier: 1.70 }
+      1: { successRate: 50, multiplier: 1.50, failureMode: 'burn' },      // setLevelParams(1, 5000, 0) + setStakeParams multiplier 15000
+      2: { successRate: 55, multiplier: 1.60, failureMode: 'downgrade' }, // setLevelParams(2, 5500, 1) + setStakeParams multiplier 16000  
+      3: { successRate: 60, multiplier: 1.65, failureMode: 'downgrade' }, // setLevelParams(3, 6000, 1) + setStakeParams multiplier 16500
+      4: { successRate: 65, multiplier: 1.70, failureMode: 'downgrade' }  // setLevelParams(4, 6500, 1) + setStakeParams multiplier 17000
     }
   }
 }
