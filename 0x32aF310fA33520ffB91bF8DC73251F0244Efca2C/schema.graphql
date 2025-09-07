@@ -26,3 +26,10 @@ type Transfer @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+# Leaderboard User entity
+type User @entity(immutable: false) {
+  id: ID! # user address
+  boatWins: Int!
+  jointWins: Int!
+}

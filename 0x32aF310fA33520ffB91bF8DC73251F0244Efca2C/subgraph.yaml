@@ -30,3 +30,45 @@ dataSources:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: ./src/bonding-token.ts
+
+  - kind: ethereum
+    name: BoatGame
+    network: sonic
+    source:
+      address: "0xab004722930Dd89C3698C73658FE803e8632fdF3"
+      abi: BoatGame
+      startBlock: 0 # Set to the deployment block if known
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - RunResult
+      abis:
+        - name: BoatGame
+          file: ./abis/BoatGame.json
+      eventHandlers:
+        - event: RunResult(indexed address,indexed uint256,uint8,uint256,bool,uint256)
+          handler: handleBoatGameRunResult
+      file: ./src/boat-game.ts
+
+  - kind: ethereum
+    name: JointBoatGame
+    network: sonic
+    source:
+      address: "0x37f989151ac5B8383ca6bB541Ac2694adB0609cB"
+      abi: JointBoatGame
+      startBlock: 0 # Set to the deployment block if known
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - JointRun
+      abis:
+        - name: JointBoatGame
+          file: ./abis/JointBoatGame.json
+      eventHandlers:
+        - event: JointRun(indexed address,indexed uint256,uint8,uint256,bool,uint256)
+          handler: handleJointBoatGameRun
+      file: ./src/joint-boat-game.ts
