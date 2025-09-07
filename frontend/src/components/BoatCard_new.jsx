@@ -109,7 +109,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       const contract = getGameContract()
       const tx = await writeContract({
         ...contract,
-        functionName: 'play',
+        functionName: 'run',
         args: [BigInt(tokenId), playAmountWei]
       })
       setLastTxHash(tx)
