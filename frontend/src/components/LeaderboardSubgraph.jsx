@@ -16,7 +16,7 @@ const BOAT_NAMES = {
 }
 
 // The Graph endpoint for your subgraph
-const SUBGRAPH_URL = 'https://api.studio.thegraph.com/query/109706/boatgame/v0.0.1'
+const SUBGRAPH_URL = 'https://api.studio.thegraph.com/query/109706/boatgame/version/latest'
 
 export default function Leaderboard() {
   const [selectedGame, setSelectedGame] = useState('BOAT')
