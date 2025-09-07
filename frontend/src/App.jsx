@@ -3,24 +3,26 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Navbar from './components/Navbar'
 import GameDashboard from './components/GameDashboard'
 import RunResults from './components/RunResults'
+import ErrorBoundary from './components/ErrorBoundary'
 import { config } from './config/wagmi'
 
 const queryClient = new QueryClient()
 
 function App() {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen night-ocean scanlines relative">
-          {/* Enhanced 80s grid overlay */}
-          <div className="fixed inset-0 opacity-5 pointer-events-none" style={{
-            backgroundImage: `
-              linear-gradient(rgba(0, 245, 255, 0.4) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 245, 255, 0.4) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px',
-            animation: 'pulse 4s ease-in-out infinite'
-          }}></div>
+    <ErrorBoundary>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <div className="min-h-screen night-ocean scanlines relative">
+            {/* Enhanced 80s grid overlay */}
+            <div className="fixed inset-0 opacity-5 pointer-events-none" style={{
+              backgroundImage: `
+                linear-gradient(rgba(0, 245, 255, 0.4) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.4) 1px, transparent 1px)
+              `,
+              backgroundSize: '60px 60px',
+              animation: 'pulse 4s ease-in-out infinite'
+            }}></div>
           
           {/* Navbar with enhanced styling */}
           <Navbar />
@@ -38,6 +40,7 @@ function App() {
         </div>
       </QueryClientProvider>
     </WagmiProvider>
+    </ErrorBoundary>
   )
 }
 

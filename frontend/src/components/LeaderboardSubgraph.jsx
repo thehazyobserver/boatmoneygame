@@ -134,7 +134,10 @@ export default function Leaderboard() {
       setLastFetch(now)
       setHasLoaded(true)
       
-      console.log(`Successfully loaded ${transformedData.length} players from subgraph`)
+      // Debug: Successfully loaded data
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Successfully loaded ${transformedData.length} players from subgraph`)
+      }
     } catch (error) {
       console.error('Error fetching from subgraph:', error)
       

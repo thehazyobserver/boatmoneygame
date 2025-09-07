@@ -239,3 +239,39 @@ code {
     padding: 1rem !important;
   }
 }
+
+/* Enhanced mobile touch targets */
+@media (max-width: 768px) {
+  .vice-button {
+    min-height: 44px; /* iOS recommended touch target */
+    min-width: 44px;
+    touch-action: manipulation; /* Prevents zoom on double-tap */
+  }
+  
+  /* Better mobile popup */
+  .fixed.inset-0 {
+    padding: 16px;
+  }
+  
+  /* Improved mobile cards */
+  .terminal-bg {
+    touch-action: manipulation;
+  }
+  
+  /* Better mobile scrolling */
+  .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Loading state improvements */
+.loading-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.2), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

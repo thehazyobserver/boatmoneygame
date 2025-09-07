@@ -28,7 +28,7 @@ export default function GameDashboard() {
             <p className="text-lg md:text-xl text-yellow-400 font-semibold mb-8 max-w-4xl leading-relaxed" style={{ fontFamily: 'Rajdhani, monospace' }}>
               High-speed smuggling runs through the neon-soaked waters of Miami.<br/>
               Outrun the Coast Guard, upgrade your fleet, stack that paper.<br/>
-              <span className="text-cyan-400 font-bold">JACK IN to start your criminal empire.</span>
+              <span className="text-cyan-400 font-bold">CONNECT WALLET to start your criminal empire.</span>
             </p>
           </div>
 

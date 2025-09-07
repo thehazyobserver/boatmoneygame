@@ -48,17 +48,26 @@ export default function Navbar() {
               </div>
               <button
                 onClick={() => disconnect()}
-                className="vice-button px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-bold"
+                disabled={false}
+                className="vice-button px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                JACK OUT
+                DISCONNECT
               </button>
             </div>
           ) : (
             <button
               onClick={() => connect({ connector: injected() })}
-              className="vice-button px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-bold"
+              disabled={isPending}
+              className="vice-button px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             >
-              JACK IN
+              {isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-cyan-400 border-t-transparent"></div>
+                  <span>CONNECTING...</span>
+                </>
+              ) : (
+                'CONNECT WALLET'
+              )}
             </button>
           )}
         </div>
