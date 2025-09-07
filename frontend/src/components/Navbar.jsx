@@ -3,7 +3,7 @@ import { injected } from 'wagmi/connectors'
 
 export default function Navbar() {
   const { address, isConnected } = useAccount()
-  const { connect } = useConnect()
+  const { connect, isPending } = useConnect()
   const { disconnect } = useDisconnect()
   const chainId = useChainId()
 
