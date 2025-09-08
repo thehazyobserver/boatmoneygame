@@ -10,6 +10,15 @@ export default function RunResults() {
   const [showModal, setShowModal] = useState(false)
   const [currentResult, setCurrentResult] = useState(null)
 
+  // Helper function to safely process event logs
+  const processEventLog = (log, processorFn, eventType) => {
+    try {
+      processorFn(log)
+    } catch (error) {
+      console.error(`Error processing ${eventType} event:`, error, log)
+    }
+  }
+
   // Watch events from both BOAT and JOINT contracts
 
   // Get event name based on selected token
@@ -19,66 +28,68 @@ export default function RunResults() {
     eventName: 'RunResult',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { user, tokenId, level, stake, success, rewardPaid } = log.args
-        
-        // Only show results for the current user
-        if (user?.toLowerCase() === address?.toLowerCase()) {
-          const result = {
-            id: Date.now() + Math.random(),
-            tokenId: tokenId.toString(),
-            level: parseInt(level),
-            stakeWei: stake, // Store original BigInt for accurate formatting
-            stake: formatTokenAmount(stake), // For backward compatibility
-            success,
-            rewardPaidWei: rewardPaid || 0n, // Store original BigInt
-            rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
-            timestamp: new Date(),
-            type: 'run',
-            gameToken: 'BOAT' // Track which game this result is from
+        processEventLog(log, (log) => {
+          const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+          
+          // Only show results for the current user
+          if (user?.toLowerCase() === address?.toLowerCase()) {
+            const result = {
+              id: Date.now() + Math.random(),
+              tokenId: tokenId?.toString() || '0',
+              level: level ? parseInt(level) : 0,
+              stakeWei: stake || 0n, // Store original BigInt for accurate formatting
+              stake: stake ? formatTokenAmount(stake) : '0', // For backward compatibility
+              success: Boolean(success),
+              rewardPaidWei: rewardPaid || 0n, // Store original BigInt
+              rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
+              timestamp: new Date(),
+              type: 'run',
+              gameToken: 'BOAT' // Track which game this result is from
+            }
+            
+            setCurrentResult(result)
+            setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
+            setShowModal(true)
+            
+            // Auto-hide modal after 8 seconds
+            setTimeout(() => setShowModal(false), 8000)
           }
-          
-          setCurrentResult(result)
-          setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
-          setShowModal(true)
-          
-          // Auto-hide modal after 8 seconds
-          setTimeout(() => setShowModal(false), 8000)
-        }
+        }, 'RunResult')
       })
     }
-  })
-
-  // Watch for JOINT game JointRun events
+  })  // Watch for JOINT game JointRun events
   useWatchContractEvent({
     ...contracts.jointBoatGame,
     eventName: 'JointRun',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { user, tokenId, level, stake, success, rewardPaid } = log.args
-        
-        // Only show results for the current user
-        if (user?.toLowerCase() === address?.toLowerCase()) {
-          const result = {
-            id: Date.now() + Math.random(),
-            tokenId: tokenId.toString(),
-            level: parseInt(level),
-            stakeWei: stake, // Store original BigInt for accurate formatting
-            stake: formatTokenAmount(stake), // For backward compatibility
-            success,
-            rewardPaidWei: rewardPaid || 0n, // Store original BigInt
-            rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
-            timestamp: new Date(),
-            type: 'run',
-            gameToken: 'JOINT' // Track which game this result is from
+        processEventLog(log, (log) => {
+          const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+          
+          // Only show results for the current user
+          if (user?.toLowerCase() === address?.toLowerCase()) {
+            const result = {
+              id: Date.now() + Math.random(),
+              tokenId: tokenId?.toString() || '0',
+              level: level ? parseInt(level) : 0,
+              stakeWei: stake || 0n, // Store original BigInt for accurate formatting
+              stake: stake ? formatTokenAmount(stake) : '0', // For backward compatibility
+              success: Boolean(success),
+              rewardPaidWei: rewardPaid || 0n, // Store original BigInt
+              rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
+              timestamp: new Date(),
+              type: 'run',
+              gameToken: 'JOINT' // Track which game this result is from
+            }
+            
+            setCurrentResult(result)
+            setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
+            setShowModal(true)
+            
+            // Auto-hide modal after 8 seconds
+            setTimeout(() => setShowModal(false), 8000)
           }
-          
-          setCurrentResult(result)
-          setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
-          setShowModal(true)
-          
-          // Auto-hide modal after 8 seconds
-          setTimeout(() => setShowModal(false), 8000)
-        }
+        }, 'JointRun')
       })
     }
   })
@@ -89,18 +100,20 @@ export default function RunResults() {
     eventName: 'BoatBurned',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, level } = log.args
-        
-        const result = {
-          id: Date.now() + Math.random(),
-          tokenId: tokenId.toString(),
-          level: parseInt(level),
-          timestamp: new Date(),
-          type: 'burned',
-          gameToken: 'BOAT'
-        }
-        
-        setResults(prev => [result, ...prev.slice(0, 9)])
+        processEventLog(log, (log) => {
+          const { tokenId, level } = log.args || {}
+          
+          const result = {
+            id: Date.now() + Math.random(),
+            tokenId: tokenId?.toString() || '0',
+            level: level ? parseInt(level) : 0,
+            timestamp: new Date(),
+            type: 'burned',
+            gameToken: 'BOAT'
+          }
+          
+          setResults(prev => [result, ...prev.slice(0, 9)])
+        }, 'BoatBurned')
       })
     }
   })
@@ -111,12 +124,12 @@ export default function RunResults() {
     eventName: 'BoatBurned',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, level } = log.args
+        const { tokenId, level } = log.args || {}
         
         const result = {
           id: Date.now() + Math.random(),
-          tokenId: tokenId.toString(),
-          level: parseInt(level),
+          tokenId: tokenId?.toString() || '0',
+          level: level ? parseInt(level) : 0,
           timestamp: new Date(),
           type: 'burned',
           gameToken: 'JOINT'
@@ -133,13 +146,13 @@ export default function RunResults() {
     eventName: 'BoatDowngraded',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, fromLevel, toLevel } = log.args
+        const { tokenId, fromLevel, toLevel } = log.args || {}
         
         const result = {
           id: Date.now() + Math.random(),
-          tokenId: tokenId.toString(),
-          fromLevel: parseInt(fromLevel),
-          toLevel: parseInt(toLevel),
+          tokenId: tokenId?.toString() || '0',
+          fromLevel: fromLevel ? parseInt(fromLevel) : 0,
+          toLevel: toLevel ? parseInt(toLevel) : 0,
           timestamp: new Date(),
           type: 'downgraded',
           gameToken: 'BOAT'
@@ -156,13 +169,13 @@ export default function RunResults() {
     eventName: 'BoatDowngraded',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, fromLevel, toLevel } = log.args
+        const { tokenId, fromLevel, toLevel } = log.args || {}
         
         const result = {
           id: Date.now() + Math.random(),
-          tokenId: tokenId.toString(),
-          fromLevel: parseInt(fromLevel),
-          toLevel: parseInt(toLevel),
+          tokenId: tokenId?.toString() || '0',
+          fromLevel: fromLevel ? parseInt(fromLevel) : 0,
+          toLevel: toLevel ? parseInt(toLevel) : 0,
           timestamp: new Date(),
           type: 'downgraded',
           gameToken: 'JOINT'
@@ -179,13 +192,13 @@ export default function RunResults() {
     eventName: 'RaftSpawned',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { to, tokenId } = log.args
+        const { to, tokenId } = log.args || {}
         
         // Only show for current user
         if (to?.toLowerCase() === address?.toLowerCase()) {
           const result = {
             id: Date.now() + Math.random(),
-            tokenId: tokenId.toString(),
+            tokenId: tokenId?.toString() || '0',
             timestamp: new Date(),
             type: 'spawned',
             gameToken: 'BOAT'

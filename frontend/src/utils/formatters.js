@@ -30,10 +30,12 @@ export function formatNumber(num, decimals = 2) {
  * @returns {string} Formatted token amount with commas
  */
 export function formatTokenAmount(weiValue, decimals = 2) {
-  if (!weiValue || weiValue === 0n) return '0.00'
+  if (!weiValue || weiValue === 0n || weiValue === null || weiValue === undefined) return '0.00'
   
   try {
-    const etherValue = parseFloat(formatEther(weiValue))
+    // Ensure we have a proper BigInt
+    const bigIntValue = typeof weiValue === 'bigint' ? weiValue : BigInt(weiValue.toString())
+    const etherValue = parseFloat(formatEther(bigIntValue))
     if (isNaN(etherValue) || !isFinite(etherValue)) return '0.00'
     return formatNumber(etherValue, decimals)
   } catch (error) {

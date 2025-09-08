@@ -50,7 +50,7 @@ export function useAutoRefresh() {
     eventName: 'RaftBought',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { user } = log.args
+        const { user } = log.args || {}
         // Refresh data if this user bought a raft
         if (user?.toLowerCase() === address?.toLowerCase()) {
           console.log('🚤 New raft bought! Refreshing all data...')
@@ -66,7 +66,7 @@ export function useAutoRefresh() {
     eventName: 'RaftSpawned',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { to } = log.args
+        const { to } = log.args || {}
         // Refresh data if this user got a bonus raft
         if (to?.toLowerCase() === address?.toLowerCase()) {
           console.log('🎁 Bonus raft spawned! Refreshing all data...')
@@ -82,7 +82,7 @@ export function useAutoRefresh() {
     eventName: 'Upgraded',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { user } = log.args
+        const { user } = log.args || {}
         // Refresh data if this user upgraded a boat
         if (user?.toLowerCase() === address?.toLowerCase()) {
           console.log('⬆️ Boat upgraded! Refreshing boat gallery...')
@@ -149,7 +149,7 @@ export function useAutoRefresh() {
     eventName: 'Approval',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { owner, spender } = log.args
+        const { owner, spender } = log.args || {}
         // Refresh allowance data if this user approved tokens
         if (owner?.toLowerCase() === address?.toLowerCase() && 
             (spender?.toLowerCase() === contracts.boatGame.address?.toLowerCase() ||
@@ -168,7 +168,7 @@ export function useAutoRefresh() {
     eventName: 'Approval',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { owner, spender } = log.args
+        const { owner, spender } = log.args || {}
         // Refresh allowance data if this user approved JOINT tokens
         if (owner?.toLowerCase() === address?.toLowerCase() && 
             spender?.toLowerCase() === contracts.jointBoatGame.address?.toLowerCase()) {
@@ -187,7 +187,7 @@ export function useAutoRefresh() {
     eventName: 'Transfer',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { from, to } = log.args
+        const { from, to } = log.args || {}
         // Refresh balance if this user sent or received BOAT tokens
         if (from?.toLowerCase() === address?.toLowerCase() || 
             to?.toLowerCase() === address?.toLowerCase()) {
@@ -206,7 +206,7 @@ export function useAutoRefresh() {
     eventName: 'Transfer',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { from, to } = log.args
+        const { from, to } = log.args || {}
         // Refresh balance if this user sent or received JOINT tokens
         if (from?.toLowerCase() === address?.toLowerCase() || 
             to?.toLowerCase() === address?.toLowerCase()) {
