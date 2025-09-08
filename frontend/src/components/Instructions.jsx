@@ -260,7 +260,7 @@ export default function Instructions() {
                     <div className="text-pink-400 text-xs">Safe Start</div>
                   </div>
                   <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
-                    <div className="text-2xl mb-2">🛶</div>
+                    <div className="text-2xl mb-2">⛵</div>
                     <div className="text-cyan-400 font-bold text-sm">DINGHY</div>
                     <div className="text-pink-400 text-xs">Better Odds</div>
                   </div>

@@ -11,14 +11,37 @@ export function useAutoRefresh() {
   const { address } = useAccount()
   const queryClient = useQueryClient()
 
-  // Helper function to invalidate relevant queries
-  const invalidateQueries = () => {
+  // Helper function to invalidate ALL relevant queries aggressively
+  const invalidateQueries = (eventType = 'general') => {
+    console.log(`🔄 Auto-refresh triggered by: ${eventType}`)
+    
+    // Balance and allowance queries
     queryClient.invalidateQueries({ queryKey: ['balance'] })
     queryClient.invalidateQueries({ queryKey: ['allowance'] })
+    queryClient.invalidateQueries({ queryKey: ['balanceOf'] })
+    queryClient.invalidateQueries({ queryKey: ['readContract'] })
+    
+    // NFT related queries
     queryClient.invalidateQueries({ queryKey: ['boatCount'] })
     queryClient.invalidateQueries({ queryKey: ['tokenOfOwnerByIndex'] })
-    queryClient.invalidateQueries({ queryKey: ['balanceOf'] })
     queryClient.invalidateQueries({ queryKey: ['levelOf'] })
+    queryClient.invalidateQueries({ queryKey: ['ownerOf'] })
+    
+    // Game state queries
+    queryClient.invalidateQueries({ queryKey: ['lastRunAt'] })
+    queryClient.invalidateQueries({ queryKey: ['cooldown'] })
+    queryClient.invalidateQueries({ queryKey: ['stats'] })
+    queryClient.invalidateQueries({ queryKey: ['poolBalance'] })
+    
+    // Force refetch all queries immediately
+    queryClient.refetchQueries({ stale: true })
+    
+    // Additional aggressive refresh after delay
+    setTimeout(() => {
+      queryClient.invalidateQueries()
+      queryClient.refetchQueries()
+      console.log('🔄 Secondary refresh completed')
+    }, 2000)
   }
 
   // Watch for new raft purchases (BOAT game)
@@ -30,8 +53,8 @@ export function useAutoRefresh() {
         const { user } = log.args
         // Refresh data if this user bought a raft
         if (user?.toLowerCase() === address?.toLowerCase()) {
-          console.log('🚤 New raft bought! Refreshing boat gallery...')
-          invalidateQueries()
+          console.log('🚤 New raft bought! Refreshing all data...')
+          invalidateQueries('raft-purchase')
         }
       })
     }
@@ -46,8 +69,8 @@ export function useAutoRefresh() {
         const { to } = log.args
         // Refresh data if this user got a bonus raft
         if (to?.toLowerCase() === address?.toLowerCase()) {
-          console.log('🎁 Bonus raft spawned! Refreshing boat gallery...')
-          invalidateQueries()
+          console.log('🎁 Bonus raft spawned! Refreshing all data...')
+          invalidateQueries('bonus-raft')
         }
       })
     }

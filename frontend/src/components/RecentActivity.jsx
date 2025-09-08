@@ -8,9 +8,45 @@ export default function RecentActivity() {
   const [activities, setActivities] = useState([])
   const [isExpanded, setIsExpanded] = useState(false)
 
+  // Storage key for activities
+  const getStorageKey = () => `recentActivity_${address?.toLowerCase()}`
+
+  // Load activities from localStorage on mount
+  useEffect(() => {
+    if (!address) {
+      // Clear activities when wallet disconnected
+      setActivities([])
+      return
+    }
+    
+    try {
+      const stored = localStorage.getItem(getStorageKey())
+      if (stored) {
+        const parsedActivities = JSON.parse(stored).map(activity => ({
+          ...activity,
+          timestamp: new Date(activity.timestamp)
+        }))
+        setActivities(parsedActivities)
+      }
+    } catch (error) {
+      console.warn('Failed to load recent activity from localStorage:', error)
+    }
+  }, [address])
+
+  // Save activities to localStorage whenever they change
+  useEffect(() => {
+    if (!address || activities.length === 0) return
+    
+    try {
+      localStorage.setItem(getStorageKey(), JSON.stringify(activities))
+    } catch (error) {
+      console.warn('Failed to save recent activity to localStorage:', error)
+    }
+  }, [activities, address])
+
   // Get boat emoji and name
   const getBoatEmoji = (level) => {
-    const emojis = { 1: '⛵', 2: '🛶', 3: '🚤', 4: '🛥️' }
+    const emojis = { 1: '🛶', 2: '⛵', 3: '🚤', 4: '🛥️' }
     return emojis[level] || '🚤'
   }
 
@@ -19,13 +55,30 @@ export default function RecentActivity() {
     return names[level] || 'Boat'
   }
 
-  // Helper to create activity entries
-  const createActivity = (type, data) => ({
-    id: Date.now() + Math.random(),
-    type,
-    timestamp: new Date(),
-    ...data
-  })
+  // Helper to add activity and save to localStorage
+  const addActivity = (type, data) => {
+    const activity = {
+      id: Date.now() + Math.random(),
+      type,
+      timestamp: new Date(),
+      ...data
+    }
+    
+    setActivities(prev => {
+      const newActivities = [activity, ...prev.slice(0, 19)] // Keep last 20
+      
+      // Save to localStorage immediately
+      if (address) {
+        try {
+          localStorage.setItem(getStorageKey(), JSON.stringify(newActivities))
+        } catch (error) {
+          console.warn('Failed to save activity to localStorage:', error)
+        }
+      }
+      
+      return newActivities
+    })
+  }
 
   // Watch for BOAT game RunResult events
   useWatchContractEvent({
@@ -36,7 +89,7 @@ export default function RecentActivity() {
         const { user, tokenId, level, stake, success, rewardPaid } = log.args
         
         if (user?.toLowerCase() === address?.toLowerCase()) {
-          const activity = createActivity('run', {
+          addActivity('run', {
             tokenId: tokenId.toString(),
             level: parseInt(level),
             stake,
@@ -44,8 +97,6 @@ export default function RecentActivity() {
             rewardPaid: rewardPaid || 0n,
             gameToken: 'BOAT'
           })
-          
-          setActivities(prev => [activity, ...prev.slice(0, 19)]) // Keep last 20
         }
       })
     }
@@ -60,7 +111,7 @@ export default function RecentActivity() {
         const { user, tokenId, level, stake, success, rewardPaid } = log.args
         
         if (user?.toLowerCase() === address?.toLowerCase()) {
-          const activity = createActivity('run', {
+          addActivity('run', {
             tokenId: tokenId.toString(),
             level: parseInt(level),
             stake,
@@ -68,8 +119,6 @@ export default function RecentActivity() {
             rewardPaid: rewardPaid || 0n,
             gameToken: 'JOINT'
           })
-          
-          setActivities(prev => [activity, ...prev.slice(0, 19)]) // Keep last 20
         }
       })
     }
@@ -83,13 +132,11 @@ export default function RecentActivity() {
       logs.forEach((log) => {
         const { tokenId, level } = log.args
         
-        const activity = createActivity('burned', {
+        addActivity('burned', {
           tokenId: tokenId.toString(),
           level: parseInt(level),
           gameToken: 'BOAT'
         })
-        
-        setActivities(prev => [activity, ...prev.slice(0, 19)])
       })
     }
   })
@@ -102,13 +149,11 @@ export default function RecentActivity() {
       logs.forEach((log) => {
         const { tokenId, level } = log.args
         
-        const activity = createActivity('burned', {
+        addActivity('burned', {
           tokenId: tokenId.toString(),
           level: parseInt(level),
           gameToken: 'JOINT'
         })
-        
-        setActivities(prev => [activity, ...prev.slice(0, 19)])
       })
     }
   })
@@ -121,14 +166,12 @@ export default function RecentActivity() {
       logs.forEach((log) => {
         const { tokenId, fromLevel, toLevel } = log.args
         
-        const activity = createActivity('downgraded', {
+        addActivity('downgraded', {
           tokenId: tokenId.toString(),
           fromLevel: parseInt(fromLevel),
           toLevel: parseInt(toLevel),
           gameToken: 'BOAT'
         })
-        
-        setActivities(prev => [activity, ...prev.slice(0, 19)])
       })
     }
   })
@@ -141,14 +184,12 @@ export default function RecentActivity() {
       logs.forEach((log) => {
         const { tokenId, fromLevel, toLevel } = log.args
         
-        const activity = createActivity('downgraded', {
+        addActivity('downgraded', {
           tokenId: tokenId.toString(),
           fromLevel: parseInt(fromLevel),
           toLevel: parseInt(toLevel),
           gameToken: 'JOINT'
         })
-        
-        setActivities(prev => [activity, ...prev.slice(0, 19)])
       })
     }
   })
@@ -162,13 +203,11 @@ export default function RecentActivity() {
         const { to, tokenId } = log.args
         
         if (to?.toLowerCase() === address?.toLowerCase()) {
-          const activity = createActivity('spawned', {
+          addActivity('spawned', {
             tokenId: tokenId.toString(),
             level: 1, // Spawned rafts are always level 1
             gameToken: 'BOAT'
           })
-          
-          setActivities(prev => [activity, ...prev.slice(0, 19)])
         }
       })
     }
@@ -183,14 +222,12 @@ export default function RecentActivity() {
         const { user, tokenId, cost } = log.args
         
         if (user?.toLowerCase() === address?.toLowerCase()) {
-          const activity = createActivity('purchased', {
+          addActivity('purchased', {
             tokenId: tokenId.toString(),
             level: 1, // Purchased rafts are always level 1
             cost,
             gameToken: 'BOAT'
           })
-          
-          setActivities(prev => [activity, ...prev.slice(0, 19)])
         }
       })
     }
@@ -205,15 +242,13 @@ export default function RecentActivity() {
         const { user, tokenId, fromLevel, toLevel, cost } = log.args
         
         if (user?.toLowerCase() === address?.toLowerCase()) {
-          const activity = createActivity('upgraded', {
+          addActivity('upgraded', {
             tokenId: tokenId.toString(),
             fromLevel: parseInt(fromLevel),
             toLevel: parseInt(toLevel),
             cost,
             gameToken: 'BOAT'
           })
-          
-          setActivities(prev => [activity, ...prev.slice(0, 19)])
         }
       })
     }
@@ -272,7 +307,7 @@ export default function RecentActivity() {
           color: 'text-blue-400',
           bgColor: 'bg-blue-400/10',
           title: `Bonus Raft Spawned`,
-          description: `⛵ Raft #${activity.tokenId} spawned from yacht bonus`,
+          description: `🛶 Raft #${activity.tokenId} spawned from yacht bonus`,
           time: timeStr
         }
       
@@ -282,7 +317,7 @@ export default function RecentActivity() {
           color: 'text-green-400',
           bgColor: 'bg-green-400/10',
           title: `Raft Purchased`,
-          description: `⛵ Raft #${activity.tokenId} bought for ${formatTokenAmount(activity.cost, 0)} $BOAT`,
+          description: `🛶 Raft #${activity.tokenId} bought for ${formatTokenAmount(activity.cost, 0)} $BOAT`,
           time: timeStr
         }
       

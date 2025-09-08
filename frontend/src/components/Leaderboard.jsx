@@ -4,8 +4,8 @@ import { formatEther, parseEther } from 'viem'
 import { contracts } from '../config/contracts'
 
 const BOAT_EMOJIS = {
-  1: '⛵',
-  2: '🛶', 
+  1: '🛶',
+  2: '⛵', 
   3: '🚤',
   4: '🛥️'
 }

@@ -110,7 +110,7 @@ export default function BoatGallery() {
             <div className="text-sm opacity-80">1000 BOAT</div>
           </div>
           <div className="p-4 bg-white bg-opacity-10 rounded-lg">
-            <div className="text-2xl mb-2">🛶</div>
+            <div className="text-2xl mb-2">⛵</div>
             <div className="font-bold">Dinghy</div>
             <div className="text-sm opacity-80">Upgrade from Raft</div>
           </div>

@@ -3,8 +3,8 @@ import { request, gql } from 'graphql-request'
 import { formatCompactNumber, formatPercentage } from '../utils/formatters'
 
 const BOAT_EMOJIS = {
-  1: '⛵',
-  2: '🛶', 
+  1: '🛶',
+  2: '⛵', 
   3: '🚤',
   4: '🛥️'
 }

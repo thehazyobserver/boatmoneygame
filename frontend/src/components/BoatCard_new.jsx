@@ -7,8 +7,8 @@ import { useCooldownTimer } from '../hooks/useCooldownTimer'
 import { formatTokenAmount, formatInteger } from '../utils/formatters'
 
 const BOAT_EMOJIS = {
-  1: '⛵',
-  2: '🛶', 
+  1: '🛶',
+  2: '⛵', 
   3: '🚤',
   4: '🛥️'
 }
