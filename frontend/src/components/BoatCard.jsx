@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'
@@ -22,6 +22,7 @@ const BOAT_NAMES = {
 
 export default function BoatCard({ tokenId, level, onRefresh }) {
   const { address } = useAccount()
+  const publicClient = usePublicClient()
   const [isRunning, setIsRunning] = useState(false)
   const [cardSelectedToken, setCardSelectedToken] = useState('BOAT') // Default to BOAT token
   
@@ -102,6 +103,41 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     return `UPGRADE TO ${BOAT_NAMES[currentLevel + 1]?.toUpperCase()}`
   }
 
+  // Build tx options with gas estimate + fee bump; fallback to safe caps if estimation fails
+  const buildTxOptions = async (contract, functionName, args) => {
+    let gas
+    let feeOpts = {}
+    try {
+      if (publicClient && address) {
+        const est = await publicClient.estimateContractGas({
+          address: contract.address,
+          abi: contract.abi,
+          functionName,
+          args,
+          account: address,
+        })
+        // Add 20% buffer
+        gas = (est * 120n) / 100n
+      }
+    } catch (e) {
+      console.warn('Gas estimation failed, will use fallback:', e?.message || e)
+    }
+    try {
+      if (publicClient) {
+        const fees = await publicClient.estimateFeesPerGas().catch(() => null)
+        if (fees?.maxFeePerGas && fees?.maxPriorityFeePerGas) {
+          feeOpts = {
+            maxFeePerGas: (fees.maxFeePerGas * 110n) / 100n,
+            maxPriorityFeePerGas: fees.maxPriorityFeePerGas + 1_000_000_000n, // +1 gwei
+          }
+        }
+      }
+    } catch (_) {
+      // ignore fee errors; wallet will fill
+    }
+    return { gas, ...feeOpts }
+  }
+
   const handleRun = async () => {
     if (isOnCooldown || isPending || isConfirming || isApproving || !hasValidAmount) return
     
@@ -114,12 +150,30 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     try {
       setIsRunning(true)
       const contract = getGameContract()
-      const tx = await writeContract({
-        ...contract,
-        functionName: 'run',
-        args: [BigInt(tokenId), playAmountWei],
-  // Let the wallet/provider estimate gas to avoid underestimation issues
-      })
+      const args = [BigInt(tokenId), playAmountWei]
+      const opts = await buildTxOptions(contract, 'run', args)
+      let tx
+      try {
+        tx = await writeContract({
+          ...contract,
+          functionName: 'run',
+          args,
+          ...(opts.gas ? { gas: opts.gas } : {}),
+          ...(opts.maxFeePerGas ? { maxFeePerGas: opts.maxFeePerGas } : {}),
+          ...(opts.maxPriorityFeePerGas ? { maxPriorityFeePerGas: opts.maxPriorityFeePerGas } : {}),
+        })
+      } catch (err) {
+        console.warn('Run tx failed on first attempt, retrying with fallback gas...', err?.message || err)
+        const fallbackGas = opts.gas && opts.gas > 0n ? opts.gas + 50_000n : 400_000n
+        tx = await writeContract({
+          ...contract,
+          functionName: 'run',
+          args,
+          gas: fallbackGas,
+          ...(opts.maxFeePerGas ? { maxFeePerGas: opts.maxFeePerGas } : {}),
+          ...(opts.maxPriorityFeePerGas ? { maxPriorityFeePerGas: opts.maxPriorityFeePerGas } : {}),
+        })
+      }
       setLastTxHash(tx)
       if (onRefresh) onRefresh()
     } catch (err) {
@@ -138,12 +192,30 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
     try {
       setIsRunning(true)
-      const tx = await writeContract({
-        ...contracts.boatGame, // Always use BOAT game contract for upgrades
-        functionName: 'upgrade', // Note: might be 'upgrade' instead of 'upgradeBoat'
-  args: [BigInt(tokenId)],
-  // Let the wallet/provider estimate gas to avoid underestimation issues
-      })
+      const args = [BigInt(tokenId)]
+      const opts = await buildTxOptions(contracts.boatGame, 'upgrade', args)
+      let tx
+      try {
+        tx = await writeContract({
+          ...contracts.boatGame,
+          functionName: 'upgrade',
+          args,
+          ...(opts.gas ? { gas: opts.gas } : {}),
+          ...(opts.maxFeePerGas ? { maxFeePerGas: opts.maxFeePerGas } : {}),
+          ...(opts.maxPriorityFeePerGas ? { maxPriorityFeePerGas: opts.maxPriorityFeePerGas } : {}),
+        })
+      } catch (err) {
+        console.warn('Upgrade tx failed on first attempt, retrying with fallback gas...', err?.message || err)
+        const fallbackGas = opts.gas && opts.gas > 0n ? opts.gas + 50_000n : 350_000n
+        tx = await writeContract({
+          ...contracts.boatGame,
+          functionName: 'upgrade',
+          args,
+          gas: fallbackGas,
+          ...(opts.maxFeePerGas ? { maxFeePerGas: opts.maxFeePerGas } : {}),
+          ...(opts.maxPriorityFeePerGas ? { maxPriorityFeePerGas: opts.maxPriorityFeePerGas } : {}),
+        })
+      }
       if (onRefresh) onRefresh()
     } catch (err) {
       console.error('Upgrade failed:', err)
