@@ -75,8 +75,18 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     query: { enabled: !!address }
   })
 
+  // Check BoatNFT authorization (which game is allowed to modify NFTs)
+  const { data: nftGameAddress } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'game',
+  })
+
   const currentLevel = boatLevel || level || 1
   const isMaxLevel = currentLevel >= 4
+  const expectedGameAddress = (cardSelectedToken === 'JOINT' ? contracts.jointBoatGame.address : contracts.boatGame.address) || ''
+  const isAuthorizedGame = (nftGameAddress && expectedGameAddress)
+    ? String(nftGameAddress).toLowerCase() === String(expectedGameAddress).toLowerCase()
+    : true // default allow until read resolves
   
   const playAmountWei = parseEther(playAmount || '0')
   const needsRunApproval = playAmountWei > 0 && !hasAllowance(playAmountWei)
@@ -88,6 +98,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const hasValidAmount = playAmount && !isNaN(playAmountNum) && isValidAmount
   
   const getRunButtonText = () => {
+  if (!isAuthorizedGame) return `${cardSelectedToken} NOT AUTHORIZED`
     if (isOnCooldown) return 'COOLING DOWN: ' + formattedTime
     if (isPending || isConfirming) return 'RUNNING...'
     if (!hasValidAmount) return 'ENTER VALID AMOUNT'
@@ -322,12 +333,19 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
           <button
             onClick={handleRun}
-            disabled={isOnCooldown || isPending || isConfirming || isApproving || !hasValidAmount}
+            disabled={isOnCooldown || isPending || isConfirming || isApproving || !hasValidAmount || !isAuthorizedGame}
             className="w-full px-6 py-4 vice-button disabled:bg-gray-700 disabled:opacity-50 text-white font-bold text-lg transition-all duration-300"
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
             {getRunButtonText()}
           </button>
+
+          {!isAuthorizedGame && (
+            <div className="text-center text-yellow-300 text-xs mt-2 border border-yellow-400 rounded p-2 bg-yellow-900/20" style={{ fontFamily: 'Rajdhani, monospace' }}>
+              BoatNFT is authorized for a different game.
+              Owner must set BoatNFT.game to {cardSelectedToken === 'JOINT' ? 'JointBoatGame' : 'BoatGame'}.
+            </div>
+          )}
           
           {!isOnCooldown && (
             <div className="text-center text-white opacity-60 text-xs mt-1">
