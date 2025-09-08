@@ -27,7 +27,7 @@ setStakeParams(4, 5000000000000000000000, 50000000000000000000000, 17000, 0);  /
 setTreasury(TREASURY, 250);                         // 2.5% treasury fee
 ```
 
-### JOINT Game Contract (0x37f989151ac5B8383ca6bB541Ac2694adB0609cB)
+### JOINT Game Contract (0xeEB2D1EB8Bf1F8441FFd6b8B5a4c88392f53Bd99)
 
 ```solidity
 // Set level parameters (identical to BOAT)
