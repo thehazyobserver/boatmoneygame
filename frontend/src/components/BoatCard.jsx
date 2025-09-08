@@ -438,13 +438,15 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
                 <button
                   key={lbl}
                   onClick={() => {
-                    let amount = Number(gameConfig.minStake)
-                    const bal = tokenBalance ? Number(formatEther(tokenBalance)) : 0
-                    if (lbl === '25%') amount = Math.max(Number(gameConfig.minStake), Math.floor(bal * 0.25))
-                    if (lbl === '50%') amount = Math.max(Number(gameConfig.minStake), Math.floor(bal * 0.5))
-                    if (lbl === 'MAX') amount = Math.min(Number(gameConfig.maxStake), Math.floor(bal))
-                    if (lbl === 'MIN') amount = Number(gameConfig.minStake)
-                    setPlayAmount(String(Math.min(amount, Number(gameConfig.maxStake))))
+                    const min = Number(gameConfig.minStake)
+                    const max = Number(gameConfig.maxStake)
+                    const snap = (v) => Math.max(min, Math.min(max, Math.round(v / 1000) * 1000))
+                    let amount = min
+                    if (lbl === 'MIN') amount = min
+                    if (lbl === '25%') amount = min + 0.25 * (max - min)
+                    if (lbl === '50%') amount = min + 0.5 * (max - min)
+                    if (lbl === 'MAX') amount = max
+                    setPlayAmount(String(snap(amount)))
                   }}
                   className="text-xs px-2 py-1 border border-cyan-500 rounded hover:bg-cyan-900/20"
                 >{lbl}</button>
