@@ -144,7 +144,7 @@ export default function Instructions() {
                       <div>
                         <h4 className="font-bold text-yellow-400">SET YOUR PLAY AMOUNT</h4>
                         <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                          Enter how much you want to risk. Higher stakes = bigger potential rewards.
+                          Enter how much you want to try to smuggle. Succeed and be rewarded, fail and face the consequences.
                         </p>
                       </div>
                     </div>
@@ -154,7 +154,7 @@ export default function Instructions() {
                       <div>
                         <h4 className="font-bold text-yellow-400">INITIATE RUN</h4>
                         <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                          Hit the button and watch the blockchain determine your fate. Success pays out, failure costs you.
+                          Hit the button and watch the blockchain determine your fate. Will you successfully smuggle the memes or get busted?
                         </p>
                       </div>
                     </div>
