@@ -5,6 +5,7 @@ import BoatGallery from './BoatGallery'
 import BuyRaftCard from './BuyRaftCard'
 import Instructions from './Instructions'
 import LeaderboardSubgraph from './LeaderboardSubgraph'
+import RecentActivity from './RecentActivity'
 
 export default function GameDashboard() {
   const { isConnected } = useAccount()
@@ -146,6 +147,9 @@ export default function GameDashboard() {
         <PoolStats />
         <UserStats />
       </div>
+      
+      {/* Recent Activity - Shows game results, wins/losses, boat changes */}
+      <RecentActivity />
       
       {/* Buy Raft Card - BOAT game only, prominently displayed */}
       <div className="max-w-2xl mx-auto">
