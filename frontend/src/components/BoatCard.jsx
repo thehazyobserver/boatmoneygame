@@ -118,7 +118,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
         ...contract,
         functionName: 'run',
         args: [BigInt(tokenId), playAmountWei],
-        gas: 400000n
+  // Let the wallet/provider estimate gas to avoid underestimation issues
       })
       setLastTxHash(tx)
       if (onRefresh) onRefresh()
@@ -141,8 +141,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       const tx = await writeContract({
         ...contracts.boatGame, // Always use BOAT game contract for upgrades
         functionName: 'upgrade', // Note: might be 'upgrade' instead of 'upgradeBoat'
-        args: [BigInt(tokenId)],
-        gas: 400000n
+  args: [BigInt(tokenId)],
+  // Let the wallet/provider estimate gas to avoid underestimation issues
       })
       if (onRefresh) onRefresh()
     } catch (err) {
@@ -257,13 +257,11 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             {getRunButtonText()}
           </button>
           
-          <div className="text-center text-white opacity-60 text-xs mt-1">
-            {isOnCooldown ? (
-              <span className="text-orange-300">Cooldown: {formattedTime} remaining</span>
-            ) : (
+          {!isOnCooldown && (
+            <div className="text-center text-white opacity-60 text-xs mt-1">
               <span>10-minute cooldown | Play: {formatInteger(gameConfig.minStake)}-{formatInteger(gameConfig.maxStake)} {gameConfig.symbol}</span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="text-center text-white opacity-80 text-sm">

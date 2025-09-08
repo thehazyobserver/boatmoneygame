@@ -8,12 +8,15 @@ export default function UserStats() {
   const { address, isConnected } = useAccount()
   const [activeTab, setActiveTab] = useState('BOAT')
 
-  // Get game config for active tab
-  const gameConfig = GAME_CONFIGS[activeTab]
+  // Get game config for active tab - fallback to BOAT if JOINT not deployed
+  const gameConfig = GAME_CONFIGS[activeTab] || GAME_CONFIGS.BOAT
+  
+  // Ensure we don't try to access JOINT if it's not deployed
+  const safeActiveTab = (activeTab === 'JOINT' && !GAME_CONFIGS.JOINT.isDeployed) ? 'BOAT' : activeTab
   
   // Get contract configuration based on active tab
   const getGameContract = () => {
-    return activeTab === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+    return safeActiveTab === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
   }
 
   // Read user's token balance from the token contract
@@ -38,7 +41,13 @@ export default function UserStats() {
     ...getGameContract(),
     functionName: 'getStats',
     args: [address],
-    query: { enabled: isConnected && !!address }
+    query: { 
+      enabled: isConnected && !!address && gameConfig.isDeployed,
+      retry: false,
+      onError: (error) => {
+        console.warn(`Error fetching ${activeTab} stats:`, error)
+      }
+    }
   })
 
   if (!isConnected) {
@@ -69,13 +78,13 @@ export default function UserStats() {
     },
     {
       label: 'Total Runs',
-      value: userStats ? userStats.runsStarted.toString() : '0',
+      value: userStats?.runsStarted ? userStats.runsStarted.toString() : '0',
       suffix: 'runs',
       icon: '🏃'
     },
     {
       label: 'Success Rate',
-      value: userStats && userStats.runsStarted > 0 
+      value: userStats?.runsStarted && userStats?.runsWon && userStats.runsStarted > 0 
         ? Math.round((Number(userStats.runsWon) / Number(userStats.runsStarted)) * 100).toString() 
         : '0',
       suffix: '%',
@@ -101,16 +110,22 @@ export default function UserStats() {
         >
           🚤 $BOAT
         </button>
-        <button
-          onClick={() => setActiveTab('JOINT')}
-          className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'JOINT'
-              ? 'bg-green-500 text-white'
-              : 'text-white hover:bg-white hover:bg-opacity-10'
-          }`}
-        >
-          🌿 $JOINT
-        </button>
+        {GAME_CONFIGS.JOINT.isDeployed && (
+          <button
+            onClick={() => {
+              if (GAME_CONFIGS.JOINT.isDeployed) {
+                setActiveTab('JOINT')
+              }
+            }}
+            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'JOINT'
+                ? 'bg-green-500 text-white'
+                : 'text-white hover:bg-white hover:bg-opacity-10'
+            }`}
+          >
+            🌿 $JOINT
+          </button>
+        )}
       </div>
       
       <div className="grid grid-cols-2 gap-4">
@@ -128,31 +143,34 @@ export default function UserStats() {
       </div>
 
       {/* Additional detailed stats if user has played */}
-      {userStats && userStats.runsStarted > 0 && (
+      {userStats && userStats.runsStarted && userStats.runsStarted > 0 && (
         <div className="mt-6 pt-4 border-t border-white border-opacity-20">
           <div className="grid grid-cols-2 gap-4 text-white text-sm">
             <div className="text-center">
-              <div className="font-bold text-green-400">{userStats.runsWon.toString()}</div>
+              <div className="font-bold text-green-400">{userStats.runsWon?.toString() || '0'}</div>
               <div className="opacity-80">Runs Won</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-red-400">{userStats.boatsLost.toString()}</div>
+              <div className="font-bold text-red-400">{userStats.boatsLost?.toString() || '0'}</div>
               <div className="opacity-80">Boats Lost</div>
             </div>
           </div>
-          <div className="text-center mt-3">
-            <div className="text-sm text-white opacity-80">
-              🏆 Max Fleet Size: {userStats.boatsOwnedMax.toString()} boats
+          {/* Only show max fleet size if it exists (BOAT game only) */}
+          {userStats.boatsOwnedMax !== undefined && (
+            <div className="text-center mt-3">
+              <div className="text-sm text-white opacity-80">
+                🏆 Max Fleet Size: {userStats.boatsOwnedMax.toString()} boats
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 
       <div className="mt-6 pt-4 border-t border-white border-opacity-20">
         <div className="text-center text-white opacity-80 text-sm">
-          {userStats && userStats.runsStarted > 0 
+          {userStats && userStats.runsStarted && userStats.runsStarted > 0 
             ? '🎯 Keep playing to improve your success rate!' 
-            : '🎮 Buy your first boat to start earning BOAT tokens!'
+            : '🎮 Buy your first boat to start earning tokens!'
           }
         </div>
       </div>

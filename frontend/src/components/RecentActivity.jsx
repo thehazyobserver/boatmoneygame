@@ -85,15 +85,15 @@ export default function RecentActivity() {
     eventName: 'RunResult',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { user, tokenId, level, stake, success, rewardPaid } = log.args
+    const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
         
         if (user?.toLowerCase() === address?.toLowerCase()) {
           addActivity('run', {
-            tokenId: tokenId.toString(),
-            level: parseInt(level),
-            stake,
-            success,
-            rewardPaid: rewardPaid || 0n,
+      tokenId: tokenId?.toString?.() || '0',
+      level: level ? parseInt(level) : 0,
+      stake: stake || 0n,
+      success: Boolean(success),
+      rewardPaid: rewardPaid || 0n,
             gameToken: 'BOAT'
           })
         }
@@ -107,15 +107,15 @@ export default function RecentActivity() {
     eventName: 'JointRun',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { user, tokenId, level, stake, success, rewardPaid } = log.args
+    const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
         
         if (user?.toLowerCase() === address?.toLowerCase()) {
           addActivity('run', {
-            tokenId: tokenId.toString(),
-            level: parseInt(level),
-            stake,
-            success,
-            rewardPaid: rewardPaid || 0n,
+      tokenId: tokenId?.toString?.() || '0',
+      level: level ? parseInt(level) : 0,
+      stake: stake || 0n,
+      success: Boolean(success),
+      rewardPaid: rewardPaid || 0n,
             gameToken: 'JOINT'
           })
         }
@@ -129,11 +129,11 @@ export default function RecentActivity() {
     eventName: 'BoatBurned',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, level } = log.args
+        const { tokenId, level } = log.args || {}
         
         addActivity('burned', {
-          tokenId: tokenId.toString(),
-          level: parseInt(level),
+          tokenId: tokenId?.toString?.() || '0',
+          level: level ? parseInt(level) : 0,
           gameToken: 'BOAT'
         })
       })
@@ -146,11 +146,11 @@ export default function RecentActivity() {
     eventName: 'BoatBurned',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, level } = log.args
+        const { tokenId, level } = log.args || {}
         
         addActivity('burned', {
-          tokenId: tokenId.toString(),
-          level: parseInt(level),
+          tokenId: tokenId?.toString?.() || '0',
+          level: level ? parseInt(level) : 0,
           gameToken: 'JOINT'
         })
       })
@@ -163,12 +163,12 @@ export default function RecentActivity() {
     eventName: 'BoatDowngraded',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, fromLevel, toLevel } = log.args
+        const { tokenId, fromLevel, toLevel } = log.args || {}
         
         addActivity('downgraded', {
-          tokenId: tokenId.toString(),
-          fromLevel: parseInt(fromLevel),
-          toLevel: parseInt(toLevel),
+          tokenId: tokenId?.toString?.() || '0',
+          fromLevel: fromLevel ? parseInt(fromLevel) : 0,
+          toLevel: toLevel ? parseInt(toLevel) : 0,
           gameToken: 'BOAT'
         })
       })
@@ -181,12 +181,12 @@ export default function RecentActivity() {
     eventName: 'BoatDowngraded',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, fromLevel, toLevel } = log.args
+        const { tokenId, fromLevel, toLevel } = log.args || {}
         
         addActivity('downgraded', {
-          tokenId: tokenId.toString(),
-          fromLevel: parseInt(fromLevel),
-          toLevel: parseInt(toLevel),
+          tokenId: tokenId?.toString?.() || '0',
+          fromLevel: fromLevel ? parseInt(fromLevel) : 0,
+          toLevel: toLevel ? parseInt(toLevel) : 0,
           gameToken: 'JOINT'
         })
       })
@@ -199,11 +199,11 @@ export default function RecentActivity() {
     eventName: 'RaftSpawned',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { to, tokenId } = log.args
+    const { to, tokenId } = log.args || {}
         
         if (to?.toLowerCase() === address?.toLowerCase()) {
           addActivity('spawned', {
-            tokenId: tokenId.toString(),
+      tokenId: tokenId?.toString?.() || '0',
             level: 1, // Spawned rafts are always level 1
             gameToken: 'BOAT'
           })
@@ -218,13 +218,13 @@ export default function RecentActivity() {
     eventName: 'RaftBought',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { user, tokenId, cost } = log.args
+    const { user, tokenId, cost } = log.args || {}
         
         if (user?.toLowerCase() === address?.toLowerCase()) {
           addActivity('purchased', {
-            tokenId: tokenId.toString(),
+      tokenId: tokenId?.toString?.() || '0',
             level: 1, // Purchased rafts are always level 1
-            cost,
+      cost: cost || 0n,
             gameToken: 'BOAT'
           })
         }
@@ -238,14 +238,14 @@ export default function RecentActivity() {
     eventName: 'Upgraded',
     onLogs(logs) {
       logs.forEach((log) => {
-        const { user, tokenId, fromLevel, toLevel, cost } = log.args
+    const { user, tokenId, fromLevel, toLevel, cost } = log.args || {}
         
         if (user?.toLowerCase() === address?.toLowerCase()) {
           addActivity('upgraded', {
-            tokenId: tokenId.toString(),
-            fromLevel: parseInt(fromLevel),
-            toLevel: parseInt(toLevel),
-            cost,
+      tokenId: tokenId?.toString?.() || '0',
+      fromLevel: fromLevel ? parseInt(fromLevel) : 0,
+      toLevel: toLevel ? parseInt(toLevel) : 0,
+      cost: cost || 0n,
             gameToken: 'BOAT'
           })
         }
