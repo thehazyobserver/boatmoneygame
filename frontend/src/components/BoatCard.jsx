@@ -456,18 +456,6 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             <div className="text-cyan-400 text-sm font-bold mt-2" style={{ fontFamily: 'Orbitron, monospace' }}>
               YOUR {gameConfig.symbol}: {tokenBalance ? formatTokenAmount(tokenBalance) : '0.00'}
             </div>
-            {/* EV / Cap helper */}
-            {hasValidAmount && (
-              <div className="mt-3 text-xs">
-                <div className="text-cyan-300">
-                  Expected payout: {formatInteger(Math.floor(Number(formatEther(effectiveRewardWei))))} {gameConfig.symbol} {capApplied ? '(capped)' : ''}
-                </div>
-                <div className={`font-bold ${evPct >= 0 ? 'text-green-400' : 'text-red-400'}`}
-                     style={{ fontFamily: 'Orbitron, monospace' }}>
-                  EV: {evPct >= 0 ? '+' : ''}{evPct.toFixed(1)}%
-                </div>
-              </div>
-            )}
           </div>
 
           <button
