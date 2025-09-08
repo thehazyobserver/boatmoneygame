@@ -6,7 +6,6 @@ import { formatTokenAmount } from '../utils/formatters'
 export default function RecentActivity() {
   const { address } = useAccount()
   const [activities, setActivities] = useState([])
-  const [isExpanded, setIsExpanded] = useState(false)
 
   // Storage key for activities
   const getStorageKey = () => `recentActivity_${address?.toLowerCase()}`
@@ -346,10 +345,7 @@ export default function RecentActivity() {
   return (
     <div className="terminal-bg rounded-xl border-2 border-purple-400 mb-6 neon-glow">
       {/* Header */}
-      <div 
-        className="p-4 cursor-pointer flex items-center justify-between hover:bg-purple-400 hover:bg-opacity-10 transition-all"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
+      <div className="p-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="text-3xl">📋</div>
           <div>
@@ -361,14 +357,10 @@ export default function RecentActivity() {
             </p>
           </div>
         </div>
-        <div className="text-purple-400 text-2xl neon-text">
-          {isExpanded ? '▲' : '▼'}
-        </div>
       </div>
 
       {/* Activity List */}
-      {isExpanded && (
-        <div className="border-t-2 border-purple-400 max-h-96 overflow-y-auto">
+      <div className="border-t-2 border-purple-400 max-h-96 overflow-y-auto">
           {activities.length === 0 ? (
             <div className="p-6 text-center">
               <p className="text-gray-400" style={{ fontFamily: 'Rajdhani, monospace' }}>
@@ -406,7 +398,6 @@ export default function RecentActivity() {
             </div>
           )}
         </div>
-      )}
     </div>
   )
 }
