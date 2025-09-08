@@ -8,8 +8,7 @@ export default function Instructions() {
 
   const tabs = [
     { id: 'basics', label: 'BASICS', icon: '🎯' },
-    { id: 'gameplay', label: 'GAMEPLAY', icon: '🚤' },
-    { id: 'strategy', label: 'STRATEGY', icon: '💡' }
+    { id: 'gameplay', label: 'GAMEPLAY', icon: '🚤' }
   ]
 
   return (
@@ -216,67 +215,7 @@ export default function Instructions() {
               </div>
             )}
 
-            {activeTab === 'strategy' && (
-              <div className="space-y-6">
-                <div className="terminal-bg p-4 rounded-lg border border-cyan-400 border-opacity-50">
-                  <h3 className="text-lg font-bold text-cyan-400 mb-3 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
-                    🧠 CRIMINAL MASTERMIND TIPS
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-yellow-400">🚀 START SMALL, SCALE UP</h4>
-                      <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                        Begin with rafts and $BOAT operations. Build your fleet before attempting high-stakes $JOINT runs.
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-yellow-400">⚖️ RISK MANAGEMENT</h4>
-                      <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                        Never stake more than you can afford to lose. Diversify across multiple boats to spread risk.
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-yellow-400">🔄 UPGRADE PATH</h4>
-                      <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                        Focus on upgrading boats to Yacht level for the best success rates and bonus raft spawning.
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-yellow-400">⏰ TIMING IS KEY</h4>
-                      <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                        Watch for cooldown periods between runs. Plan your operations during peak pool times.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
-                    <div className="text-2xl mb-2">�</div>
-                    <div className="text-cyan-400 font-bold text-sm">RAFT</div>
-                    <div className="text-pink-400 text-xs">Safe Start</div>
-                  </div>
-                  <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
-                    <div className="text-2xl mb-2">⛵</div>
-                    <div className="text-cyan-400 font-bold text-sm">DINGHY</div>
-                    <div className="text-pink-400 text-xs">Better Odds</div>
-                  </div>
-                  <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
-                    <div className="text-2xl mb-2">🚤</div>
-                    <div className="text-cyan-400 font-bold text-sm">SPEEDBOAT</div>
-                    <div className="text-pink-400 text-xs">High Risk</div>
-                  </div>
-                  <div className="terminal-bg p-3 rounded-lg border border-cyan-400 border-opacity-30 text-center">
-                    <div className="text-2xl mb-2">🛥️</div>
-                    <div className="text-cyan-400 font-bold text-sm">YACHT</div>
-                    <div className="text-pink-400 text-xs">Elite Status</div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Strategy tab removed per request */}
           </div>
         </div>
       )}
