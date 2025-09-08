@@ -30,13 +30,17 @@ export function useTokenApproval(selectedToken = 'BOAT') {
   // Use the actual token address if available, fallback to config
   const tokenAddress = actualTokenAddress || gameConfig.tokenAddress
 
-  // Check current allowance
+  // Check current allowance with more frequent refetch
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: tokenAddress,
     abi: BOAT_TOKEN_ABI,
     functionName: 'allowance',
     args: [address, getGameContract().address],
-    query: { enabled: !!address && !!tokenAddress }
+    query: { 
+      enabled: !!address && !!tokenAddress,
+      refetchInterval: 3000, // Refetch every 3 seconds to catch changes
+      staleTime: 1000 // Consider data stale after 1 second
+    }
   })
 
   // Check if we have enough allowance for a specific amount
@@ -60,10 +64,15 @@ export function useTokenApproval(selectedToken = 'BOAT') {
         args: [getGameContract().address, amount]
       })
       
-      // Wait a bit and refetch allowance
+      // Force immediate refresh of all relevant queries
       setTimeout(() => {
+        // Invalidate allowance queries
+        queryClient.invalidateQueries({ queryKey: ['allowance'] })
+        queryClient.invalidateQueries({ queryKey: ['readContract'] })
+        // Refetch this specific allowance
         refetchAllowance()
-      }, 2000)
+        console.log(`✅ ${selectedToken} approval completed! Refreshing UI...`)
+      }, 1000) // Shorter delay for better UX
       
       return result
     } catch (err) {
