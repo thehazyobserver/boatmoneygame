@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useQueryClient } from '@tanstack/react-query'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 import { useTokenApproval } from '../hooks/useTokenApproval'
@@ -9,6 +10,7 @@ function BuyRaftCard() {
   const { address, isConnected } = useAccount()
   const [isBuying, setIsBuying] = useState(false)
   const [lastTxHash, setLastTxHash] = useState(null)
+  const queryClient = useQueryClient()
 
   // Token approval hook - explicitly for BOAT tokens only
   const { hasAllowance, approveMax, isApproving } = useTokenApproval('BOAT')
@@ -63,6 +65,14 @@ function BuyRaftCard() {
         functionName: 'buyRaft'
       })
       setLastTxHash(tx)
+      
+      // Immediately refresh data for better UX
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['balanceOf'] })
+        queryClient.invalidateQueries({ queryKey: ['tokenOfOwnerByIndex'] })
+        queryClient.invalidateQueries({ queryKey: ['balance'] })
+      }, 1000) // Small delay to allow blockchain to update
+      
     } catch (error) {
       console.error('Buy raft failed:', error)
     } finally {

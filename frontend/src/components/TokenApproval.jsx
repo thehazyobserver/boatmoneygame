@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
+import { useQueryClient } from '@tanstack/react-query'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI } from '../config/contracts'
 import { formatTokenAmount } from '../utils/formatters'
@@ -7,6 +8,7 @@ import { formatTokenAmount } from '../utils/formatters'
 export default function TokenApproval() {
   const { address } = useAccount()
   const [approvalAmount, setApprovalAmount] = useState('1000000') // 1M BOAT default
+  const queryClient = useQueryClient()
   
   const { writeContract, isPending, error } = useWriteContract()
 
@@ -44,6 +46,12 @@ export default function TokenApproval() {
         functionName: 'approve',
         args: [contracts.boatGame.address, parseEther(approvalAmount)]
       })
+      
+      // Immediately refresh allowance data for better UX
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['allowance'] })
+      }, 1000) // Small delay to allow blockchain to update
+      
     } catch (err) {
       console.error('Approval failed:', err)
     }
