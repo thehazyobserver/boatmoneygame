@@ -1,21 +1,19 @@
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { sonic } from 'wagmi/chains'
-import { useState } from 'react'
 
 export default function NetworkSwitcher() {
   const { isConnected } = useAccount()
   const chainId = useChainId()
   const { switchChain, isPending, error } = useSwitchChain()
-  const [isVisible, setIsVisible] = useState(true)
+
+  // Debug logging
+  console.log('NetworkSwitcher - isConnected:', isConnected, 'chainId:', chainId, 'sonic.id:', sonic.id)
 
   // Don't show if wallet not connected
   if (!isConnected) return null
 
   // Don't show if already on Sonic network
   if (chainId === sonic.id) return null
-
-  // Don't show if user dismissed
-  if (!isVisible) return null
 
   const getNetworkName = (id) => {
     switch (id) {
@@ -37,10 +35,6 @@ export default function NetworkSwitcher() {
     } catch (err) {
       console.error('Failed to switch network:', err)
     }
-  }
-
-  const handleDismiss = () => {
-    setIsVisible(false)
   }
 
   return (
@@ -84,11 +78,11 @@ export default function NetworkSwitcher() {
         )}
 
         {/* Action buttons */}
-        <div className="flex space-x-3">
+        <div className="flex justify-center">
           <button
             onClick={handleSwitchNetwork}
             disabled={isPending}
-            className="flex-1 vice-button px-4 py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="w-full vice-button px-6 py-4 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
             {isPending ? (
@@ -99,24 +93,26 @@ export default function NetworkSwitcher() {
             ) : (
               <>
                 <span>🔄</span>
-                <span>SWITCH TO SONIC</span>
+                <span>SWITCH TO SONIC NETWORK</span>
               </>
             )}
           </button>
-
-          <button
-            onClick={handleDismiss}
-            className="px-4 py-3 rounded-lg font-bold border border-gray-500 text-gray-400 hover:text-white hover:border-gray-400 transition-colors"
-            style={{ fontFamily: 'Orbitron, monospace' }}
-          >
-            DISMISS
-          </button>
         </div>
+
+        {/* Error display */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-900 bg-opacity-50 rounded border border-red-500">
+            <p className="text-red-300 text-sm" style={{ fontFamily: 'Orbitron, monospace' }}>
+              Switch failed: {error.message || 'Please try again or switch manually in your wallet'}
+            </p>
+          </div>
+        )}
 
         {/* Help text */}
         <div className="mt-4 text-xs text-gray-400 text-center" style={{ fontFamily: 'Orbitron, monospace' }}>
-          <p>Game features won't work on other networks.</p>
-          <p>Switch to Sonic to play BOAT RUNNER!</p>
+          <p className="text-yellow-400 font-bold mb-2">⚠️ REQUIRED FOR GAMEPLAY</p>
+          <p>This game only works on Sonic Network.</p>
+          <p>Please switch your wallet network to continue.</p>
         </div>
       </div>
     </div>
