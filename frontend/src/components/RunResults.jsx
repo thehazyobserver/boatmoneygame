@@ -198,7 +198,7 @@ export default function RunResults() {
   })
 
   const getBoatEmoji = (level) => {
-    const emojis = { 1: '�', 2: '🛶', 3: '🚤', 4: '🛥️' }
+    const emojis = { 1: '⛵', 2: '🛶', 3: '🚤', 4: '🛥️' }
     return emojis[level] || '🚤'
   }
 

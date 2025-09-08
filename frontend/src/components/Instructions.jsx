@@ -70,13 +70,13 @@ export default function Instructions() {
                       <strong>BOAT RUNNER</strong> is a high-risk blockchain game where you operate smuggling boats in the neon-soaked waters of Miami '85.
                     </p>
                     <p>
-                      • <strong className="text-yellow-400">BUY RAFTS:</strong> Start with basic rafts using $BOAT tokens
+                      • <strong className="text-yellow-400">BUY RAFTS:</strong> Start with basic rafts using 50K $BOAT tokens
                     </p>
                     <p>
-                      • <strong className="text-yellow-400">RUN OPERATIONS:</strong> Execute smuggling runs with either $BOAT or $JOINT tokens
+                      • <strong className="text-yellow-400">RUN OPERATIONS:</strong> Execute operations with $BOAT (5K-50K) or $JOINT (7.8K-78K) tokens
                     </p>
                     <p>
-                      • <strong className="text-yellow-400">UPGRADE FLEET:</strong> Use $BOAT to upgrade boats for better success rates
+                      • <strong className="text-yellow-400">UPGRADE FLEET:</strong> Use $BOAT to upgrade boats (80K→150K→250K) for better success rates
                     </p>
                     <p>
                       • <strong className="text-yellow-400">STACK PAPER:</strong> Win big payouts or lose everything trying
@@ -90,10 +90,10 @@ export default function Instructions() {
                       💰 $BOAT OPERATIONS
                     </h4>
                     <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                      <li>• Buy new rafts</li>
-                      <li>• Upgrade boat levels</li>
-                      <li>• Run smuggling operations</li>
-                      <li>• Lower risk amounts, steady gains</li>
+                      <li>• Buy new rafts (50K $BOAT)</li>
+                      <li>• Upgrade boat levels (80K-250K $BOAT)</li>
+                      <li>• Run operations (5K-50K stakes)</li>
+                      <li>• Lower risk, steady progression</li>
                     </ul>
                   </div>
                   
@@ -102,10 +102,10 @@ export default function Instructions() {
                       🔥 $JOINT OPERATIONS
                     </h4>
                     <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                      <li>• High-risk smuggling runs</li>
-                      <li>• Massive potential payouts</li>
-                      <li>• Higher play amounts required</li>
-                      <li>• More dangerous waters</li>
+                      <li>• High-stakes operations (7.8K-78K stakes)</li>
+                      <li>• Same boat mechanics, different token</li>
+                      <li>• Upgrades still paid in $BOAT</li>
+                      <li>• Multipliers based on boat level</li>
                     </ul>
                   </div>
                 </div>
@@ -134,7 +134,7 @@ export default function Instructions() {
                       <div>
                         <h4 className="font-bold text-yellow-400">CHOOSE OPERATION MODE</h4>
                         <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                          Pick $BOAT (safer) or $JOINT (riskier) from the dropdown on each boat card.
+                          Pick $BOAT (5K-50K stakes) or $JOINT (7.8K-78K stakes) from the dropdown on each boat card. Note: All upgrades are always paid in $BOAT tokens.
                         </p>
                       </div>
                     </div>
@@ -168,8 +168,9 @@ export default function Instructions() {
                     </h4>
                     <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
                       <li>• Win your stake multiplied by boat level</li>
-                      <li>• Yacht runs can spawn bonus rafts</li>
+                      <li>• Yacht runs have 15% chance to spawn bonus rafts</li>
                       <li>• Keep your boat for more runs</li>
+                      <li>• 10 minute cooldown between runs</li>
                     </ul>
                   </div>
                   
@@ -179,9 +180,37 @@ export default function Instructions() {
                     </h4>
                     <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
                       <li>• Lose your staked tokens</li>
-                      <li>• Boat might get burned or downgraded</li>
-                      <li>• Higher level boats = worse penalties</li>
+                      <li>• Rafts get BURNED on failure</li>
+                      <li>• Higher boats get DOWNGRADED one level</li>
+                      <li>• 10 minute cooldown still applies</li>
                     </ul>
+                  </div>
+                </div>
+
+                {/* Game Mechanics Section */}
+                <div className="terminal-bg p-4 rounded-lg border border-purple-400 border-opacity-50">
+                  <h3 className="text-lg font-bold text-purple-400 mb-3 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+                    📊 BOAT MECHANICS
+                  </h3>
+                  <div className="responsive-grid">
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-yellow-400">🚢 SUCCESS RATES</h4>
+                      <ul className="text-white text-sm space-y-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                        <li>• Raft: 50% success</li>
+                        <li>• Dinghy: 55% success</li>
+                        <li>• Speedboat: 60% success</li>
+                        <li>• Yacht: 65% success</li>
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-yellow-400">💰 UPGRADE COSTS</h4>
+                      <ul className="text-white text-sm space-y-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
+                        <li>• Raft → Dinghy: 80K $BOAT</li>
+                        <li>• Dinghy → Speedboat: 150K $BOAT</li>
+                        <li>• Speedboat → Yacht: 250K $BOAT</li>
+                        <li>• New Raft: 50K $BOAT</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -104,7 +104,7 @@ function BuyRaftCard() {
       <div className="flex flex-col items-center space-y-6 relative z-10">
         {/* Header Section */}
         <div className="text-center space-y-4">
-          <div className="text-7xl neon-glow" style={{ filter: 'drop-shadow(0 0 10px currentColor)' }}>🚣</div>
+          <div className="text-7xl neon-glow" style={{ filter: 'drop-shadow(0 0 10px currentColor)' }}>⛵</div>
           <div>
             <h3 className="text-2xl font-bold text-cyan-400 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
               BUY YOUR FIRST RAFT

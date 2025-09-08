@@ -5,7 +5,7 @@ import { contracts } from '../config/contracts'
 import { formatCompactNumber, formatPercentage } from '../utils/formatters'
 
 const BOAT_EMOJIS = {
-  1: '🚣',
+  1: '⛵',
   2: '🛶', 
   3: '🚤',
   4: '🛥️'
