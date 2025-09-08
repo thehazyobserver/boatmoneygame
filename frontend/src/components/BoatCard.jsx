@@ -397,7 +397,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
               {hasValidAmount && (
                 <div className="mt-1">
                   <span className={`font-bold ${nextEvPct - evPct >= 0 ? 'text-green-400' : 'text-red-400'}`} style={{ fontFamily: 'Orbitron, monospace' }}>
-                    EV change: {(nextEvPct - evPct) >= 0 ? '+' : ''}{(nextEvPct - evPct).toFixed(1)}%
+                    Change: {(nextEvPct - evPct) >= 0 ? '+' : ''}{(nextEvPct - evPct).toFixed(1)}%
                   </span>
                   <span className="text-cyan-300 ml-2">at your stake</span>
                 </div>
