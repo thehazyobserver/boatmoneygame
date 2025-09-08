@@ -93,11 +93,23 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     args: [boatLevel || level || 1],
     query: { enabled: cardSelectedToken === 'JOINT' }
   })
+  const { data: jointMaxAbsNext } = useReadContract({
+    ...contracts.jointBoatGame,
+    functionName: 'maxPayoutAbs',
+    args: [(boatLevel || level || 1) + 1],
+    query: { enabled: cardSelectedToken === 'JOINT' && (boatLevel || level || 1) < 4 }
+  })
   const { data: boatStakeCfg } = useReadContract({
     ...contracts.boatGame,
     functionName: 'stakeCfg',
     args: [boatLevel || level || 1],
     query: { enabled: cardSelectedToken === 'BOAT' }
+  })
+  const { data: boatStakeCfgNext } = useReadContract({
+    ...contracts.boatGame,
+    functionName: 'stakeCfg',
+    args: [(boatLevel || level || 1) + 1],
+    query: { enabled: cardSelectedToken === 'BOAT' && (boatLevel || level || 1) < 4 }
   })
 
   // Check BoatNFT authorization (which game is allowed to modify NFTs)
@@ -141,6 +153,23 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const p = (levelCfg.successRate || 50) / 100
   const evPct = playAmountWei > 0n ? (p * effectiveMultiplier - 1) * 100 : 0
   const capApplied = effectiveRewardWei < rawRewardWei
+
+  // Next-level EV (for upgrade preview)
+  const nextLevel = Math.min(currentLevel + 1, 4)
+  const nextCfg = gameConfig.levels[nextLevel] || { successRate: levelCfg.successRate, multiplier: levelCfg.multiplier }
+  const nextMultBps = Math.round((nextCfg.multiplier || levelCfg.multiplier || 1.5) * 10000)
+  const nextRawWei = (playAmountWei * BigInt(nextMultBps)) / 10000n
+  const nextMaxAbsWei = cardSelectedToken === 'JOINT'
+    ? (jointMaxAbsNext || 0n)
+    : (boatStakeCfgNext && boatStakeCfgNext[3]) || 0n
+  let nextEffWei = nextRawWei
+  if (capByPoolWei > 0n && nextEffWei > capByPoolWei) nextEffWei = capByPoolWei
+  if (nextMaxAbsWei > 0n && nextEffWei > nextMaxAbsWei) nextEffWei = nextMaxAbsWei
+  const nextEffMult = playAmountWei > 0n
+    ? (Number(formatEther(nextEffWei)) / Math.max(1e-9, Number(playAmount)))
+    : 0
+  const nextP = (nextCfg.successRate || levelCfg.successRate || 50) / 100
+  const nextEvPct = playAmountWei > 0n ? (nextP * nextEffMult - 1) * 100 : 0
   
   const getRunButtonText = () => {
   // Keep cooldown display only in the banner, not on the button
@@ -356,6 +385,26 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           <div className="w-full text-center space-y-3 border border-yellow-400 rounded-lg p-4 bg-yellow-900/20">
             <div className="text-yellow-400 text-sm font-bold" style={{ fontFamily: 'Orbitron, monospace' }}>
               UPGRADE COST: {upgradeCost ? formatTokenAmount(upgradeCost, 0) : '...'} $BOAT
+            </div>
+            {/* Upgrade benefits preview */}
+            <div className="text-left text-xs bg-black/30 border border-yellow-400/40 rounded p-2">
+              <div className="text-cyan-300 font-bold" style={{ fontFamily: 'Orbitron, monospace' }}>
+                Next level gains
+              </div>
+              <div className="mt-1 text-cyan-200">
+                Success: {levelCfg.successRate}% → {nextCfg.successRate}%  •  Multiplier: {levelCfg.multiplier}x → {nextCfg.multiplier}x
+              </div>
+              {hasValidAmount && (
+                <div className="mt-1">
+                  <span className={`font-bold ${nextEvPct - evPct >= 0 ? 'text-green-400' : 'text-red-400'}`} style={{ fontFamily: 'Orbitron, monospace' }}>
+                    EV change: {(nextEvPct - evPct) >= 0 ? '+' : ''}{(nextEvPct - evPct).toFixed(1)}%
+                  </span>
+                  <span className="text-cyan-300 ml-2">at your stake</span>
+                </div>
+              )}
+              {nextLevel === 4 && (
+                <div className="mt-1 text-yellow-300">Bonus: 15% chance to spawn a free raft</div>
+              )}
             </div>
             <button
               onClick={handleUpgrade}
