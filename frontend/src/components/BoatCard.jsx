@@ -265,7 +265,30 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
         </div>
 
         <div className="text-center text-white opacity-80 text-sm">
-          Success Rate: {currentLevel === 1 ? '55%' : currentLevel === 2 ? '65%' : currentLevel === 3 ? '75%' : '85%'}
+          <div className="grid grid-cols-2 gap-4 text-xs" style={{ fontFamily: 'Orbitron, monospace' }}>
+            <div className="bg-green-900/30 rounded p-2 border border-green-500/50">
+              <div className="text-green-400 font-bold">🎯 SUCCESS</div>
+              <div className="text-green-300">
+                {gameConfig.levels[currentLevel]?.successRate || 50}% chance
+              </div>
+              <div className="text-green-200 text-xs">
+                Win {gameConfig.levels[currentLevel]?.multiplier || 1.5}x stake
+              </div>
+            </div>
+            <div className="bg-red-900/30 rounded p-2 border border-red-500/50">
+              <div className="text-red-400 font-bold">💥 FAILURE</div>
+              <div className="text-red-300">
+                {100 - (gameConfig.levels[currentLevel]?.successRate || 50)}% chance
+              </div>
+              <div className="text-red-200 text-xs">
+                {currentLevel === 1 ? 'Boat destroyed' : 'Downgrade to Lvl ' + (currentLevel - 1)}
+              </div>
+            </div>
+          </div>
+          <div className="mt-2 text-cyan-400 text-xs font-bold">
+            Risk: {formatTokenAmount(parseEther(playAmount || '0'), gameConfig.symbol)} • 
+            Reward: {formatTokenAmount(parseEther(((parseFloat(playAmount || '0') * (gameConfig.levels[currentLevel]?.multiplier || 1.5)).toFixed(0))), gameConfig.symbol)}
+          </div>
         </div>
       </div>
     </div>
