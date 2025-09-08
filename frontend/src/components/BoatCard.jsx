@@ -98,7 +98,6 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const hasValidAmount = playAmount && !isNaN(playAmountNum) && isValidAmount
   
   const getRunButtonText = () => {
-  if (!isAuthorizedGame) return `${cardSelectedToken} NOT AUTHORIZED`
     if (isOnCooldown) return 'COOLING DOWN: ' + formattedTime
     if (isPending || isConfirming) return 'RUNNING...'
     if (!hasValidAmount) return 'ENTER VALID AMOUNT'
@@ -333,7 +332,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
           <button
             onClick={handleRun}
-            disabled={isOnCooldown || isPending || isConfirming || isApproving || !hasValidAmount || !isAuthorizedGame}
+            disabled={isOnCooldown || isPending || isConfirming || isApproving || !hasValidAmount}
             className="w-full px-6 py-4 vice-button disabled:bg-gray-700 disabled:opacity-50 text-white font-bold text-lg transition-all duration-300"
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
