@@ -36,8 +36,8 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable JOINT;
-    IBoatNFT public immutable NFT;
-    IBoatGame public immutable BOAT_GAME;
+    IBoatNFT public NFT;
+    IBoatGame public BOAT_GAME;
 
     uint256 public minStake = 7_800 ether;    // 7.8k $JOINT min (configurable)
     uint256 public maxStake = 78_000 ether;   // 78k $JOINT max (configurable)
@@ -59,6 +59,8 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
     event BoatBurned(uint256 indexed tokenId, uint8 level);
     event BoatDowngraded(uint256 indexed tokenId, uint8 fromLevel, uint8 toLevel);
     event Seeded(uint256 amount);
+    event NFTUpdated(address indexed oldNft, address indexed newNft);
+    event BoatGameUpdated(address indexed oldGame, address indexed newGame);
 
     constructor(IERC20 jointToken, IBoatNFT boatNft, IBoatGame boatGame) {
         require(address(jointToken) != address(0) && address(boatNft) != address(0) && address(boatGame) != address(0), "zero addr");
@@ -157,6 +159,22 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
 
     function setCooldown(uint256 seconds_) external onlyOwner { 
         runCooldown = seconds_; 
+    }
+    
+    /// @notice Update the BoatNFT contract address. Recommended to pause first.
+    function setNFT(IBoatNFT newNft) external onlyOwner {
+        require(address(newNft) != address(0), "zero addr");
+        address old = address(NFT);
+        NFT = newNft;
+        emit NFTUpdated(old, address(newNft));
+    }
+    
+    /// @notice Update the BoatGame contract used for upgrades.
+    function setBoatGame(IBoatGame newGame) external onlyOwner {
+        require(address(newGame) != address(0), "zero addr");
+        address old = address(BOAT_GAME);
+        BOAT_GAME = newGame;
+        emit BoatGameUpdated(old, address(newGame));
     }
     
     function setMinMaxStake(uint256 min_, uint256 max_) external onlyOwner {

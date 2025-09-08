@@ -37,7 +37,7 @@ contract BoatGame is Ownable, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable BOAT;
-    IBoatNFT public immutable NFT;
+    IBoatNFT public NFT;
 
     enum FailureMode { Burn, DowngradeOne, None }
 
@@ -73,6 +73,7 @@ contract BoatGame is Ownable, Pausable, ReentrancyGuard {
     event BoatDowngraded(uint256 indexed tokenId, uint8 fromLevel, uint8 toLevel);
     event RaftSpawned(address indexed to, uint256 indexed tokenId);
     event Seeded(uint256 amount);
+    event NFTUpdated(address indexed oldNft, address indexed newNft);
 
     constructor(IERC20 boatToken, IBoatNFT boatNft) {
         require(address(boatToken) != address(0) && address(boatNft) != address(0), "zero addr");
@@ -117,6 +118,14 @@ contract BoatGame is Ownable, Pausable, ReentrancyGuard {
     function pause() external onlyOwner { _pause(); }
     function unpause() external onlyOwner { _unpause(); }
 
+    /// @notice Update the BoatNFT contract address. Recommended to pause first.
+    function setNFT(IBoatNFT newNft) external onlyOwner {
+        require(address(newNft) != address(0), "zero addr");
+        address old = address(NFT);
+        NFT = newNft;
+        emit NFTUpdated(old, address(newNft));
+    }
+
     /// Seed initial $BOAT into the Rewards Pool (for airdropped boats).
     function seedRewards(uint256 amount) external onlyOwner {
         BOAT.safeTransferFrom(msg.sender, address(this), amount);
@@ -154,8 +163,8 @@ contract BoatGame is Ownable, Pausable, ReentrancyGuard {
     }
 
     function upgrade(uint256 tokenId) external whenNotPaused nonReentrant {
-        require(NFT.ownerOf(tokenId) == msg.sender, "not owner");
-        uint8 lvl = NFT.levelOf(tokenId);
+    require(NFT.ownerOf(tokenId) == msg.sender, "not owner");
+    uint8 lvl = NFT.levelOf(tokenId);
         require(lvl >= 1 && lvl <= 3, "at max");
         uint256 cost = upgradeCost[lvl];
         _collect(msg.sender, cost);
@@ -165,8 +174,8 @@ contract BoatGame is Ownable, Pausable, ReentrancyGuard {
 
     /// Run with user-selected stake. Reward = min(stake*mult, cap%, abs cap).
     function run(uint256 tokenId, uint256 stake) external whenNotPaused nonReentrant {
-        require(NFT.ownerOf(tokenId) == msg.sender, "not owner");
-        uint8 lvl = NFT.levelOf(tokenId);
+    require(NFT.ownerOf(tokenId) == msg.sender, "not owner");
+    uint8 lvl = NFT.levelOf(tokenId);
         require(lvl >= 1 && lvl <= 4, "bad lvl");
 
         uint256 last = lastRunAt[tokenId];
@@ -249,7 +258,7 @@ contract BoatGame is Ownable, Pausable, ReentrancyGuard {
     }
 
     function _bumpBoatsOwnedMax(address user) internal {
-        uint256 bal = NFT.balanceOf(user);
+    uint256 bal = NFT.balanceOf(user);
         if (bal > stats[user].boatsOwnedMax) { stats[user].boatsOwnedMax = uint64(bal); }
     }
 
