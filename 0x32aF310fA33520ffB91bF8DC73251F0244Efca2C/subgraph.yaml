@@ -56,7 +56,7 @@ dataSources:
     name: JointBoatGame
     network: sonic
     source:
-      address: "0x37f989151ac5B8383ca6bB541Ac2694adB0609cB"
+      address: "0xeEB2D1EB8Bf1F8441FFd6b8B5a4c88392f53Bd99"
       abi: JointBoatGame
       startBlock: 0 # Set to the deployment block if known
     mapping:
