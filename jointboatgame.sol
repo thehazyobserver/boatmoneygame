@@ -175,7 +175,7 @@ contract JointBoatGame is Ownable, Pausable, ReentrancyGuard {
     mapping(uint8 => uint16) public levelSuccessBps;
     mapping(uint8 => uint16) public levelMultiplierBps;
     
-    function setLevelParams(uint8 lvl, uint16 successBps, uint8 failMode) external onlyOwner {
+    function setLevelParams(uint8 lvl, uint16 successBps, uint8 /* failMode */) external onlyOwner {
         require(lvl >= 1 && lvl <= 4, "Invalid level");
         require(successBps <= 10000, "Invalid success rate");
         levelSuccessBps[lvl] = successBps;
