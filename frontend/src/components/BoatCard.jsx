@@ -85,9 +85,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
   const currentLevel = boatLevel || level || 1
   const isMaxLevel = currentLevel >= 4
-  const isAuthorized = (isAuthorizedGame && expectedGameAddress)
-    ? String(isAuthorizedGame).toLowerCase() === String(expectedGameAddress).toLowerCase()
-    : true // default allow until read resolves
+  // isGame(address) returns a boolean; if undefined (loading), default to true to avoid blocking UI
+  const isAuthorized = typeof isAuthorizedGame === 'boolean' ? isAuthorizedGame : true
   
   const playAmountWei = parseEther(playAmount || '0')
   const needsRunApproval = playAmountWei > 0 && !hasAllowance(playAmountWei)
@@ -99,8 +98,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const hasValidAmount = playAmount && !isNaN(playAmountNum) && isValidAmount
   
   const getRunButtonText = () => {
-    if (isOnCooldown) return 'COOLING DOWN: ' + formattedTime
-    if (isPending || isConfirming) return 'RUNNING...'
+  // Keep cooldown display only in the banner, not on the button
+  if (isPending || isConfirming) return 'RUNNING...'
     if (!hasValidAmount) return 'ENTER VALID AMOUNT'
     if (needsRunApproval) return `APPROVE ${gameConfig.symbol} FIRST`
     if (isApproving) return 'APPROVING...'
@@ -340,12 +339,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             {getRunButtonText()}
           </button>
 
-          {!isAuthorized && (
-            <div className="text-center text-yellow-300 text-xs mt-2 border border-yellow-400 rounded p-2 bg-yellow-900/20" style={{ fontFamily: 'Rajdhani, monospace' }}>
-              BoatNFT is authorized for a different game.
-              Owner must allowlist {cardSelectedToken === 'JOINT' ? 'JointBoatGame' : 'BoatGame'} in BoatNFT via addGame().
-            </div>
-          )}
+          {/* Removed allowlist warning banner per request */}
           
           {!isOnCooldown && (
             <div className="text-center text-white opacity-60 text-xs mt-1">
