@@ -76,16 +76,17 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   })
 
   // Check BoatNFT authorization (which game is allowed to modify NFTs)
-  const { data: nftGameAddress } = useReadContract({
+  const expectedGameAddress = (cardSelectedToken === 'JOINT' ? contracts.jointBoatGame.address : contracts.boatGame.address) || ''
+  const { data: isAuthorizedGame } = useReadContract({
     ...contracts.boatNFT,
-    functionName: 'game',
+    functionName: 'isGame',
+    args: [expectedGameAddress]
   })
 
   const currentLevel = boatLevel || level || 1
   const isMaxLevel = currentLevel >= 4
-  const expectedGameAddress = (cardSelectedToken === 'JOINT' ? contracts.jointBoatGame.address : contracts.boatGame.address) || ''
-  const isAuthorizedGame = (nftGameAddress && expectedGameAddress)
-    ? String(nftGameAddress).toLowerCase() === String(expectedGameAddress).toLowerCase()
+  const isAuthorized = (isAuthorizedGame && expectedGameAddress)
+    ? String(isAuthorizedGame).toLowerCase() === String(expectedGameAddress).toLowerCase()
     : true // default allow until read resolves
   
   const playAmountWei = parseEther(playAmount || '0')
@@ -339,10 +340,10 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             {getRunButtonText()}
           </button>
 
-          {!isAuthorizedGame && (
+          {!isAuthorized && (
             <div className="text-center text-yellow-300 text-xs mt-2 border border-yellow-400 rounded p-2 bg-yellow-900/20" style={{ fontFamily: 'Rajdhani, monospace' }}>
               BoatNFT is authorized for a different game.
-              Owner must set BoatNFT.game to {cardSelectedToken === 'JOINT' ? 'JointBoatGame' : 'BoatGame'}.
+              Owner must allowlist {cardSelectedToken === 'JOINT' ? 'JointBoatGame' : 'BoatGame'} in BoatNFT via addGame().
             </div>
           )}
           
