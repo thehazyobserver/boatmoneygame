@@ -276,6 +276,11 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
               <div className="text-green-200 text-xs">
                 Win {gameConfig.levels[currentLevel]?.multiplier || 1.5}x stake
               </div>
+              {currentLevel === 4 && (
+                <div className="text-yellow-300 text-xs mt-1 border-t border-green-500/30 pt-1">
+                  🎁 15% chance to spawn bonus raft
+                </div>
+              )}
             </div>
             <div className="bg-red-900/30 rounded p-2 border border-red-500/50">
               <div className="text-red-400 font-bold">💥 FAILURE</div>
@@ -286,10 +291,6 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
                 {currentLevel === 1 ? 'Boat destroyed' : 'Downgrade to Lvl ' + (currentLevel - 1)}
               </div>
             </div>
-          </div>
-          <div className="mt-2 text-cyan-400 text-xs font-bold">
-            Risk: {formatTokenAmount(parseEther(playAmount || '0'), gameConfig.symbol)} • 
-            Reward: {formatTokenAmount(parseEther(((parseFloat(playAmount || '0') * (gameConfig.levels[currentLevel]?.multiplier || 1.5)).toFixed(0))), gameConfig.symbol)}
           </div>
         </div>
       </div>
