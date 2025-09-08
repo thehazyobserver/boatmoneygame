@@ -117,7 +117,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       const tx = await writeContract({
         ...contract,
         functionName: 'run',
-        args: [BigInt(tokenId), playAmountWei]
+        args: [BigInt(tokenId), playAmountWei],
+        gas: 400000n
       })
       setLastTxHash(tx)
       if (onRefresh) onRefresh()
@@ -140,7 +141,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       const tx = await writeContract({
         ...contracts.boatGame, // Always use BOAT game contract for upgrades
         functionName: 'upgrade', // Note: might be 'upgrade' instead of 'upgradeBoat'
-        args: [BigInt(tokenId)]
+        args: [BigInt(tokenId)],
+        gas: 400000n
       })
       if (onRefresh) onRefresh()
     } catch (err) {

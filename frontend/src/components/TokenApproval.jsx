@@ -44,14 +44,13 @@ export default function TokenApproval() {
         address: boatTokenAddress,
         abi: BOAT_TOKEN_ABI,
         functionName: 'approve',
-        args: [contracts.boatGame.address, parseEther(approvalAmount)]
+        args: [contracts.boatGame.address, parseEther(approvalAmount)],
+        gas: 100000n
       })
-      
       // Immediately refresh allowance data for better UX
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['allowance'] })
       }, 1000) // Small delay to allow blockchain to update
-      
     } catch (err) {
       console.error('Approval failed:', err)
     }

@@ -62,17 +62,16 @@ function BuyRaftCard() {
       setIsBuying(true)
       const tx = await writeContract({
         ...contracts.boatGame,
-        functionName: 'buyRaft'
+        functionName: 'buyRaft',
+        gas: 400000n
       })
       setLastTxHash(tx)
-      
       // Immediately refresh data for better UX
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['balanceOf'] })
         queryClient.invalidateQueries({ queryKey: ['tokenOfOwnerByIndex'] })
         queryClient.invalidateQueries({ queryKey: ['balance'] })
       }, 1000) // Small delay to allow blockchain to update
-      
     } catch (error) {
       console.error('Buy raft failed:', error)
     } finally {
