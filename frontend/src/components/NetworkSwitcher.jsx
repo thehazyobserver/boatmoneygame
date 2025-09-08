@@ -61,7 +61,7 @@ export default function NetworkSwitcher() {
         {/* Required network info */}
         <div className="mb-6 p-3 bg-green-900 bg-opacity-50 rounded border border-green-500">
           <p className="text-green-300 text-sm mb-2" style={{ fontFamily: 'Orbitron, monospace' }}>
-            BOAT RUNNER requires:
+            MEME RUNNER requires:
           </p>
           <p className="text-green-400 font-bold" style={{ fontFamily: 'Orbitron, monospace' }}>
             Sonic Mainnet (Chain 146)

@@ -79,7 +79,7 @@ export default function Instructions() {
                       • <strong className="text-yellow-400">UPGRADE FLEET:</strong> Use $BOAT to upgrade boats (80K→150K→250K) for better success rates
                     </p>
                     <p>
-                      • <strong className="text-yellow-400">STACK PAPER:</strong> Win big payouts or lose everything trying
+                      • <strong className="text-yellow-400">BUILD AN EMPIRE:</strong> BECOME THE OCEAN'S MOST NOTORIOUS MEME SMUGGLER!
                     </p>
                   </div>
                 </div>

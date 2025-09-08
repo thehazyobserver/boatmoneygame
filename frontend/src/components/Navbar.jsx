@@ -23,7 +23,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-4">
           <h1 className="text-3xl md:text-4xl font-bold text-cyan-400 flex items-center neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
             <span className="wave mr-3 text-4xl md:text-5xl">🚤</span>
-            <span className="hidden sm:inline">BOAT RUNNER</span>
+            <span className="hidden sm:inline">MEME RUNNER</span>
             <span className="sm:hidden">BOAT</span>
           </h1>
           <div className="text-xs md:text-sm text-pink-400 font-semibold" style={{ fontFamily: 'Orbitron, monospace' }}>

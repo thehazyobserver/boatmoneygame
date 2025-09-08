@@ -21,7 +21,7 @@ export default function GameDashboard() {
           <div className="mb-8">
             <div className="text-8xl md:text-9xl mb-6 float neon-glow" style={{ filter: 'drop-shadow(0 0 30px currentColor)' }}>🚤</div>
             <h2 className="text-4xl md:text-6xl font-bold text-cyan-400 mb-4 neon-pulse" style={{ fontFamily: 'Orbitron, monospace' }}>
-              BOAT RUNNER
+              MEME RUNNER
             </h2>
             <h3 className="text-xl md:text-2xl font-bold text-pink-400 mb-6" style={{ fontFamily: 'Rajdhani, monospace' }}>
               [ MIAMI '85 CRIMINAL OPERATION ]
