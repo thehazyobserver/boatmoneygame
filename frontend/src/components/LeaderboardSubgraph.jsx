@@ -19,6 +19,9 @@ const BOAT_NAMES = {
 // The Graph endpoint for your subgraph
 const SUBGRAPH_URL = 'https://api.studio.thegraph.com/query/109706/boatgame/version/latest'
 
+// Temporary feature flag: show a COMING SOON overlay without removing code
+const LEADERBOARD_COMING_SOON = true
+
 export default function Leaderboard() {
   const [selectedGame, setSelectedGame] = useState('BOAT')
   const [leaderboardData, setLeaderboardData] = useState([])
@@ -199,7 +202,7 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="terminal-bg rounded-xl p-6 border-2 border-cyan-400 neon-glow">
+    <div className="terminal-bg rounded-xl p-6 border-2 border-cyan-400 neon-glow relative">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-cyan-400 neon-text mb-4 md:mb-0" style={{ fontFamily: 'Orbitron, monospace' }}>
@@ -229,14 +232,19 @@ export default function Leaderboard() {
       <div className="text-center mb-6">
         <button
           onClick={handleLoadLeaderboard}
-          disabled={loading}
+          disabled={loading || LEADERBOARD_COMING_SOON}
           className={`vice-button px-8 py-3 text-lg font-bold transition-all duration-300 ${
-            loading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+            (loading || LEADERBOARD_COMING_SOON) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
           }`}
           style={{ fontFamily: 'Orbitron, monospace' }}
         >
-          {loading ? '🔄 LOADING...' : 
-           hasLoaded ? '🔄 REFRESH' : '📊 LOAD LEADERBOARD'}
+          {LEADERBOARD_COMING_SOON
+            ? '🔒 COMING SOON'
+            : loading
+              ? '🔄 LOADING...'
+              : hasLoaded
+                ? '🔄 REFRESH'
+                : '📊 LOAD LEADERBOARD'}
         </button>
         <div className="mt-2">
           <p className="text-pink-400 font-semibold text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
@@ -245,6 +253,11 @@ export default function Leaderboard() {
           <p className="text-yellow-400 text-xs mt-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
             🔗 Powered by The Graph • Fast & Reliable
           </p>
+          {LEADERBOARD_COMING_SOON && (
+            <p className="text-orange-300 text-xs mt-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
+              COMING SOON – Troubleshooting subgraph indexing. Thanks for your patience.
+            </p>
+          )}
           {error && (
             <p className="text-orange-400 text-xs mt-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
               {error}
@@ -278,7 +291,7 @@ export default function Leaderboard() {
       )}
 
       {/* Leaderboard Table */}
-      {!loading && hasLoaded && leaderboardData.length > 0 && (
+  {!loading && hasLoaded && leaderboardData.length > 0 && (
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -355,6 +368,20 @@ export default function Leaderboard() {
           </div>
         </div>
       </div>
+
+      {/* COMING SOON Overlay */}
+      {LEADERBOARD_COMING_SOON && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/70 backdrop-blur-sm rounded-xl">
+          <div className="text-center px-6 py-8">
+            <div className="text-4xl md:text-5xl font-extrabold text-cyan-400 neon-text" style={{ fontFamily: 'Orbitron, monospace' }}>
+              COMING SOON
+            </div>
+            <div className="mt-3 text-yellow-300 text-sm md:text-base" style={{ fontFamily: 'Rajdhani, monospace' }}>
+              Leaderboard powered by The Graph is being finalized. Troubleshooting in progress.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
