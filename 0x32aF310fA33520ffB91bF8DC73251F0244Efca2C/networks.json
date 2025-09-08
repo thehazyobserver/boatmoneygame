@@ -3,6 +3,14 @@
     "BondingToken": {
       "address": "0x32aF310fA33520ffB91bF8DC73251F0244Efca2C",
       "startBlock": 44679813
+    },
+    "BoatGame": {
+      "address": "0xab004722930Dd89C3698C73658FE803e8632fdF3",
+      "startBlock": 44679813
+    },
+    "JointBoatGame": {
+      "address": "0xeEB2D1EB8Bf1F8441FFd6b8B5a4c88392f53Bd99",
+      "startBlock": 44679813
     }
   }
 }

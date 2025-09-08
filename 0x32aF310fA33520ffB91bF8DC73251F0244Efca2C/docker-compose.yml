@@ -19,7 +19,9 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph-node
       ipfs: "ipfs:5001"
-      ethereum: "mainnet:http://host.docker.internal:8545"
+  # Map the 'sonic' network label in subgraph.yaml to a reachable RPC endpoint
+  # You can provide multiple endpoints separated by commas
+  ethereum: "sonic:https://rpc.soniclabs.com,sonic:https://sonic.drpc.org"
       GRAPH_LOG: info
   ipfs:
     image: ipfs/kubo:v0.17.0

@@ -37,7 +37,7 @@ dataSources:
     source:
       address: "0xab004722930Dd89C3698C73658FE803e8632fdF3"
       abi: BoatGame
-      startBlock: 0 # Set to the deployment block if known
+  startBlock: 44679813 # Approximate deployment block to avoid genesis scan
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9
@@ -58,7 +58,7 @@ dataSources:
     source:
       address: "0xeEB2D1EB8Bf1F8441FFd6b8B5a4c88392f53Bd99"
       abi: JointBoatGame
-      startBlock: 0 # Set to the deployment block if known
+  startBlock: 44679813 # Approximate deployment block to avoid genesis scan
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9
