@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import GameDashboard from './components/GameDashboard'
 import RunResults from './components/RunResults'
 import ErrorBoundary from './components/ErrorBoundary'
+import NetworkSwitcher from './components/NetworkSwitcher'
 import { useAutoRefresh } from './hooks/useAutoRefresh'
 import { config } from './config/wagmi'
 
@@ -15,6 +16,9 @@ function AppContent() {
   
   return (
     <div className="min-h-screen night-ocean scanlines relative">
+      {/* Network switching modal - appears on top when needed */}
+      <NetworkSwitcher />
+      
       {/* Enhanced 80s grid overlay */}
       <div className="fixed inset-0 opacity-5 pointer-events-none" style={{
         backgroundImage: `
