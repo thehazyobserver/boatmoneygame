@@ -14,88 +14,218 @@ export default function BoatGallery() {
   })
 
   // For ERC721Enumerable, we need to get each token ID individually
-  // We'll get up to 10 boats to handle larger fleets
+  // We'll get up to 30 boats to handle larger fleets
+  const boatCountNum = Number(boatCount ?? 0)
   const { data: firstTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 0],
-    query: { enabled: isConnected && boatCount > 0 }
+    query: { enabled: isConnected && boatCountNum > 0 }
   })
 
   const { data: secondTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex', 
     args: [address, 1],
-    query: { enabled: isConnected && boatCount > 1 }
+  query: { enabled: isConnected && boatCountNum > 1 }
   })
 
   const { data: thirdTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 2], 
-    query: { enabled: isConnected && boatCount > 2 }
+  query: { enabled: isConnected && boatCountNum > 2 }
   })
 
   const { data: fourthTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 3], 
-    query: { enabled: isConnected && boatCount > 3 }
+  query: { enabled: isConnected && boatCountNum > 3 }
   })
 
   const { data: fifthTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 4], 
-    query: { enabled: isConnected && boatCount > 4 }
+  query: { enabled: isConnected && boatCountNum > 4 }
   })
 
   const { data: sixthTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 5], 
-    query: { enabled: isConnected && boatCount > 5 }
+  query: { enabled: isConnected && boatCountNum > 5 }
   })
 
   const { data: seventhTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 6], 
-    query: { enabled: isConnected && boatCount > 6 }
+  query: { enabled: isConnected && boatCountNum > 6 }
   })
 
   const { data: eighthTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 7], 
-    query: { enabled: isConnected && boatCount > 7 }
+  query: { enabled: isConnected && boatCountNum > 7 }
   })
 
   const { data: ninthTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 8], 
-    query: { enabled: isConnected && boatCount > 8 }
+  query: { enabled: isConnected && boatCountNum > 8 }
   })
 
   const { data: tenthTokenId } = useReadContract({
     ...contracts.boatNFT,
     functionName: 'tokenOfOwnerByIndex',
     args: [address, 9], 
-    query: { enabled: isConnected && boatCount > 9 }
+  query: { enabled: isConnected && boatCountNum > 9 }
+  })
+
+  // Extra slots 10..29 (indexes 10 to 29)
+  const { data: eleventhTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 10],
+  query: { enabled: isConnected && boatCountNum > 10 }
+  })
+  const { data: twelfthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 11],
+  query: { enabled: isConnected && boatCountNum > 11 }
+  })
+  const { data: thirteenthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 12],
+  query: { enabled: isConnected && boatCountNum > 12 }
+  })
+  const { data: fourteenthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 13],
+  query: { enabled: isConnected && boatCountNum > 13 }
+  })
+  const { data: fifteenthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 14],
+  query: { enabled: isConnected && boatCountNum > 14 }
+  })
+  const { data: sixteenthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 15],
+  query: { enabled: isConnected && boatCountNum > 15 }
+  })
+  const { data: seventeenthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 16],
+  query: { enabled: isConnected && boatCountNum > 16 }
+  })
+  const { data: eighteenthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 17],
+  query: { enabled: isConnected && boatCountNum > 17 }
+  })
+  const { data: nineteenthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 18],
+  query: { enabled: isConnected && boatCountNum > 18 }
+  })
+  const { data: twentiethTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 19],
+  query: { enabled: isConnected && boatCountNum > 19 }
+  })
+  const { data: twentyFirstTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 20],
+  query: { enabled: isConnected && boatCountNum > 20 }
+  })
+  const { data: twentySecondTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 21],
+  query: { enabled: isConnected && boatCountNum > 21 }
+  })
+  const { data: twentyThirdTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 22],
+  query: { enabled: isConnected && boatCountNum > 22 }
+  })
+  const { data: twentyFourthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 23],
+  query: { enabled: isConnected && boatCountNum > 23 }
+  })
+  const { data: twentyFifthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 24],
+  query: { enabled: isConnected && boatCountNum > 24 }
+  })
+  const { data: twentySixthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 25],
+  query: { enabled: isConnected && boatCountNum > 25 }
+  })
+  const { data: twentySeventhTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 26],
+  query: { enabled: isConnected && boatCountNum > 26 }
+  })
+  const { data: twentyEighthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 27],
+  query: { enabled: isConnected && boatCountNum > 27 }
+  })
+  const { data: twentyNinthTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 28],
+  query: { enabled: isConnected && boatCountNum > 28 }
+  })
+  const { data: thirtiethTokenId } = useReadContract({
+    ...contracts.boatNFT,
+    functionName: 'tokenOfOwnerByIndex',
+    args: [address, 29],
+  query: { enabled: isConnected && boatCountNum > 29 }
   })
 
   // Create array of token IDs
-  const tokenIds = [
+  const tokenIdsRaw = [
     firstTokenId, secondTokenId, thirdTokenId, fourthTokenId, fifthTokenId,
-    sixthTokenId, seventhTokenId, eighthTokenId, ninthTokenId, tenthTokenId
-  ].filter(id => id !== undefined).map(id => id.toString())
+    sixthTokenId, seventhTokenId, eighthTokenId, ninthTokenId, tenthTokenId,
+    eleventhTokenId, twelfthTokenId, thirteenthTokenId, fourteenthTokenId, fifteenthTokenId,
+    sixteenthTokenId, seventeenthTokenId, eighteenthTokenId, nineteenthTokenId, twentiethTokenId,
+    twentyFirstTokenId, twentySecondTokenId, twentyThirdTokenId, twentyFourthTokenId, twentyFifthTokenId,
+    twentySixthTokenId, twentySeventhTokenId, twentyEighthTokenId, twentyNinthTokenId, thirtiethTokenId
+  ]
+  const tokenIds = tokenIdsRaw.filter(id => id !== undefined && id !== null)
+    .map(id => id?.toString?.())
+    .filter(Boolean)
 
   if (!isConnected) {
     return null
   }
 
-  if (!boatCount || boatCount === 0) {
+  if (boatCountNum === 0) {
     return (
       <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-8 border border-white border-opacity-20 text-center">
         <div className="text-6xl mb-4">🌊</div>
@@ -136,7 +266,7 @@ export default function BoatGallery() {
           ⚓ Your Fleet
         </h2>
         <p className="text-white opacity-80">
-          You own {boatCount.toString()} boat{boatCount > 1 ? 's' : ''}
+          You own {boatCount?.toString?.() || '0'} boat{Number(boatCount) > 1 ? 's' : ''}
         </p>
       </div>
 

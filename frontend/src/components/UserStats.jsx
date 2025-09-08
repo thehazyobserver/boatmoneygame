@@ -72,21 +72,23 @@ export default function UserStats() {
     },
     {
       label: 'Your Boats',
-      value: boatCount ? boatCount.toString() : '0',
+      value: boatCount?.toString?.() ?? '0',
       suffix: 'boats',
       icon: '🚤'
     },
     {
       label: 'Total Runs',
-      value: userStats?.runsStarted ? userStats.runsStarted.toString() : '0',
+      value: userStats?.runsStarted !== undefined ? String(userStats.runsStarted) : '0',
       suffix: 'runs',
       icon: '🏃'
     },
     {
       label: 'Success Rate',
-      value: userStats?.runsStarted && userStats?.runsWon && userStats.runsStarted > 0 
-        ? Math.round((Number(userStats.runsWon) / Number(userStats.runsStarted)) * 100).toString() 
-        : '0',
+      value: (() => {
+        const started = Number(userStats?.runsStarted ?? 0)
+        const won = Number(userStats?.runsWon ?? 0)
+        return started > 0 ? Math.round((won / started) * 100).toString() : '0'
+      })(),
       suffix: '%',
       icon: '📈'
     }
@@ -143,23 +145,23 @@ export default function UserStats() {
       </div>
 
       {/* Additional detailed stats if user has played */}
-      {userStats && userStats.runsStarted && userStats.runsStarted > 0 && (
+  {Number(userStats?.runsStarted ?? 0) > 0 && (
         <div className="mt-6 pt-4 border-t border-white border-opacity-20">
           <div className="grid grid-cols-2 gap-4 text-white text-sm">
             <div className="text-center">
-              <div className="font-bold text-green-400">{userStats.runsWon?.toString() || '0'}</div>
+      <div className="font-bold text-green-400">{String(userStats?.runsWon ?? 0)}</div>
               <div className="opacity-80">Runs Won</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-red-400">{userStats.boatsLost?.toString() || '0'}</div>
+      <div className="font-bold text-red-400">{String(userStats?.boatsLost ?? 0)}</div>
               <div className="opacity-80">Boats Lost</div>
             </div>
           </div>
           {/* Only show max fleet size if it exists (BOAT game only) */}
-          {userStats.boatsOwnedMax !== undefined && (
+      {userStats?.boatsOwnedMax !== undefined && (
             <div className="text-center mt-3">
               <div className="text-sm text-white opacity-80">
-                🏆 Max Fleet Size: {userStats.boatsOwnedMax.toString()} boats
+        🏆 Max Fleet Size: {String(userStats?.boatsOwnedMax ?? 0)} boats
               </div>
             </div>
           )}
