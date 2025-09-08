@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
+import { useQueryClient } from '@tanstack/react-query'
 import { parseEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI, BOAT_GAME_ABI, JOINT_BOAT_GAME_ABI, GAME_CONFIGS } from '../config/contracts'
 
 export function useTokenApproval(selectedToken = 'BOAT') {
   const { address } = useAccount()
   const [isApproving, setIsApproving] = useState(false)
+  const queryClient = useQueryClient()
   
   const { writeContract: writeApproval, isPending: isApprovePending } = useWriteContract()
 
