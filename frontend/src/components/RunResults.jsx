@@ -304,61 +304,6 @@ export default function RunResults() {
           </div>
         </div>
       )}
-
-      {/* Recent results list */}
-      {results.length > 0 && (
-        <div className="terminal-bg rounded-xl p-6 border-2 border-cyan-400 mb-4 neon-glow">
-          <h3 className="text-xl font-bold text-cyan-400 neon-text mb-4 flex items-center" style={{ fontFamily: 'Orbitron, monospace' }}>
-            📊 RECENT ACTIVITY
-            <span className="ml-2 text-sm opacity-80 text-pink-400">({results.length}/10)</span>
-          </h3>
-          <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
-            {results.map((result) => {
-              const formatted = formatResult(result)
-              const tokenSymbol = result.gameToken === 'BOAT' ? '$BOAT' : '$JOINT'
-              
-              return (
-                <div key={result.id} className="flex items-center justify-between p-3 terminal-bg border border-cyan-400 border-opacity-30 rounded-lg hover:border-opacity-60 transition-all duration-300">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-2xl">{formatted.emoji}</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2">
-                        <span className={`text-sm font-bold ${
-                          formatted.color === 'green' ? 'text-green-400' :
-                          formatted.color === 'red' ? 'text-red-400' :
-                          'text-yellow-400'
-                        }`} style={{ fontFamily: 'Orbitron, monospace' }}>
-                          {result.type === 'run' ? (result.success ? 'WON' : 'LOST') : result.type.toUpperCase()}
-                        </span>
-                        <span className="text-white text-xs" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                          {getBoatName(result.level)} #{result.tokenId}
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-400" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                        {result.timestamp.toLocaleTimeString()} • {result.gameToken}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    {result.type === 'run' && (
-                      <div className={`text-lg font-bold ${
-                        result.success ? 'text-green-400' : 'text-red-400'
-                      }`} style={{ fontFamily: 'Orbitron, monospace' }}>
-                        {result.success ? '+' : '-'}{formatTokenAmount(result.success ? result.rewardPaidWei : result.stakeWei, 0)} {tokenSymbol}
-                      </div>
-                    )}
-                    {(result.type === 'burned' || result.type === 'upgraded' || result.type === 'downgraded') && (
-                      <div className="text-sm text-yellow-400 font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                        Level Change
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
     </>
   )
 }

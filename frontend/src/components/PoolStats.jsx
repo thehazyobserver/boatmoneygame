@@ -62,7 +62,7 @@ export default function PoolStats() {
       label: 'Raft Cost',
       value: buyRaftCost ? parseInt(formatEther(buyRaftCost)).toLocaleString() : '100,000',
       suffix: '$BOAT',
-      icon: '�'
+      icon: '🛶'
     }
   ] : baseStats
 
