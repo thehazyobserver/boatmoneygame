@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { contracts, BOAT_TOKEN_ABI, GAME_CONFIGS } from '../config/contracts'
@@ -25,6 +25,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const publicClient = usePublicClient()
   const [isRunning, setIsRunning] = useState(false)
   const [cardSelectedToken, setCardSelectedToken] = useState('BOAT') // Default to BOAT token
+  const [errorMsg, setErrorMsg] = useState('')
   
   const gameConfig = GAME_CONFIGS[cardSelectedToken]
   const [playAmount, setPlayAmount] = useState(gameConfig.minStake)
@@ -75,6 +76,30 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     query: { enabled: !!address }
   })
 
+  // Pool/cap reads for EV & cap awareness
+  const gameContract = useMemo(() => (cardSelectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame), [cardSelectedToken])
+  const { data: poolBalance } = useReadContract({
+    ...gameContract,
+    functionName: 'poolBalance'
+  })
+  const { data: capBps } = useReadContract({
+    ...gameContract,
+    functionName: 'capBps'
+  })
+  // Max absolute payout differs per game
+  const { data: jointMaxAbs } = useReadContract({
+    ...contracts.jointBoatGame,
+    functionName: 'maxPayoutAbs',
+    args: [boatLevel || level || 1],
+    query: { enabled: cardSelectedToken === 'JOINT' }
+  })
+  const { data: boatStakeCfg } = useReadContract({
+    ...contracts.boatGame,
+    functionName: 'stakeCfg',
+    args: [boatLevel || level || 1],
+    query: { enabled: cardSelectedToken === 'BOAT' }
+  })
+
   // Check BoatNFT authorization (which game is allowed to modify NFTs)
   const expectedGameAddress = (cardSelectedToken === 'JOINT' ? contracts.jointBoatGame.address : contracts.boatGame.address) || ''
   const { data: isAuthorizedGame } = useReadContract({
@@ -96,6 +121,26 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const playAmountNum = parseFloat(playAmount || '0')
   const isValidAmount = playAmountNum >= parseInt(gameConfig.minStake) && playAmountNum <= parseInt(gameConfig.maxStake)
   const hasValidAmount = playAmount && !isNaN(playAmountNum) && isValidAmount
+
+  // EV and cap awareness
+  const levelCfg = gameConfig.levels[currentLevel] || { successRate: 50, multiplier: 1.5 }
+  const multBps = Math.round((levelCfg.multiplier || 1.5) * 10000)
+  const rawRewardWei = (playAmountWei * BigInt(multBps)) / 10000n
+  const capByPoolWei = (poolBalance && capBps)
+    ? (poolBalance * BigInt(capBps)) / 10000n
+    : 0n
+  const maxAbsWei = cardSelectedToken === 'JOINT'
+    ? (jointMaxAbs || 0n)
+    : (boatStakeCfg && boatStakeCfg[3]) /* maxPayoutAbs */ || 0n
+  let effectiveRewardWei = rawRewardWei
+  if (capByPoolWei > 0n && effectiveRewardWei > capByPoolWei) effectiveRewardWei = capByPoolWei
+  if (maxAbsWei > 0n && effectiveRewardWei > maxAbsWei) effectiveRewardWei = maxAbsWei
+  const effectiveMultiplier = playAmountWei > 0n
+    ? (Number(formatEther(effectiveRewardWei)) / Math.max(1e-9, Number(playAmount)))
+    : 0
+  const p = (levelCfg.successRate || 50) / 100
+  const evPct = playAmountWei > 0n ? (p * effectiveMultiplier - 1) * 100 : 0
+  const capApplied = effectiveRewardWei < rawRewardWei
   
   const getRunButtonText = () => {
   // Keep cooldown display only in the banner, not on the button
@@ -187,7 +232,16 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       setLastTxHash(tx)
       if (onRefresh) onRefresh()
     } catch (err) {
-      console.error('Run failed:', err)
+  console.error('Run failed:', err)
+  const m = (err?.shortMessage || err?.message || '').toString()
+  let friendly = ''
+  if (/Cooldown/i.test(m)) friendly = 'Boat is cooling down.'
+  else if (/Stake out of bounds/i.test(m)) friendly = 'Amount outside allowed range.'
+  else if (/Insufficient pool/i.test(m)) friendly = 'Pool is low for that stake. Try a smaller amount.'
+  else if (/Not owner/i.test(m)) friendly = 'You must own this boat.'
+  else friendly = 'Transaction failed. Please try again.'
+  setErrorMsg(friendly)
+  setTimeout(() => setErrorMsg(''), 5000)
     }
   }
 
@@ -229,6 +283,13 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
       if (onRefresh) onRefresh()
     } catch (err) {
       console.error('Upgrade failed:', err)
+  const m = (err?.shortMessage || err?.message || '').toString()
+  let friendly = ''
+  if (/insufficient allowance/i.test(m)) friendly = 'Approve BOAT first.'
+  else if (/Not owner/i.test(m)) friendly = 'You must own this boat.'
+  else friendly = 'Upgrade failed. Please try again.'
+  setErrorMsg(friendly)
+  setTimeout(() => setErrorMsg(''), 5000)
     }
   }
 
@@ -322,12 +383,42 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
               className="w-full px-4 py-3 terminal-bg border-2 border-pink-500 rounded-lg text-center text-cyan-400 font-bold text-xl focus:outline-none focus:border-cyan-400 neon-glow"
               style={{ fontFamily: 'Orbitron, monospace' }}
             />
+            {/* Preset buttons */}
+            <div className="grid grid-cols-4 gap-2 mt-2">
+              {['MIN','25%','50%','MAX'].map((lbl) => (
+                <button
+                  key={lbl}
+                  onClick={() => {
+                    let amount = Number(gameConfig.minStake)
+                    const bal = tokenBalance ? Number(formatEther(tokenBalance)) : 0
+                    if (lbl === '25%') amount = Math.max(Number(gameConfig.minStake), Math.floor(bal * 0.25))
+                    if (lbl === '50%') amount = Math.max(Number(gameConfig.minStake), Math.floor(bal * 0.5))
+                    if (lbl === 'MAX') amount = Math.min(Number(gameConfig.maxStake), Math.floor(bal))
+                    if (lbl === 'MIN') amount = Number(gameConfig.minStake)
+                    setPlayAmount(String(Math.min(amount, Number(gameConfig.maxStake))))
+                  }}
+                  className="text-xs px-2 py-1 border border-cyan-500 rounded hover:bg-cyan-900/20"
+                >{lbl}</button>
+              ))}
+            </div>
             <div className="text-xs text-pink-400 mt-1 font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
               Range: {formatInteger(gameConfig.minStake)} - {formatInteger(gameConfig.maxStake)} {gameConfig.symbol}
             </div>
             <div className="text-cyan-400 text-sm font-bold mt-2" style={{ fontFamily: 'Orbitron, monospace' }}>
               YOUR {gameConfig.symbol}: {tokenBalance ? formatTokenAmount(tokenBalance) : '0.00'}
             </div>
+            {/* EV / Cap helper */}
+            {hasValidAmount && (
+              <div className="mt-3 text-xs">
+                <div className="text-cyan-300">
+                  Expected payout: {formatInteger(Math.floor(Number(formatEther(effectiveRewardWei))))} {gameConfig.symbol} {capApplied ? '(capped)' : ''}
+                </div>
+                <div className={`font-bold ${evPct >= 0 ? 'text-green-400' : 'text-red-400'}`}
+                     style={{ fontFamily: 'Orbitron, monospace' }}>
+                  EV: {evPct >= 0 ? '+' : ''}{evPct.toFixed(1)}%
+                </div>
+              </div>
+            )}
           </div>
 
           <button
@@ -338,6 +429,12 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
           >
             {getRunButtonText()}
           </button>
+
+          {errorMsg && (
+            <div className="mt-2 text-red-300 text-xs font-semibold border border-red-500/50 bg-red-900/20 rounded p-2">
+              {errorMsg}
+            </div>
+          )}
 
           {/* Removed allowlist warning banner per request */}
           
