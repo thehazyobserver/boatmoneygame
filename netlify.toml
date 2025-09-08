@@ -2,6 +2,10 @@
   base = "frontend"
   publish = "dist"
   command = "npm run build"
+  # Build when ANY repo files change (not just frontend/)
+  # If there are no changes in the repo between cached and current commit, exit 0 to skip.
+  # Otherwise, exit 1 to run the build.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF || exit 1"
 
 [build.environment]
   NODE_VERSION = "18"
