@@ -29,6 +29,25 @@ export default function RunResults() {
     }
   }, [])
 
+  // Fallback: listen for local 'runResult' events dispatched after tx receipt parsing
+  useEffect(() => {
+    const onLocalRunResult = (e) => {
+      const r = e?.detail
+      if (!r) return
+      const key = r._dedupeKey || `${r.txHash || ''}:${r.logIndex ?? ''}`
+      if (key && seenLogIdsRef.current.has(key)) return
+      if (key) seenLogIdsRef.current.add(key)
+
+      setCurrentResult(r)
+      setResults(prev => [r, ...prev.slice(0, 9)])
+      setShowModal(true)
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+      hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
+    }
+    window.addEventListener('runResult', onLocalRunResult)
+    return () => window.removeEventListener('runResult', onLocalRunResult)
+  }, [])
+
   // Helper function to safely process event logs
   const processEventLog = (log, processorFn, eventType) => {
     try {

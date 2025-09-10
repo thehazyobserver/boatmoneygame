@@ -323,6 +323,46 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   }
 
   if (isConfirmed && isRunning) {
+    // Fallback: parse receipt logs to derive run result and notify UI
+    const emitFromReceipt = async () => {
+      try {
+        if (!lastTxHash || !publicClient) return
+        const receipt = await publicClient.getTransactionReceipt({ hash: lastTxHash })
+        const ifaceMap = [
+          { game: 'BOAT', abi: contracts.boatGame.abi, address: contracts.boatGame.address, event: 'RunResult' },
+          { game: 'JOINT', abi: contracts.jointBoatGame.abi, address: contracts.jointBoatGame.address, event: 'JointRun' },
+        ]
+        for (const log of receipt.logs || []) {
+          for (const { game, abi, address, event } of ifaceMap) {
+            if (log.address?.toLowerCase() !== address?.toLowerCase()) continue
+            try {
+              const parsed = await publicClient.decodeEventLog({ abi, data: log.data, topics: log.topics })
+              if (!parsed || parsed.eventName !== event) continue
+              const { user, tokenId, level, stake, success, rewardPaid } = parsed.args || {}
+              if (user?.toLowerCase && address && user.toLowerCase() !== address.toLowerCase()) continue
+              const detail = {
+                id: Date.now() + Math.random(),
+                tokenId: tokenId?.toString?.() || '0',
+                level: level ? Number(level) : 0,
+                stakeWei: stake || 0n,
+                success: Boolean(success),
+                rewardPaidWei: rewardPaid || 0n,
+                type: 'run',
+                gameToken: game,
+                timestamp: new Date(),
+                _dedupeKey: `${receipt.transactionHash}:${log.logIndex}`,
+                txHash: receipt.transactionHash,
+                logIndex: log.logIndex,
+              }
+              window.dispatchEvent(new CustomEvent('runResult', { detail }))
+            } catch (_) {
+              // skip decode errors
+            }
+          }
+        }
+      } catch (_) {}
+    }
+    emitFromReceipt()
     setIsRunning(false)
     setLastTxHash(null)
   }
