@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useAccount, useWatchContractEvent } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts, GAME_CONFIGS } from '../config/contracts'
-import { sonic } from 'wagmi/chains'
 import { formatTokenAmount, formatInteger } from '../utils/formatters'
 
 export default function RunResults() {
@@ -46,10 +45,9 @@ export default function RunResults() {
   useWatchContractEvent({
     ...contracts.boatGame,
     eventName: 'RunResult',
-    onLogs(logs) {
+  onLogs(logs) {
       logs.forEach((log) => {
         processEventLog(log, (log) => {
-            console.debug('[RunResults] Showing modal for RunResult', { game: 'BOAT', tokenId: result.tokenId, success: result.success })
           const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
           const key = `${log.transactionHash}:${log.logIndex}`
           if (seenLogIdsRef.current.has(key)) return
@@ -73,6 +71,7 @@ export default function RunResults() {
             
             setCurrentResult(result)
             setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
+      console.debug('[RunResults] Showing modal for RunResult', { game: 'BOAT', tokenId: result.tokenId, success: result.success })
             setShowModal(true)
             
             // Auto-hide modal after 8 seconds
