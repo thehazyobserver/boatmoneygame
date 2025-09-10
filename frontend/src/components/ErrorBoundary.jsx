@@ -32,7 +32,7 @@ class ErrorBoundary extends React.Component {
               SYSTEM ERROR
             </h2>
             <p className="text-white mb-6" style={{ fontFamily: 'Rajdhani, monospace' }}>
-              Something went wrong with the criminal operation.<br/>
+              Something went wrong with the meme running operation.<br/>
               The authorities might have found us.
             </p>
             <button

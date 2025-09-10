@@ -109,7 +109,7 @@ export default function BuyRaftCard() {
               BUY YOUR FIRST RAFT
             </h3>
             <p className="text-pink-400 font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
-              [ START YOUR CRIMINAL EMPIRE ]
+              [ START YOUR MEME RUNNING EMPIRE ]
             </p>
             <p className="text-yellow-400 text-lg font-bold mt-2" style={{ fontFamily: 'Orbitron, monospace' }}>
               COST: {raftPriceFormatted} $BOAT

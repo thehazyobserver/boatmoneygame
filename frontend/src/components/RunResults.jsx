@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAccount, useWatchContractEvent } from 'wagmi'
 import { formatEther } from 'viem'
 import { contracts, GAME_CONFIGS } from '../config/contracts'
+import { sonic } from 'wagmi/chains'
 import { formatTokenAmount, formatInteger } from '../utils/formatters'
 
 export default function RunResults() {
@@ -9,6 +10,25 @@ export default function RunResults() {
   const [results, setResults] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [currentResult, setCurrentResult] = useState(null)
+  const hideTimerRef = useRef(null)
+  const seenLogIdsRef = useRef(new Set())
+  const activeAddressRef = useRef(address?.toLowerCase() || null)
+
+  // Keep ref in sync with current address to avoid stale closures
+  useEffect(() => {
+    activeAddressRef.current = address?.toLowerCase() || null
+  // Reset seen log cache when user changes to avoid suppressing their events
+  seenLogIdsRef.current = new Set()
+  }, [address])
+
+  // Clear any pending hide timers on unmount
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current)
+      }
+    }
+  }, [])
 
   // Helper function to safely process event logs
   const processEventLog = (log, processorFn, eventType) => {
@@ -29,10 +49,14 @@ export default function RunResults() {
     onLogs(logs) {
       logs.forEach((log) => {
         processEventLog(log, (log) => {
+            console.debug('[RunResults] Showing modal for RunResult', { game: 'BOAT', tokenId: result.tokenId, success: result.success })
           const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+          const key = `${log.transactionHash}:${log.logIndex}`
+          if (seenLogIdsRef.current.has(key)) return
           
           // Only show results for the current user
-          if (user?.toLowerCase() === address?.toLowerCase()) {
+          if (user?.toLowerCase() === activeAddressRef.current) {
+            seenLogIdsRef.current.add(key)
             const result = {
               id: Date.now() + Math.random(),
               tokenId: tokenId?.toString() || '0',
@@ -52,7 +76,8 @@ export default function RunResults() {
             setShowModal(true)
             
             // Auto-hide modal after 8 seconds
-            setTimeout(() => setShowModal(false), 8000)
+            if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+            hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
           }
         }, 'RunResult')
       })
@@ -65,9 +90,12 @@ export default function RunResults() {
       logs.forEach((log) => {
         processEventLog(log, (log) => {
           const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+          const key = `${log.transactionHash}:${log.logIndex}`
+          if (seenLogIdsRef.current.has(key)) return
           
           // Only show results for the current user
-          if (user?.toLowerCase() === address?.toLowerCase()) {
+          if (user?.toLowerCase() === activeAddressRef.current) {
+            seenLogIdsRef.current.add(key)
             const result = {
               id: Date.now() + Math.random(),
               tokenId: tokenId?.toString() || '0',
@@ -84,10 +112,12 @@ export default function RunResults() {
             
             setCurrentResult(result)
             setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
+            console.debug('[RunResults] Showing modal for JointRun', { game: 'JOINT', tokenId: result.tokenId, success: result.success })
             setShowModal(true)
             
             // Auto-hide modal after 8 seconds
-            setTimeout(() => setShowModal(false), 8000)
+            if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+            hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
           }
         }, 'JointRun')
       })
@@ -98,10 +128,13 @@ export default function RunResults() {
   useWatchContractEvent({
     ...contracts.boatGame,
     eventName: 'BoatBurned',
-    onLogs(logs) {
+  onLogs(logs) {
       logs.forEach((log) => {
         processEventLog(log, (log) => {
           const { tokenId, level } = log.args || {}
+      const key = `${log.transactionHash}:${log.logIndex}`
+      if (seenLogIdsRef.current.has(key)) return
+      seenLogIdsRef.current.add(key)
           
           const result = {
             id: Date.now() + Math.random(),
@@ -122,9 +155,12 @@ export default function RunResults() {
   useWatchContractEvent({
     ...contracts.jointBoatGame,
     eventName: 'BoatBurned',
-    onLogs(logs) {
+  onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, level } = log.args || {}
+    const { tokenId, level } = log.args || {}
+    const key = `${log.transactionHash}:${log.logIndex}`
+    if (seenLogIdsRef.current.has(key)) return
+    seenLogIdsRef.current.add(key)
         
         const result = {
           id: Date.now() + Math.random(),
@@ -144,9 +180,12 @@ export default function RunResults() {
   useWatchContractEvent({
     ...contracts.boatGame,
     eventName: 'BoatDowngraded',
-    onLogs(logs) {
+  onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, fromLevel, toLevel } = log.args || {}
+    const { tokenId, fromLevel, toLevel } = log.args || {}
+    const key = `${log.transactionHash}:${log.logIndex}`
+    if (seenLogIdsRef.current.has(key)) return
+    seenLogIdsRef.current.add(key)
         
         const result = {
           id: Date.now() + Math.random(),
@@ -167,9 +206,12 @@ export default function RunResults() {
   useWatchContractEvent({
     ...contracts.jointBoatGame,
     eventName: 'BoatDowngraded',
-    onLogs(logs) {
+  onLogs(logs) {
       logs.forEach((log) => {
-        const { tokenId, fromLevel, toLevel } = log.args || {}
+    const { tokenId, fromLevel, toLevel } = log.args || {}
+    const key = `${log.transactionHash}:${log.logIndex}`
+    if (seenLogIdsRef.current.has(key)) return
+    seenLogIdsRef.current.add(key)
         
         const result = {
           id: Date.now() + Math.random(),
@@ -193,9 +235,12 @@ export default function RunResults() {
     onLogs(logs) {
       logs.forEach((log) => {
         const { to, tokenId } = log.args || {}
+        const key = `${log.transactionHash}:${log.logIndex}`
+        if (seenLogIdsRef.current.has(key)) return
         
         // Only show for current user
-        if (to?.toLowerCase() === address?.toLowerCase()) {
+        if (to?.toLowerCase() === activeAddressRef.current) {
+          seenLogIdsRef.current.add(key)
           const result = {
             id: Date.now() + Math.random(),
             tokenId: tokenId?.toString() || '0',

@@ -1,4 +1,4 @@
-import { http, createConfig, fallback } from 'wagmi'
+import { http, createConfig, fallback, webSocket } from 'wagmi'
 import { sonic, mainnet, sepolia, polygon, arbitrum, optimism, base, bsc, avalanche } from 'wagmi/chains'
 import { injected, metaMask } from 'wagmi/connectors'
 
@@ -20,8 +20,10 @@ export const config = createConfig({
   ],
   transports: {
     [sonic.id]: fallback([
+      // Prefer WebSocket for reliable event subscriptions
+      webSocket('wss://sonic.drpc.org'),
       http('https://sonic.drpc.org'),                                    // Primary: Public RPC
-      http('https://rpc.soniclabs.com'),                                // Secondary: Public RPC  
+      http('https://rpc.soniclabs.com'),                                 // Secondary: Public RPC  
       http('https://sonic-mainnet.g.alchemy.com/v2/QiDLI_B9X1EAVYatlN9Jm'), // Fallback: Alchemy (rate limited)
     ]),
     // Basic transports for other chains (just for chain detection, not for transactions)
@@ -34,4 +36,5 @@ export const config = createConfig({
     [bsc.id]: http(),
     [avalanche.id]: http(),
   },
+  // No separate webSocketTransports needed in wagmi v2; included above via fallback
 })
