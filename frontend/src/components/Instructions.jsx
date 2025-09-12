@@ -56,6 +56,19 @@ export default function Instructions() {
             ))}
           </div>
 
+          {/* External Link: Trade Boat NFTs */}
+          <div className="p-4 pt-3 flex justify-end">
+            <a
+              href="https://paintswap.io/sonic/collections/meme-runner-boats/listings"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="vice-button px-4 py-2 rounded-lg font-bold"
+              style={{ fontFamily: 'Orbitron, monospace' }}
+            >
+              TRADE BOAT NFTS
+            </a>
+          </div>
+
           {/* Tab Content */}
           <div className="p-6 mobile-p-4">
             {activeTab === 'basics' && (
