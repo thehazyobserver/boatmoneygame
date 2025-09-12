@@ -61,8 +61,8 @@ export default function GameDashboard() {
             </div>
           </div>
 
-          {/* Token Purchase Buttons */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center max-w-2xl">
+          {/* Token Purchase Buttons + NFT Trade */}
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 justify-center max-w-4xl">
             <a
               href="https://fatfinger.fun/app/token/0x32aF310fA33520ffB91bF8DC73251F0244Efca2C"
               target="_blank"
@@ -80,6 +80,15 @@ export default function GameDashboard() {
               style={{ fontFamily: 'Orbitron, monospace' }}
             >
               🚀 GET MORE $JOINT
+            </a>
+            <a
+              href="https://paintswap.io/sonic/collections/meme-runner-boats/listings"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-center rounded-lg hover:from-emerald-400 hover:to-green-500 transition-all duration-300 neon-glow"
+              style={{ fontFamily: 'Orbitron, monospace' }}
+            >
+              🎨 TRADE BOAT NFTS
             </a>
           </div>
 
@@ -118,9 +127,9 @@ export default function GameDashboard() {
       {/* Instructions - Always visible but collapsible */}
       <Instructions />
       
-      {/* Token Purchase Buttons */}
+      {/* Token Purchase Buttons + NFT Trade */}
       <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-center">
           <a
             href="https://fatfinger.fun/app/token/0x32aF310fA33520ffB91bF8DC73251F0244Efca2C"
             target="_blank"
@@ -138,6 +147,15 @@ export default function GameDashboard() {
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
             🚀 GET MORE $JOINT
+          </a>
+          <a
+            href="https://paintswap.io/sonic/collections/meme-runner-boats/listings"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 px-6 py-4 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-center rounded-lg hover:from-emerald-400 hover:to-green-500 transition-all duration-300 neon-glow"
+            style={{ fontFamily: 'Orbitron, monospace' }}
+          >
+            🎨 TRADE BOAT NFTS
           </a>
         </div>
       </div>
