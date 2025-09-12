@@ -17,8 +17,8 @@ export const GAME_CONFIGS = {
     symbol: '$BOAT',
     contractAddress: BOAT_GAME_ADDRESS,
     tokenAddress: BOAT_TOKEN_ADDRESS,
-    minStake: '5000',         // Final uniform stakes 5k-50k BOAT
-    maxStake: '50000',        // Final uniform stakes 5k-50k BOAT
+  minStake: '5000',         // Final uniform stakes 5k-100k BOAT
+  maxStake: '100000',       // Updated max stake 100k BOAT per request
     decimals: 18,
     isDeployed: true,
     // Final balanced costs - deployment ready

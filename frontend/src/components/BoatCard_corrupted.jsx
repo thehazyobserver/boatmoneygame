@@ -217,7 +217,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             className="w-full px-4 py-3 terminal-bg border-2 border-pink-500 rounded-lg text-cyan-400 font-bold focus:outline-none focus:border-cyan-400 neon-glow"
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
-            <option value="BOAT" className="bg-gray-900">🚤 $BOAT (5K-50K)</option>
+            <option value="BOAT" className="bg-gray-900">🚤 $BOAT (5K-100K)</option>
             <option value="JOINT" className="bg-gray-900">🌿 $JOINT (7.8K-78K)</option>
           </select>
         </div>
@@ -286,7 +286,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             {isOnCooldown ? (
               <span className="text-orange-300">Cooldown: {formattedTime} remaining</span>
             ) : (
-              <span>10-minute cooldown | Play: {parseInt(gameConfig.minStake).toLocaleString()}-{parseInt(gameConfig.maxStake).toLocaleString()} {gameConfig.symbol}</span>
+              <span>120s cooldown | Play: {parseInt(gameConfig.minStake).toLocaleString()}-{parseInt(gameConfig.maxStake).toLocaleString()} {gameConfig.symbol}</span>
             )}
           </div>
         </div>

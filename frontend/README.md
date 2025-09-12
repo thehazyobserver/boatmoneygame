@@ -6,7 +6,7 @@ A decentralized boat smuggling game built on the Sonic blockchain. Buy boats, up
 
 1. **Connect Your Wallet** - Connect your Web3 wallet to start playing
 2. **Buy Your First Raft** - Purchase a raft with 50,000 BOAT tokens  
-3. **Run Operations** - Choose $BOAT (5K-50K stakes) or $JOINT (7.8K-78K stakes) for runs
+3. **Run Operations** - Choose $BOAT (5K-100K stakes) or $JOINT (7.8K-78K stakes) for runs
 4. **Upgrade Your Fleet** - Use BOAT tokens to upgrade boats for better success rates
 5. **Expand Your Empire** - Buy more boats and compound your earnings
 
@@ -19,12 +19,12 @@ A decentralized boat smuggling game built on the Sonic blockchain. Buy boats, up
 
 ## 💰 Game Mechanics
 
-- **Two Token Systems**: Play with $BOAT (5K-50K stakes) or $JOINT (7.8K-78K stakes)
+- **Two Token Systems**: Play with $BOAT (5K-100K stakes) or $JOINT (7.8K-78K stakes)
 - **Multipliers**: Payouts vary by boat level (Raft 1.5x to Yacht 1.7x)
 - **Failure Penalties**: Lose stake + boat burns (Raft) or downgrades (higher boats)
 - **Upgrade Costs**: Always paid in BOAT tokens (80K→150K→250K progression)
 - **Yacht Bonus**: 15% chance to spawn free rafts on successful yacht runs
-- **Cooldown**: 10 minutes between runs per boat
+- **Cooldown**: 120 seconds between runs per boat
 
 ## 🌐 Deployment
 

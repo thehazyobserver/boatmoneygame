@@ -72,7 +72,7 @@ export default function Instructions() {
                       • <strong className="text-yellow-400">BUY RAFTS:</strong> Start with basic rafts using 50K $BOAT tokens
                     </p>
                     <p>
-                      • <strong className="text-yellow-400">RUN OPERATIONS:</strong> Execute operations with $BOAT (5K-50K) or $JOINT (7.8K-78K) tokens
+                      • <strong className="text-yellow-400">RUN OPERATIONS:</strong> Execute operations with $BOAT (5K-100K) or $JOINT (7.8K-78K) tokens
                     </p>
                     <p>
                       • <strong className="text-yellow-400">UPGRADE FLEET:</strong> Use $BOAT to upgrade boats (80K→150K→250K) for better success rates
@@ -91,7 +91,7 @@ export default function Instructions() {
                     <ul className="text-white space-y-1 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
                       <li>• Buy new rafts (50K $BOAT)</li>
                       <li>• Upgrade boat levels (80K-250K $BOAT)</li>
-                      <li>• Run operations (5K-50K stakes)</li>
+                      <li>• Run operations (5K-100K stakes)</li>
                       <li>• Lower risk, steady progression</li>
                     </ul>
                   </div>
@@ -133,7 +133,7 @@ export default function Instructions() {
                       <div>
                         <h4 className="font-bold text-yellow-400">CHOOSE OPERATION MODE</h4>
                         <p className="text-white text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                          Pick $BOAT (5K-50K stakes) or $JOINT (7.8K-78K stakes) from the dropdown on each boat card. Note: All upgrades are always paid in $BOAT tokens.
+                          Pick $BOAT (5K-100K stakes) or $JOINT (7.8K-78K stakes) from the dropdown on each boat card. Note: All upgrades are always paid in $BOAT tokens.
                         </p>
                       </div>
                     </div>
