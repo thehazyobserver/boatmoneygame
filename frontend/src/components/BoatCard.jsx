@@ -517,9 +517,9 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
 
           {/* Removed allowlist warning banner per request */}
           
-          {!isOnCooldown && (
+      {!isOnCooldown && (
             <div className="text-center text-white opacity-60 text-xs mt-1">
-              <span>10-minute cooldown | Play: {formatInteger(gameConfig.minStake)}-{formatInteger(gameConfig.maxStake)} {gameConfig.symbol}</span>
+        <span>120s cooldown | Play: {formatInteger(gameConfig.minStake)}-{formatInteger(gameConfig.maxStake)} {gameConfig.symbol}</span>
             </div>
           )}
         </div>

@@ -169,7 +169,7 @@ export default function Instructions() {
                       <li>• Win your stake multiplied by boat level</li>
                       <li>• Yacht runs have 15% chance to spawn bonus rafts</li>
                       <li>• Keep your boat for more runs</li>
-                      <li>• 10 minute cooldown between runs</li>
+                      <li>• 120 second cooldown between runs</li>
                     </ul>
                   </div>
                   
@@ -181,7 +181,7 @@ export default function Instructions() {
                       <li>• Lose your staked tokens</li>
                       <li>• Rafts get BURNED on failure</li>
                       <li>• Higher boats get DOWNGRADED one level</li>
-                      <li>• 10 minute cooldown still applies</li>
+                      <li>• 120 second cooldown still applies</li>
                     </ul>
                   </div>
                 </div>
@@ -195,10 +195,10 @@ export default function Instructions() {
                     <div className="space-y-2">
                       <h4 className="font-bold text-yellow-400">🚢 SUCCESS RATES</h4>
                       <ul className="text-white text-sm space-y-1" style={{ fontFamily: 'Rajdhani, monospace' }}>
-                        <li>• Raft: 50% success</li>
-                        <li>• Dinghy: 55% success</li>
-                        <li>• Speedboat: 60% success</li>
-                        <li>• Yacht: 65% success</li>
+                        <li>• Raft: 60% success</li>
+                        <li>• Dinghy: 68% success</li>
+                        <li>• Speedboat: 78% success</li>
+                        <li>• Yacht: 87% success</li>
                       </ul>
                     </div>
                     <div className="space-y-2">

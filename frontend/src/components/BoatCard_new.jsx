@@ -253,13 +253,13 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             {isOnCooldown ? (
               <span className="text-orange-300">Cooldown: {formattedTime} remaining</span>
             ) : (
-              <span>10-minute cooldown | Play: {formatInteger(gameConfig.minStake)}-{formatInteger(gameConfig.maxStake)} {gameConfig.symbol}</span>
+              <span>120s cooldown | Play: {formatInteger(gameConfig.minStake)}-{formatInteger(gameConfig.maxStake)} {gameConfig.symbol}</span>
             )}
           </div>
         </div>
 
         <div className="text-center text-white opacity-80 text-sm">
-          Success Rate: {currentLevel === 1 ? '55%' : currentLevel === 2 ? '65%' : currentLevel === 3 ? '75%' : '85%'}
+          Success Rate: {gameConfig.levels[currentLevel]?.successRate || 0}%
         </div>
       </div>
     </div>

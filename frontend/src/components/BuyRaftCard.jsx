@@ -131,7 +131,7 @@ function BuyRaftCard() {
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="terminal-bg border border-yellow-400 rounded-lg p-4 text-center">
             <div className="text-2xl mb-2">🎯</div>
-            <div className="font-bold text-cyan-400" style={{ fontFamily: 'Orbitron, monospace' }}>55% SUCCESS</div>
+            <div className="font-bold text-cyan-400" style={{ fontFamily: 'Orbitron, monospace' }}>60% SUCCESS</div>
             <div className="text-pink-400 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>Starting odds</div>
           </div>
           <div className="terminal-bg border border-yellow-400 rounded-lg p-4 text-center">
