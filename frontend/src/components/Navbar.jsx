@@ -45,6 +45,20 @@ export default function Navbar() {
             <span className="hidden sm:inline">TELEGRAM</span>
             <span className="sm:hidden">TG</span>
           </a>
+
+          {/* Pass the Joint Link */}
+          <a
+            href="https://passthejoint.xyz/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-pink-400 transition-colors duration-300 text-xs md:text-sm font-semibold flex items-center space-x-1 neon-border px-2 md:px-3 py-1 rounded bg-black bg-opacity-50 hover:bg-opacity-70"
+            style={{ fontFamily: 'Orbitron, monospace' }}
+            title="Pass the Joint"
+          >
+            <span className="text-sm md:text-base">💨</span>
+            <span className="hidden sm:inline">PASS THE JOINT</span>
+            <span className="sm:hidden">PTJ</span>
+          </a>
           
           {isConnected && (
             <div className="text-cyan-400 text-xs md:text-sm font-semibold">
