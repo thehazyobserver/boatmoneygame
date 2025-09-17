@@ -101,7 +101,7 @@ code {
   animation: neonPulse 2s ease-in-out infinite;
 }
 
-@keyframes scanlines {
+/* @keyframes scanlines {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
@@ -114,7 +114,7 @@ code {
   width: 100%;
   height: 2px;
   background: linear-gradient(90deg, transparent, #00f5ff, transparent);
-  animation: scanlines 3s linear infinite;
+  /* animation: scanlines 3s linear infinite; */
   z-index: 1000;
   pointer-events: none;
 }
