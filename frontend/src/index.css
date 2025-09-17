@@ -119,6 +119,7 @@ code {
   pointer-events: none;
 }
 
+/* ...existing code... */
 /* 80s Gradient backgrounds */
 .miami-gradient {
   background: linear-gradient(135deg, #ff006e 0%, #8338ec 25%, #3a86ff 75%, #06ffa5 100%);
