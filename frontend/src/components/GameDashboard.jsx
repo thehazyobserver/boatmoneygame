@@ -62,7 +62,7 @@ export default function GameDashboard() {
           </div>
 
           {/* Token Purchase Buttons + NFT Trade */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 justify-center max-w-4xl">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 justify-center max-w-5xl">
             <a
               href="https://fatfinger.fun/app/token/0x32aF310fA33520ffB91bF8DC73251F0244Efca2C"
               target="_blank"
@@ -80,6 +80,15 @@ export default function GameDashboard() {
               style={{ fontFamily: 'Orbitron, monospace' }}
             >
               🚀 GET MORE $JOINT
+            </a>
+            <a
+              href="https://fatfinger.fun/app/token/0xf520D737dC03e0dFB81350C6Fd27479dd75Db88D"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-center rounded-lg hover:from-yellow-400 hover:to-orange-400 transition-all duration-300 neon-glow"
+              style={{ fontFamily: 'Orbitron, monospace' }}
+            >
+              😊 GET MORE $LSD
             </a>
             <a
               href="https://paintswap.io/sonic/collections/meme-runner-boats/listings"
@@ -128,8 +137,8 @@ export default function GameDashboard() {
       <Instructions />
       
       {/* Token Purchase Buttons + NFT Trade */}
-      <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-center">
+      <div className="max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 justify-center">
           <a
             href="https://fatfinger.fun/app/token/0x32aF310fA33520ffB91bF8DC73251F0244Efca2C"
             target="_blank"
@@ -147,6 +156,15 @@ export default function GameDashboard() {
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
             🚀 GET MORE $JOINT
+          </a>
+          <a
+            href="https://fatfinger.fun/app/token/0xf520D737dC03e0dFB81350C6Fd27479dd75Db88D"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 px-6 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-center rounded-lg hover:from-yellow-400 hover:to-orange-400 transition-all duration-300 neon-glow"
+            style={{ fontFamily: 'Orbitron, monospace' }}
+          >
+            😊 GET MORE $LSD
           </a>
           <a
             href="https://paintswap.io/sonic/collections/meme-runner-boats/listings"
