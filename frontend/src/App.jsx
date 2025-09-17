@@ -33,8 +33,17 @@ function AppContent() {
       
       {/* Main content with better spacing */}
       <main className="relative z-10">
+        {/* Fee notice */}
+        <div className="container mx-auto px-4 pt-2">
+          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3 mb-4 text-center">
+            <p className="text-yellow-300 text-sm font-medium">
+              ⚠️ 2.5% fee applies to all transactions
+            </p>
+          </div>
+        </div>
+        
         {/* Run Results positioned prominently */}
-        <div className="container mx-auto px-4 pt-4">
+        <div className="container mx-auto px-4">
           <RunResults />
         </div>
         
