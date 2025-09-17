@@ -100,7 +100,7 @@ export default function GameDashboard() {
               </div>
               <div className="text-yellow-300 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
                 This is an experimental blockchain game. Use at your own risk.<br/>
-                Only play with game tokens you're willing to lose.
+                Just a pointless game. Made to experiment & kill some time. .
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function GameDashboard() {
           </div>
           <div className="text-yellow-300 text-sm" style={{ fontFamily: 'Rajdhani, monospace' }}>
             This is an experimental blockchain game. Use at your own risk.<br/>
-            Only play with game tokens you're willing to lose.
+            Just a pointless game. Made to experiment & kill some time. .
           </div>
         </div>
       </div>

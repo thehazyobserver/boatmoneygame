@@ -21,7 +21,7 @@ export default function PoolStats() {
     functionName: 'totalSupply'
   })
 
-  // Read prize pool balance from game contract
+  // Read GAME POOL balance from game contract
   const { data: prizePool } = useReadContract({
     ...getGameContract(),
     functionName: 'poolBalance'
@@ -42,7 +42,7 @@ export default function PoolStats() {
 
   const baseStats = [
     {
-      label: 'Prize Pool',
+      label: 'GAME POOL',
       value: prizePool ? parseInt(formatEther(prizePool)).toLocaleString() : '0',
       suffix: gameConfig.symbol,
       icon: '💰'
