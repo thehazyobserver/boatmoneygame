@@ -77,7 +77,7 @@ export default function Instructions() {
                       • <strong className="text-yellow-400">RUN OPERATIONS:</strong> Execute operations with $BOAT (5K-100K) or $JOINT (7.8K-78K) tokens
                     </p>
                     <p>
-                      • <strong className="text-yellow-400">UPGRADE FLEET:</strong> Use $BOAT to upgrade boats (80K→150K→250K) for better success rates
+                      • <strong className="text-yellow-400">UPGRADE FLEET:</strong> Use $BOAT to upgrade boats (80K→180K→500K) for better success rates
                     </p>
                     <p>
                       • <strong className="text-yellow-400">BUILD AN EMPIRE:</strong> BECOME THE OCEAN'S MOST NOTORIOUS MEME SMUGGLER!
