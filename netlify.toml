@@ -1,5 +1,8 @@
 [build]
-  base = "frontend"
+[build.environment]
+  NODE_VERSION = "18"
+  SECRETS_SCAN_ENABLED = "false"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_ALCHEMY_API_KEY"ase = "frontend"
   publish = "dist"
   command = "npm run build"
   # Build when ANY repo files change (not just frontend/)

@@ -24,7 +24,7 @@ export const config = createConfig({
       webSocket('wss://sonic.drpc.org'),
       http('https://sonic.drpc.org'),                                    // Primary: Public RPC
       http('https://rpc.soniclabs.com'),                                 // Secondary: Public RPC  
-      http('https://sonic-mainnet.g.alchemy.com/v2/QiDLI_B9X1EAVYatlN9Jm'), // Fallback: Alchemy (rate limited)
+      http(`https://sonic-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_API_KEY}`), // Fallback: Alchemy (rate limited)
     ]),
     // Basic transports for other chains (just for chain detection, not for transactions)
     [mainnet.id]: http(),
