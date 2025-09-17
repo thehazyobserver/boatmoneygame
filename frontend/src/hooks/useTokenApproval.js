@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { useQueryClient } from '@tanstack/react-query'
 import { parseEther } from 'viem'
-import { contracts, BOAT_TOKEN_ABI, BOAT_GAME_ABI, JOINT_BOAT_GAME_ABI, GAME_CONFIGS } from '../config/contracts'
+import { contracts, BOAT_TOKEN_ABI, BOAT_GAME_ABI, JOINT_BOAT_GAME_ABI, LSD_GAME_ABI, GAME_CONFIGS } from '../config/contracts'
 
 export function useTokenApproval(selectedToken = 'BOAT') {
   const { address } = useAccount()
@@ -16,14 +16,16 @@ export function useTokenApproval(selectedToken = 'BOAT') {
   
   // Get contract configuration based on selected token
   const getGameContract = () => {
-    return selectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+    if (selectedToken === 'JOINT') return contracts.jointBoatGame
+    if (selectedToken === 'LSD') return contracts.lsdGame
+    return contracts.boatGame
   }
 
   // Get the actual token address from the game contract
   const { data: actualTokenAddress } = useReadContract({
     address: getGameContract().address,
-    abi: selectedToken === 'JOINT' ? JOINT_BOAT_GAME_ABI : BOAT_GAME_ABI,
-    functionName: selectedToken === 'JOINT' ? 'JOINT' : 'BOAT',
+    abi: selectedToken === 'JOINT' ? JOINT_BOAT_GAME_ABI : selectedToken === 'LSD' ? LSD_GAME_ABI : BOAT_GAME_ABI,
+    functionName: selectedToken === 'JOINT' ? 'JOINT' : selectedToken === 'LSD' ? 'LSD' : 'BOAT',
     query: { enabled: true }
   })
 
