@@ -11,7 +11,9 @@ export default function PoolStats() {
   
   // Get contract configuration based on active tab
   const getGameContract = () => {
-    return activeTab === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+    if (activeTab === 'JOINT') return contracts.jointBoatGame
+    if (activeTab === 'LSD') return contracts.lsdGame
+    return contracts.boatGame
   }
 
   // Read total supply of tokens from the token contract
@@ -98,6 +100,17 @@ export default function PoolStats() {
           style={{ fontFamily: 'Orbitron, monospace' }}
         >
           🌿 $JOINT
+        </button>
+        <button
+          onClick={() => setActiveTab('LSD')}
+          className={`flex-1 px-4 py-3 rounded-lg text-sm font-bold transition-all duration-300 ${
+            activeTab === 'LSD'
+              ? 'vice-button neon-glow'
+              : 'text-cyan-400 hover:bg-cyan-900/20 border border-cyan-400/50'
+          }`}
+          style={{ fontFamily: 'Orbitron, monospace' }}
+        >
+          😊 $LSD
         </button>
       </div>
       

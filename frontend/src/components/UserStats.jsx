@@ -8,15 +8,21 @@ export default function UserStats() {
   const { address, isConnected } = useAccount()
   const [activeTab, setActiveTab] = useState('BOAT')
 
-  // Get game config for active tab - fallback to BOAT if JOINT not deployed
+  // Get game config for active tab - fallback to BOAT if not deployed
   const gameConfig = GAME_CONFIGS[activeTab] || GAME_CONFIGS.BOAT
   
-  // Ensure we don't try to access JOINT if it's not deployed
-  const safeActiveTab = (activeTab === 'JOINT' && !GAME_CONFIGS.JOINT.isDeployed) ? 'BOAT' : activeTab
+  // Ensure we don't try to access undeployed games
+  const safeActiveTab = (() => {
+    if (activeTab === 'JOINT' && !GAME_CONFIGS.JOINT.isDeployed) return 'BOAT'
+    if (activeTab === 'LSD' && !GAME_CONFIGS.LSD.isDeployed) return 'BOAT'  
+    return activeTab
+  })()
   
   // Get contract configuration based on active tab
   const getGameContract = () => {
-    return safeActiveTab === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+    if (safeActiveTab === 'JOINT') return contracts.jointBoatGame
+    if (safeActiveTab === 'LSD') return contracts.lsdGame
+    return contracts.boatGame
   }
 
   // Read user's token balance from the token contract
@@ -126,6 +132,22 @@ export default function UserStats() {
             }`}
           >
             🌿 $JOINT
+          </button>
+        )}
+        {GAME_CONFIGS.LSD.isDeployed && (
+          <button
+            onClick={() => {
+              if (GAME_CONFIGS.LSD.isDeployed) {
+                setActiveTab('LSD')
+              }
+            }}
+            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'LSD'
+                ? 'bg-yellow-500 text-white'
+                : 'text-white hover:bg-white hover:bg-opacity-10'
+            }`}
+          >
+            😊 $LSD
           </button>
         )}
       </div>

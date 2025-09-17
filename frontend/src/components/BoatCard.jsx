@@ -32,7 +32,9 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const [lastTxHash, setLastTxHash] = useState(null)
 
   const getGameContract = () => {
-    return cardSelectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame
+    if (cardSelectedToken === 'JOINT') return contracts.jointBoatGame
+    if (cardSelectedToken === 'LSD') return contracts.lsdGame
+    return contracts.boatGame
   }
 
   const { hasAllowance, approveMax, isApproving } = useTokenApproval(cardSelectedToken)
@@ -77,7 +79,11 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   })
 
   // Pool/cap reads for EV & cap awareness
-  const gameContract = useMemo(() => (cardSelectedToken === 'JOINT' ? contracts.jointBoatGame : contracts.boatGame), [cardSelectedToken])
+  const gameContract = useMemo(() => {
+    if (cardSelectedToken === 'JOINT') return contracts.jointBoatGame
+    if (cardSelectedToken === 'LSD') return contracts.lsdGame
+    return contracts.boatGame
+  }, [cardSelectedToken])
   const { data: poolBalance } = useReadContract({
     ...gameContract,
     functionName: 'poolBalance'
@@ -98,6 +104,18 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     functionName: 'maxPayoutAbs',
     args: [(boatLevel || level || 1) + 1],
     query: { enabled: cardSelectedToken === 'JOINT' && (boatLevel || level || 1) < 4 }
+  })
+  const { data: lsdMaxAbs } = useReadContract({
+    ...contracts.lsdGame,
+    functionName: 'maxPayoutAbs',
+    args: [boatLevel || level || 1],
+    query: { enabled: cardSelectedToken === 'LSD' }
+  })
+  const { data: lsdMaxAbsNext } = useReadContract({
+    ...contracts.lsdGame,
+    functionName: 'maxPayoutAbs',
+    args: [(boatLevel || level || 1) + 1],
+    query: { enabled: cardSelectedToken === 'LSD' && (boatLevel || level || 1) < 4 }
   })
   const { data: boatStakeCfg } = useReadContract({
     ...contracts.boatGame,
@@ -143,6 +161,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
     : 0n
   const maxAbsWei = cardSelectedToken === 'JOINT'
     ? (jointMaxAbs || 0n)
+    : cardSelectedToken === 'LSD'
+    ? (lsdMaxAbs || 0n)
     : (boatStakeCfg && boatStakeCfg[3]) /* maxPayoutAbs */ || 0n
   let effectiveRewardWei = rawRewardWei
   if (capByPoolWei > 0n && effectiveRewardWei > capByPoolWei) effectiveRewardWei = capByPoolWei
@@ -161,6 +181,8 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const nextRawWei = (playAmountWei * BigInt(nextMultBps)) / 10000n
   const nextMaxAbsWei = cardSelectedToken === 'JOINT'
     ? (jointMaxAbsNext || 0n)
+    : cardSelectedToken === 'LSD'
+    ? (lsdMaxAbsNext || 0n)
     : (boatStakeCfgNext && boatStakeCfgNext[3]) || 0n
   let nextEffWei = nextRawWei
   if (capByPoolWei > 0n && nextEffWei > capByPoolWei) nextEffWei = capByPoolWei
@@ -400,7 +422,12 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
             <option value="BOAT" className="bg-gray-900">🚤 $BOAT (5K-100K)</option>
-            <option value="JOINT" className="bg-gray-900">🌿 $JOINT (7.8K-78K)</option>
+            {GAME_CONFIGS.JOINT.isDeployed && (
+              <option value="JOINT" className="bg-gray-900">🌿 $JOINT (7.8K-78K)</option>
+            )}
+            {GAME_CONFIGS.LSD.isDeployed && (
+              <option value="LSD" className="bg-gray-900">😊 $LSD (500-5K)</option>
+            )}
           </select>
         </div>
 
