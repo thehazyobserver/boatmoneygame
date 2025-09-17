@@ -24,9 +24,9 @@ export const GAME_CONFIGS = {
     // Final balanced costs - deployment ready
     raftCost: '50000',        // setBuyRaftCost(50000000000000000000000)
     upgradeCosts: {
-      1: '80000',             // setUpgradeCost(1, 80000000000000000000000)  
-      2: '150000',            // setUpgradeCost(2, 150000000000000000000000)
-      3: '250000'             // setUpgradeCost(3, 250000000000000000000000)
+        1: '80000',             // setUpgradeCost(1, 80000000000000000000000)  
+        2: '180000',            // setUpgradeCost(2, 180000000000000000000000)
+        3: '500000'             // setUpgradeCost(3, 500000000000000000000000)
     },
     treasuryFee: '2.5',       // setTreasury(TREASURY, 250) = 2.5%
     // Final level parameters - exact contract values
