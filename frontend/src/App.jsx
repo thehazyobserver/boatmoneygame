@@ -25,8 +25,7 @@ function AppContent() {
           linear-gradient(rgba(0, 245, 255, 0.4) 1px, transparent 1px),
           linear-gradient(90deg, rgba(0, 245, 255, 0.4) 1px, transparent 1px)
         `,
-        backgroundSize: '60px 60px',
-        animation: 'pulse 4s ease-in-out infinite'
+        backgroundSize: '60px 60px'
       }}></div>
     
       {/* Navbar with enhanced styling */}
