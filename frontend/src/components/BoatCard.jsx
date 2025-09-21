@@ -13,6 +13,13 @@ const BOAT_EMOJIS = {
   4: '🛥️'
 }
 
+const TOKEN_ICONS = {
+  BOAT: '🚤',
+  JOINT: '🌿',
+  LSD: '😊',
+  LIZARD: '🦎'
+}
+
 const BOAT_NAMES = {
   1: 'Raft',
   2: 'Dinghy',
@@ -34,6 +41,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
   const getGameContract = () => {
     if (cardSelectedToken === 'JOINT') return contracts.jointBoatGame
     if (cardSelectedToken === 'LSD') return contracts.lsdGame
+    if (cardSelectedToken === 'LIZARD') return contracts.lizardGame
     return contracts.boatGame
   }
 
@@ -421,12 +429,15 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
             className="w-full px-4 py-3 terminal-bg border-2 border-pink-500 rounded-lg text-cyan-400 font-bold focus:outline-none focus:border-cyan-400 neon-glow"
             style={{ fontFamily: 'Orbitron, monospace' }}
           >
-            <option value="BOAT" className="bg-gray-900">🚤 $BOAT (5K-50K)</option>
+            <option value="BOAT" className="bg-gray-900">{TOKEN_ICONS.BOAT} $BOAT (5K-50K)</option>
             {GAME_CONFIGS.JOINT.isDeployed && (
-              <option value="JOINT" className="bg-gray-900">🌿 $JOINT (7.8K-78K)</option>
+              <option value="JOINT" className="bg-gray-900">{TOKEN_ICONS.JOINT} $JOINT (7.8K-78K)</option>
             )}
             {GAME_CONFIGS.LSD.isDeployed && (
-              <option value="LSD" className="bg-gray-900">😊 $LSD (500-5K)</option>
+              <option value="LSD" className="bg-gray-900">{TOKEN_ICONS.LSD} $LSD (500-5K)</option>
+            )}
+            {GAME_CONFIGS.LIZARD.isDeployed && (
+              <option value="LIZARD" className="bg-gray-900">{TOKEN_ICONS.LIZARD} $LIZARD (100K-500K)</option>
             )}
           </select>
         </div>
@@ -520,7 +531,12 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
               ))}
             </div>
             <div className="text-xs text-pink-400 mt-1 font-semibold" style={{ fontFamily: 'Rajdhani, monospace' }}>
-              Range: {formatInteger(gameConfig.minStake)} - {formatInteger(gameConfig.maxStake)} {gameConfig.symbol}
+                  Range: {formatInteger(gameConfig.minStake)} - {formatInteger(gameConfig.maxStake)} {gameConfig.symbol}
+                  {cardSelectedToken === 'LIZARD' && (
+                    <span className="ml-2">
+                      <a href="https://fatfinger.fun/app/dex/swap?inputCurrency=S&outputCurrency=0x7b1e42Ef1BeE9AEc63d4f3F65B6edC67B5795EFe" target="_blank" rel="noopener noreferrer" className="text-green-400 underline">Get more $LIZARD</a>
+                    </span>
+                  )}
             </div>
             <div className="text-cyan-400 text-sm font-bold mt-2" style={{ fontFamily: 'Orbitron, monospace' }}>
               YOUR {gameConfig.symbol}: {tokenBalance ? formatTokenAmount(tokenBalance) : '0.00'}

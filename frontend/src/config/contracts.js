@@ -8,6 +8,9 @@ export const LSD_TOKEN_ADDRESS = '0xf520D737dC03e0dFB81350C6Fd27479dd75Db88D' //
 export const BOAT_TOKEN_ADDRESS = '0x32aF310fA33520ffB91bF8DC73251F0244Efca2C'  // BOAT token address
 // Note: BOAT token address will be read from the game contract
 
+export const LIZARD_GAME_ADDRESS = '0x88545AE0666bAb610Afcb8F3eBA3C01508E82148' // LIZARD Game address
+export const LIZARD_TOKEN_ADDRESS = '0x7b1e42Ef1BeE9AEc63d4f3F65B6edC67B5795EFe' // LIZARD token address
+
 // Check if contracts are deployed (not placeholder addresses)
 const isJointContractDeployed = JOINT_BOAT_GAME_ADDRESS !== '0xYourJointBoatGameAddressHere'
 const isJointTokenDeployed = JOINT_TOKEN_ADDRESS !== '0xYourJointTokenAddressHere'
@@ -84,6 +87,30 @@ export const GAME_CONFIGS = {
       3: '0'
     },
     levels: {
+  LIZARD: {
+    name: 'LIZARD Game',
+    symbol: '$LIZARD',
+    icon: '🦎',
+    contractAddress: LIZARD_GAME_ADDRESS,
+    tokenAddress: LIZARD_TOKEN_ADDRESS,
+    minStake: '100000',      // 100,000 LIZARD tokens
+    maxStake: '500000',      // 500,000 LIZARD tokens
+    decimals: 18,
+    isDeployed: true,
+    treasuryFee: '2.5',
+    buyTokenUrl: 'https://fatfinger.fun/app/dex/swap?inputCurrency=S&outputCurrency=0x7b1e42Ef1BeE9AEc63d4f3F65B6edC67B5795EFe',
+    upgradeCosts: {
+      1: '0',
+      2: '0',
+      3: '0'
+    },
+    levels: {
+      1: { successRate: 60, multiplier: 1.50, failureMode: 'burn' },
+      2: { successRate: 68, multiplier: 1.60, failureMode: 'downgrade' },
+      3: { successRate: 78, multiplier: 1.65, failureMode: 'downgrade' },
+      4: { successRate: 87, multiplier: 1.70, failureMode: 'downgrade' }
+    }
+  },
       1: { successRate: 60, multiplier: 1.50, failureMode: 'burn' },      // setLevelParams(1, 6000, 0) + setStakeParams multiplier 15000 - SAME AS BOAT/JOINT
       2: { successRate: 68, multiplier: 1.60, failureMode: 'downgrade' }, // setLevelParams(2, 6800, 1) + setStakeParams multiplier 16000 - SAME AS BOAT/JOINT
       3: { successRate: 78, multiplier: 1.65, failureMode: 'downgrade' }, // setLevelParams(3, 7800, 1) + setStakeParams multiplier 16500 - SAME AS BOAT/JOINT
@@ -133,5 +160,14 @@ export const contracts = {
   lsdToken: {
     address: LSD_TOKEN_ADDRESS,
     abi: BOAT_TOKEN_ABI
+  }
+  ,
+  lizardGame: {
+    address: LIZARD_GAME_ADDRESS,
+    abi: LSD_GAME_ABI // Same ABI structure as LSD game
+  },
+  lizardToken: {
+    address: LIZARD_TOKEN_ADDRESS,
+    abi: BOAT_TOKEN_ABI // Standard ERC20 ABI
   }
 }

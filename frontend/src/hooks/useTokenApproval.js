@@ -16,17 +16,26 @@ export function useTokenApproval(selectedToken = 'BOAT') {
   
   // Get contract configuration based on selected token
   const getGameContract = () => {
-    if (selectedToken === 'JOINT') return contracts.jointBoatGame
-    if (selectedToken === 'LSD') return contracts.lsdGame
-    return contracts.boatGame
+     if (selectedToken === 'JOINT') return contracts.jointBoatGame
+     if (selectedToken === 'LSD') return contracts.lsdGame
+     if (selectedToken === 'LIZARD') return contracts.lizardGame
+     return contracts.boatGame
   }
 
   // Get the actual token address from the game contract
   const { data: actualTokenAddress } = useReadContract({
-    address: getGameContract().address,
-    abi: selectedToken === 'JOINT' ? JOINT_BOAT_GAME_ABI : selectedToken === 'LSD' ? LSD_GAME_ABI : BOAT_GAME_ABI,
-    functionName: selectedToken === 'JOINT' ? 'JOINT' : selectedToken === 'LSD' ? 'LSD' : 'BOAT',
-    query: { enabled: true }
+      address: getGameContract().address,
+      abi:
+        selectedToken === 'JOINT' ? JOINT_BOAT_GAME_ABI :
+        selectedToken === 'LSD' ? LSD_GAME_ABI :
+        selectedToken === 'LIZARD' ? LSD_GAME_ABI : // LIZARD uses same ABI structure as LSD
+        BOAT_GAME_ABI,
+      functionName:
+        selectedToken === 'JOINT' ? 'JOINT' :
+        selectedToken === 'LSD' ? 'LSD' :
+        selectedToken === 'LIZARD' ? 'LIZARD' :
+        'BOAT',
+      query: { enabled: true }
   })
 
   // Use the actual token address if available, fallback to config
@@ -34,15 +43,15 @@ export function useTokenApproval(selectedToken = 'BOAT') {
 
   // Check current allowance with more frequent refetch
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: tokenAddress,
-    abi: BOAT_TOKEN_ABI,
-    functionName: 'allowance',
-    args: [address, getGameContract().address],
-    query: { 
-      enabled: !!address && !!tokenAddress,
-      refetchInterval: 3000, // Refetch every 3 seconds to catch changes
-      staleTime: 1000 // Consider data stale after 1 second
-    }
+      address: tokenAddress,
+      abi: BOAT_TOKEN_ABI, // Standard ERC20 ABI for all tokens
+      functionName: 'allowance',
+      args: [address, getGameContract().address],
+      query: { 
+        enabled: !!address && !!tokenAddress,
+        refetchInterval: 3000, // Refetch every 3 seconds to catch changes
+        staleTime: 1000 // Consider data stale after 1 second
+      }
   })
 
   // Check if we have enough allowance for a specific amount
