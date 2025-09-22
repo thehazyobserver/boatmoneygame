@@ -437,7 +437,7 @@ export default function BoatCard({ tokenId, level, onRefresh }) {
               <option value="LSD" className="bg-gray-900">{TOKEN_ICONS.LSD} $LSD (500-5K)</option>
             )}
             {GAME_CONFIGS.LIZARD.isDeployed && (
-              <option value="LIZARD" className="bg-gray-900">{TOKEN_ICONS.LIZARD} $LIZARD (100K-500K)</option>
+              <option value="LIZARD" className="bg-gray-900">{TOKEN_ICONS.LIZARD} $LIZARD (10K-50K)</option>
             )}
           </select>
         </div>
