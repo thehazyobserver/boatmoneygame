@@ -95,6 +95,43 @@ export default function RunResults() {
           }
         }, 'RunResult')
       })
+
+    // Watch for LIZARD game LIZARDRun events
+    useWatchContractEvent({
+      ...contracts.lizardGame,
+      eventName: 'LIZARDRun',
+      onLogs(logs) {
+        logs.forEach((log) => {
+          processEventLog(log, (log) => {
+            const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+            const key = `${log.transactionHash}:${log.logIndex}`
+            if (seenLogIdsRef.current.has(key)) return
+            // Only show results for the current user
+            if (user?.toLowerCase() === activeAddressRef.current) {
+              seenLogIdsRef.current.add(key)
+              const result = {
+                id: Date.now() + Math.random(),
+                tokenId: tokenId?.toString() || '0',
+                level: level ? parseInt(level) : 0,
+                stakeWei: stake || 0n,
+                stake: stake ? formatTokenAmount(stake) : '0',
+                success: Boolean(success),
+                rewardPaidWei: rewardPaid || 0n,
+                rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
+                timestamp: new Date(),
+                type: 'run',
+                gameToken: 'LIZARD'
+              }
+              setCurrentResult(result)
+              setResults(prev => [result, ...prev.slice(0, 9)])
+              setShowModal(true)
+              if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+              hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
+            }
+          }, 'LIZARDRun')
+        })
+      }
+    })
     }
   })
 
