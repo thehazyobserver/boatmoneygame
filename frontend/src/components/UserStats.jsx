@@ -22,6 +22,7 @@ export default function UserStats() {
   const getGameContract = () => {
     if (safeActiveTab === 'JOINT') return contracts.jointBoatGame
     if (safeActiveTab === 'LSD') return contracts.lsdGame
+    if (safeActiveTab === 'LIZARD') return contracts.lizardGame
     return contracts.boatGame
   }
 
