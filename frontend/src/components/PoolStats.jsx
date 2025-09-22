@@ -13,6 +13,7 @@ export default function PoolStats() {
   const getGameContract = () => {
     if (activeTab === 'JOINT') return contracts.jointBoatGame
     if (activeTab === 'LSD') return contracts.lsdGame
+    if (activeTab === 'LIZARD') return contracts.lizardGame
     return contracts.boatGame
   }
 
