@@ -112,6 +112,17 @@ export default function PoolStats() {
         >
           😊 $LSD
         </button>
+        <button
+          onClick={() => setActiveTab('LIZARD')}
+          className={`flex-1 px-4 py-3 rounded-lg text-sm font-bold transition-all duration-300 ${
+            activeTab === 'LIZARD'
+              ? 'vice-button neon-glow'
+              : 'text-cyan-400 hover:bg-cyan-900/20 border border-cyan-400/50'
+          }`}
+          style={{ fontFamily: 'Orbitron, monospace' }}
+        >
+          🦎 $LIZARD
+        </button>
       </div>
       
       <div className="grid grid-cols-2 gap-6 relative z-10">

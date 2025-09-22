@@ -100,8 +100,8 @@ export const GAME_CONFIGS = {
     icon: '🦎',
     contractAddress: LIZARD_GAME_ADDRESS,
     tokenAddress: LIZARD_TOKEN_ADDRESS,
-    minStake: '100000',      // 100,000 LIZARD tokens
-    maxStake: '500000',      // 500,000 LIZARD tokens
+  minStake: '10000000000000000000000',      // 10,000 LIZARD tokens (in wei)
+  maxStake: '50000000000000000000000',      // 50,000 LIZARD tokens (in wei)
     decimals: 18,
     isDeployed: true,
     treasuryFee: '2.5',

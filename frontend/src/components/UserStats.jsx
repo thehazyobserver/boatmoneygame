@@ -150,6 +150,22 @@ export default function UserStats() {
             😊 $LSD
           </button>
         )}
+        {GAME_CONFIGS.LIZARD.isDeployed && (
+          <button
+            onClick={() => {
+              if (GAME_CONFIGS.LIZARD.isDeployed) {
+                setActiveTab('LIZARD')
+              }
+            }}
+            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'LIZARD'
+                ? 'bg-lime-500 text-white'
+                : 'text-white hover:bg-white hover:bg-opacity-10'
+            }`}
+          >
+            🦎 $LIZARD
+          </button>
+        )}
       </div>
       
       <div className="grid grid-cols-2 gap-4">
