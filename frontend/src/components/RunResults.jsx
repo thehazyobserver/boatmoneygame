@@ -59,18 +59,16 @@ export default function RunResults() {
 
   // Watch events from both BOAT and JOINT contracts
 
-  // Get event name based on selected token
   // Watch for BOAT game RunResult events
   useWatchContractEvent({
     ...contracts.boatGame,
     eventName: 'RunResult',
-  onLogs(logs) {
+    onLogs(logs) {
       logs.forEach((log) => {
         processEventLog(log, (log) => {
           const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
           const key = `${log.transactionHash}:${log.logIndex}`
           if (seenLogIdsRef.current.has(key)) return
-          
           // Only show results for the current user
           if (user?.toLowerCase() === activeAddressRef.current) {
             seenLogIdsRef.current.add(key)
@@ -87,12 +85,10 @@ export default function RunResults() {
               type: 'run',
               gameToken: 'BOAT' // Track which game this result is from
             }
-            
             setCurrentResult(result)
             setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
-      console.debug('[RunResults] Showing modal for RunResult', { game: 'BOAT', tokenId: result.tokenId, success: result.success })
+            console.debug('[RunResults] Showing modal for RunResult', { game: 'BOAT', tokenId: result.tokenId, success: result.success })
             setShowModal(true)
-            
             // Auto-hide modal after 8 seconds
             if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
             hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
@@ -100,17 +96,18 @@ export default function RunResults() {
         }, 'RunResult')
       })
     }
-  })  // Watch for JOINT game JointRun events
+  })
+
+  // Watch for LSD game LSDRun events (for both LSD and LIZARD games)
   useWatchContractEvent({
-    ...contracts.jointBoatGame,
-    eventName: 'JointRun',
+    ...contracts.lsdGame,
+    eventName: 'LSDRun',
     onLogs(logs) {
       logs.forEach((log) => {
         processEventLog(log, (log) => {
           const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
           const key = `${log.transactionHash}:${log.logIndex}`
           if (seenLogIdsRef.current.has(key)) return
-          
           // Only show results for the current user
           if (user?.toLowerCase() === activeAddressRef.current) {
             seenLogIdsRef.current.add(key)
@@ -118,14 +115,9 @@ export default function RunResults() {
               id: Date.now() + Math.random(),
               tokenId: tokenId?.toString() || '0',
               level: level ? parseInt(level) : 0,
-              stakeWei: stake || 0n, // Store original BigInt for accurate formatting
-              stake: stake ? formatTokenAmount(stake) : '0', // For backward compatibility
+              stakeWei: stake || 0n,
+              stake: stake ? formatTokenAmount(stake) : '0',
               success: Boolean(success),
-              rewardPaidWei: rewardPaid || 0n, // Store original BigInt
-              rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
-              timestamp: new Date(),
-              type: 'run',
-              gameToken: 'JOINT' // Track which game this result is from
             }
             
             setCurrentResult(result)
@@ -284,7 +276,10 @@ export default function RunResults() {
   }
 
   const formatResult = (result) => {
-    const tokenSymbol = result.gameToken === 'JOINT' ? 'JOINT' : 'BOAT'
+  let tokenSymbol = 'BOAT'
+  if (result.gameToken === 'JOINT') tokenSymbol = 'JOINT'
+  if (result.gameToken === 'LSD') tokenSymbol = 'LSD'
+  if (result.gameToken === 'LIZARD') tokenSymbol = 'LIZARD'
     
     switch (result.type) {
       case 'run':
