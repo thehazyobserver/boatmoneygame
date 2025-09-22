@@ -87,6 +87,13 @@ export const GAME_CONFIGS = {
       3: '0'
     },
     levels: {
+      1: { successRate: 60, multiplier: 1.50, failureMode: 'burn' },      // setLevelParams(1, 6000, 0) + setStakeParams multiplier 15000 - SAME AS BOAT/JOINT
+      2: { successRate: 68, multiplier: 1.60, failureMode: 'downgrade' }, // setLevelParams(2, 6800, 1) + setStakeParams multiplier 16000 - SAME AS BOAT/JOINT
+      3: { successRate: 78, multiplier: 1.65, failureMode: 'downgrade' }, // setLevelParams(3, 7800, 1) + setStakeParams multiplier 16500 - SAME AS BOAT/JOINT
+      4: { successRate: 87, multiplier: 1.70, failureMode: 'downgrade' }  // setLevelParams(4, 8700, 1) + setStakeParams multiplier 17000 - SAME AS BOAT/JOINT
+    }
+  },
+
   LIZARD: {
     name: 'LIZARD Game',
     symbol: '$LIZARD',
@@ -109,12 +116,6 @@ export const GAME_CONFIGS = {
       2: { successRate: 68, multiplier: 1.60, failureMode: 'downgrade' },
       3: { successRate: 78, multiplier: 1.65, failureMode: 'downgrade' },
       4: { successRate: 87, multiplier: 1.70, failureMode: 'downgrade' }
-    }
-  },
-      1: { successRate: 60, multiplier: 1.50, failureMode: 'burn' },      // setLevelParams(1, 6000, 0) + setStakeParams multiplier 15000 - SAME AS BOAT/JOINT
-      2: { successRate: 68, multiplier: 1.60, failureMode: 'downgrade' }, // setLevelParams(2, 6800, 1) + setStakeParams multiplier 16000 - SAME AS BOAT/JOINT
-      3: { successRate: 78, multiplier: 1.65, failureMode: 'downgrade' }, // setLevelParams(3, 7800, 1) + setStakeParams multiplier 16500 - SAME AS BOAT/JOINT
-      4: { successRate: 87, multiplier: 1.70, failureMode: 'downgrade' }  // setLevelParams(4, 8700, 1) + setStakeParams multiplier 17000 - SAME AS BOAT/JOINT
     }
   }
 }
