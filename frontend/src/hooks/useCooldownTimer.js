@@ -8,9 +8,10 @@ export function useCooldownTimer(selectedToken, tokenId) {
 
   // Get contract configuration based on selected token
   const getGameContract = () => {
-    if (selectedToken === 'JOINT') return contracts.jointBoatGame
-    if (selectedToken === 'LSD') return contracts.lsdGame
-    return contracts.boatGame
+  if (selectedToken === 'JOINT') return contracts.jointBoatGame
+  if (selectedToken === 'LSD') return contracts.lsdGame
+  if (selectedToken === 'LIZARD') return contracts.lizardGame
+  return contracts.boatGame
   }
 
   // Read the cooldown duration from contract

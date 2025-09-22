@@ -101,6 +101,27 @@ export default function RecentActivity() {
     }
   })
 
+    // Watch for LIZARD game LIZARDRun events
+    useWatchContractEvent({
+      ...contracts.lizardGame,
+      eventName: 'LIZARDRun',
+      onLogs(logs) {
+        logs.forEach((log) => {
+          const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+          if (user?.toLowerCase() === address?.toLowerCase()) {
+            addActivity('run', {
+              tokenId: tokenId?.toString?.() || '0',
+              level: level ? parseInt(level) : 0,
+              stake: stake || 0n,
+              success: Boolean(success),
+              rewardPaid: rewardPaid || 0n,
+              gameToken: 'LIZARD'
+            })
+          }
+        })
+      }
+    })
+
   // Watch for JOINT game JointRun events
   useWatchContractEvent({
     ...contracts.jointBoatGame,
@@ -140,6 +161,22 @@ export default function RecentActivity() {
     }
   })
 
+    // Watch for boat burns (LIZARD game)
+    useWatchContractEvent({
+      ...contracts.lizardGame,
+      eventName: 'BoatBurned',
+      onLogs(logs) {
+        logs.forEach((log) => {
+          const { tokenId, level } = log.args || {}
+          addActivity('burned', {
+            tokenId: tokenId?.toString?.() || '0',
+            level: level ? parseInt(level) : 0,
+            gameToken: 'LIZARD'
+          })
+        })
+      }
+    })
+
   // Watch for boat burns (JOINT game)
   useWatchContractEvent({
     ...contracts.jointBoatGame,
@@ -174,6 +211,23 @@ export default function RecentActivity() {
       })
     }
   })
+
+    // Watch for boat downgrades (LIZARD game)
+    useWatchContractEvent({
+      ...contracts.lizardGame,
+      eventName: 'BoatDowngraded',
+      onLogs(logs) {
+        logs.forEach((log) => {
+          const { tokenId, fromLevel, toLevel } = log.args || {}
+          addActivity('downgraded', {
+            tokenId: tokenId?.toString?.() || '0',
+            fromLevel: fromLevel ? parseInt(fromLevel) : 0,
+            toLevel: toLevel ? parseInt(toLevel) : 0,
+            gameToken: 'LIZARD'
+          })
+        })
+      }
+    })
 
   // Watch for boat downgrades (JOINT game)
   useWatchContractEvent({
@@ -255,7 +309,10 @@ export default function RecentActivity() {
 
   // Format activity message
   const formatActivity = (activity) => {
-    const tokenSymbol = activity.gameToken === 'JOINT' ? 'JOINT' : 'BOAT'
+  let tokenSymbol = 'BOAT'
+  if (activity.gameToken === 'JOINT') tokenSymbol = 'JOINT'
+  if (activity.gameToken === 'LSD') tokenSymbol = 'LSD'
+  if (activity.gameToken === 'LIZARD') tokenSymbol = 'LIZARD'
     const timeStr = activity.timestamp.toLocaleTimeString()
     
     switch (activity.type) {
