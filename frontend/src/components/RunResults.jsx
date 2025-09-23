@@ -95,47 +95,49 @@ export default function RunResults() {
           }
         }, 'RunResult')
       })
-
-    // Watch for LIZARD game LIZARDRun events
-    useWatchContractEvent({
-      ...contracts.lizardGame,
-      eventName: 'LIZARDRun',
-      onLogs(logs) {
-        logs.forEach((log) => {
-          processEventLog(log, (log) => {
-            const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
-            const key = `${log.transactionHash}:${log.logIndex}`
-            if (seenLogIdsRef.current.has(key)) return
-            // Only show results for the current user
-            if (user?.toLowerCase() === activeAddressRef.current) {
-              seenLogIdsRef.current.add(key)
-              const result = {
-                id: Date.now() + Math.random(),
-                tokenId: tokenId?.toString() || '0',
-                level: level ? parseInt(level) : 0,
-                stakeWei: stake || 0n,
-                stake: stake ? formatTokenAmount(stake) : '0',
-                success: Boolean(success),
-                rewardPaidWei: rewardPaid || 0n,
-                rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
-                timestamp: new Date(),
-                type: 'run',
-                gameToken: 'LIZARD'
-              }
-              setCurrentResult(result)
-              setResults(prev => [result, ...prev.slice(0, 9)])
-              setShowModal(true)
-              if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
-              hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
-            }
-          }, 'LIZARDRun')
-        })
-      }
-    })
     }
   })
 
-  // Watch for LSD game LSDRun events (for both LSD and LIZARD games)
+  // Watch for JOINT game JointRun events
+  useWatchContractEvent({
+    ...contracts.jointBoatGame,
+    eventName: 'JointRun',
+    onLogs(logs) {
+      logs.forEach((log) => {
+        processEventLog(log, (log) => {
+          const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+          const key = `${log.transactionHash}:${log.logIndex}`
+          if (seenLogIdsRef.current.has(key)) return
+          // Only show results for the current user
+          if (user?.toLowerCase() === activeAddressRef.current) {
+            seenLogIdsRef.current.add(key)
+            const result = {
+              id: Date.now() + Math.random(),
+              tokenId: tokenId?.toString() || '0',
+              level: level ? parseInt(level) : 0,
+              stakeWei: stake || 0n,
+              stake: stake ? formatTokenAmount(stake) : '0',
+              success: Boolean(success),
+              rewardPaidWei: rewardPaid || 0n,
+              rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
+              timestamp: new Date(),
+              type: 'run',
+              gameToken: 'JOINT'
+            }
+            setCurrentResult(result)
+            setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
+            console.debug('[RunResults] Showing modal for JointRun', { game: 'JOINT', tokenId: result.tokenId, success: result.success })
+            setShowModal(true)
+            // Auto-hide modal after 8 seconds
+            if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+            hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
+          }
+        }, 'JointRun')
+      })
+    }
+  })
+
+  // Watch for LSD game LSDRun events
   useWatchContractEvent({
     ...contracts.lsdGame,
     eventName: 'LSDRun',
@@ -155,18 +157,59 @@ export default function RunResults() {
               stakeWei: stake || 0n,
               stake: stake ? formatTokenAmount(stake) : '0',
               success: Boolean(success),
+              rewardPaidWei: rewardPaid || 0n,
+              rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
+              timestamp: new Date(),
+              type: 'run',
+              gameToken: 'LSD'
             }
-            
             setCurrentResult(result)
             setResults(prev => [result, ...prev.slice(0, 9)]) // Keep last 10 results
-            console.debug('[RunResults] Showing modal for JointRun', { game: 'JOINT', tokenId: result.tokenId, success: result.success })
+            console.debug('[RunResults] Showing modal for LSDRun', { game: 'LSD', tokenId: result.tokenId, success: result.success })
             setShowModal(true)
-            
             // Auto-hide modal after 8 seconds
             if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
             hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
           }
-        }, 'JointRun')
+        }, 'LSDRun')
+      })
+    }
+  })
+
+  // Watch for LIZARD game LIZARDRun events
+  useWatchContractEvent({
+    ...contracts.lizardGame,
+    eventName: 'LIZARDRun',
+    onLogs(logs) {
+      logs.forEach((log) => {
+        processEventLog(log, (log) => {
+          const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+          const key = `${log.transactionHash}:${log.logIndex}`
+          if (seenLogIdsRef.current.has(key)) return
+          // Only show results for the current user
+          if (user?.toLowerCase() === activeAddressRef.current) {
+            seenLogIdsRef.current.add(key)
+            const result = {
+              id: Date.now() + Math.random(),
+              tokenId: tokenId?.toString() || '0',
+              level: level ? parseInt(level) : 0,
+              stakeWei: stake || 0n,
+              stake: stake ? formatTokenAmount(stake) : '0',
+              success: Boolean(success),
+              rewardPaidWei: rewardPaid || 0n,
+              rewardPaid: rewardPaid ? formatTokenAmount(rewardPaid) : '0',
+              timestamp: new Date(),
+              type: 'run',
+              gameToken: 'LIZARD'
+            }
+            setCurrentResult(result)
+            setResults(prev => [result, ...prev.slice(0, 9)])
+            console.debug('[RunResults] Showing modal for LIZARDRun', { game: 'LIZARD', tokenId: result.tokenId, success: result.success })
+            setShowModal(true)
+            if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+            hideTimerRef.current = setTimeout(() => setShowModal(false), 8000)
+          }
+        }, 'LIZARDRun')
       })
     }
   })
