@@ -397,7 +397,7 @@ export default function RecentActivity() {
           color: 'text-red-400',
           bgColor: 'bg-red-400/10',
           title: `Boat Burned`,
-          description: `${getBoatEmoji(activity.level)} ${getBoatName(activity.level)} #${activity.tokenId} was destroyed`,
+          description: `${getBoatEmoji(activity.level)} ${getBoatName(activity.level)} #${activity.tokenId} was destroyed (after failed run)`,
           time: timeStr
         }
       
@@ -407,7 +407,7 @@ export default function RecentActivity() {
           color: 'text-yellow-400',
           bgColor: 'bg-yellow-400/10',
           title: `Boat Downgraded`,
-          description: `${getBoatEmoji(activity.fromLevel)} ${getBoatName(activity.fromLevel)} #${activity.tokenId} → ${getBoatEmoji(activity.toLevel)} ${getBoatName(activity.toLevel)}`,
+          description: `${getBoatEmoji(activity.fromLevel)} ${getBoatName(activity.fromLevel)} #${activity.tokenId} → ${getBoatEmoji(activity.toLevel)} ${getBoatName(activity.toLevel)} (after failed run)`,
           time: timeStr
         }
       
