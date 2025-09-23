@@ -122,6 +122,27 @@ export default function RecentActivity() {
       }
     })
 
+  // Watch for LSD game LSDRun events
+  useWatchContractEvent({
+    ...contracts.lsdGame,
+    eventName: 'LSDRun',
+    onLogs(logs) {
+      logs.forEach((log) => {
+        const { user, tokenId, level, stake, success, rewardPaid } = log.args || {}
+        if (user?.toLowerCase() === address?.toLowerCase()) {
+          addActivity('run', {
+            tokenId: tokenId?.toString?.() || '0',
+            level: level ? parseInt(level) : 0,
+            stake: stake || 0n,
+            success: Boolean(success),
+            rewardPaid: rewardPaid || 0n,
+            gameToken: 'LSD'
+          })
+        }
+      })
+    }
+  })
+
   // Watch for JOINT game JointRun events
   useWatchContractEvent({
     ...contracts.jointBoatGame,
@@ -176,6 +197,22 @@ export default function RecentActivity() {
         })
       }
     })
+
+  // Watch for boat burns (LSD game)
+  useWatchContractEvent({
+    ...contracts.lsdGame,
+    eventName: 'BoatBurned',
+    onLogs(logs) {
+      logs.forEach((log) => {
+        const { tokenId, level } = log.args || {}
+        addActivity('burned', {
+          tokenId: tokenId?.toString?.() || '0',
+          level: level ? parseInt(level) : 0,
+          gameToken: 'LSD'
+        })
+      })
+    }
+  })
 
   // Watch for boat burns (JOINT game)
   useWatchContractEvent({
@@ -242,6 +279,23 @@ export default function RecentActivity() {
           fromLevel: fromLevel ? parseInt(fromLevel) : 0,
           toLevel: toLevel ? parseInt(toLevel) : 0,
           gameToken: 'JOINT'
+        })
+      })
+    }
+  })
+
+  // Watch for boat downgrades (LSD game)
+  useWatchContractEvent({
+    ...contracts.lsdGame,
+    eventName: 'BoatDowngraded',
+    onLogs(logs) {
+      logs.forEach((log) => {
+        const { tokenId, fromLevel, toLevel } = log.args || {}
+        addActivity('downgraded', {
+          tokenId: tokenId?.toString?.() || '0',
+          fromLevel: fromLevel ? parseInt(fromLevel) : 0,
+          toLevel: toLevel ? parseInt(toLevel) : 0,
+          gameToken: 'LSD'
         })
       })
     }
