@@ -21,14 +21,38 @@ export default function RecentActivity() {
     try {
       const stored = localStorage.getItem(getStorageKey())
       if (stored) {
-        const parsedActivities = JSON.parse(stored).map(activity => ({
-          ...activity,
-          timestamp: new Date(activity.timestamp)
-        }))
+        const parsedActivities = JSON.parse(stored).map(activity => {
+          try {
+            return {
+              ...activity,
+              timestamp: new Date(activity.timestamp),
+              // Convert string values back to BigInt for proper formatting
+              stake: activity.stake ? BigInt(activity.stake) : 0n,
+              rewardPaid: activity.rewardPaid ? BigInt(activity.rewardPaid) : 0n,
+              cost: activity.cost ? BigInt(activity.cost) : 0n
+            }
+          } catch (bigintError) {
+            console.warn('Failed to parse BigInt values for activity:', activity.id, bigintError)
+            // Return activity with default BigInt values if parsing fails
+            return {
+              ...activity,
+              timestamp: new Date(activity.timestamp),
+              stake: 0n,
+              rewardPaid: 0n,
+              cost: 0n
+            }
+          }
+        })
         setActivities(parsedActivities)
       }
     } catch (error) {
       console.warn('Failed to load recent activity from localStorage:', error)
+      // Clear corrupted data
+      try {
+        localStorage.removeItem(getStorageKey())
+      } catch (clearError) {
+        console.warn('Failed to clear corrupted localStorage:', clearError)
+      }
     }
   }, [address])
 
@@ -37,7 +61,14 @@ export default function RecentActivity() {
     if (!address || activities.length === 0) return
     
     try {
-      localStorage.setItem(getStorageKey(), JSON.stringify(activities))
+      // Convert BigInt values to strings for JSON serialization
+      const serializableActivities = activities.map(act => ({
+        ...act,
+        stake: act.stake ? act.stake.toString() : '0',
+        rewardPaid: act.rewardPaid ? act.rewardPaid.toString() : '0',
+        cost: act.cost ? act.cost.toString() : '0'
+      }))
+      localStorage.setItem(getStorageKey(), JSON.stringify(serializableActivities))
     } catch (error) {
       console.warn('Failed to save recent activity to localStorage:', error)
     }
@@ -69,7 +100,14 @@ export default function RecentActivity() {
       // Save to localStorage immediately
       if (address) {
         try {
-          localStorage.setItem(getStorageKey(), JSON.stringify(newActivities))
+          // Convert BigInt values to strings for JSON serialization
+          const serializableActivities = newActivities.map(act => ({
+            ...act,
+            stake: act.stake ? act.stake.toString() : '0',
+            rewardPaid: act.rewardPaid ? act.rewardPaid.toString() : '0',
+            cost: act.cost ? act.cost.toString() : '0'
+          }))
+          localStorage.setItem(getStorageKey(), JSON.stringify(serializableActivities))
         } catch (error) {
           console.warn('Failed to save activity to localStorage:', error)
         }
